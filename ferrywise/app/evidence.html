@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Evidence gate – Ferrywise (owner only)</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <h1>Evidence gate</h1>
+    <p>Public threads found by hand. No outreach.</p>
+  </header>
+  <main>
+    <section aria-live="polite">
+      <h2>Counters</h2>
+      <div class="tier">
+        <h3>Distinct threads (last 12 months)</h3>
+        <p><progress id="p-threads" max="15" value="0"></progress> <span id="c-threads">0 of 15</span></p>
+        <p id="s-threads">✕ Not yet</p>
+      </div>
+      <div class="tier">
+        <h3>Free tools didn't solve it</h3>
+        <p><progress id="p-failed" max="5" value="0"></progress> <span id="c-failed">0 of 5</span></p>
+        <p id="s-failed">✕ Not yet</p>
+      </div>
+    </section>
+    <section>
+      <h2>Add a thread</h2>
+      <form id="evidence-form" novalidate>
+        <label for="e-url">Thread URL</label>
+        <input id="e-url" type="url" placeholder="https://www.reddit.com/r/…" aria-describedby="e-errors">
+        <label for="e-date">Date posted</label>
+        <input id="e-date" type="date">
+        <label for="e-workflow">Named workflow</label>
+        <input id="e-workflow" type="text" placeholder="Copy client details into an invoice form">
+        <label for="e-tools">Tools named (comma separated)</label>
+        <input id="e-tools" type="text">
+        <fieldset>
+          <legend>Did free tools solve it?</legend>
+          <label><input type="radio" name="solved" value="yes"> Yes</label>
+          <label><input type="radio" name="solved" value="no"> No</label>
+          <label><input type="radio" name="solved" value="unknown" checked> Unknown</label>
+        </fieldset>
+        <label for="e-price">Price mentioned (optional)</label>
+        <input id="e-price" type="text">
+        <div id="e-errors" class="error" role="alert"></div>
+        <button type="submit">Add thread</button>
+      </form>
+      <p id="e-toast" role="status"></p>
+    </section>
+    <section>
+      <h2>Logged threads</h2>
+      <p id="e-empty" hidden>No threads logged yet. Search Reddit, Stack Overflow or Quora for a recent thread about retyping data between sites, then paste its URL above.</p>
+      <ul id="e-list"></ul>
+      <button type="button" id="e-csv" class="secondary">Download CSV</button>
+    </section>
+  </main>
+  <footer><p><a href="admin.html">Owner: results</a></p></footer>
+  <script src="src/store.js"></script>
+  <script src="src/csv.js"></script>
+  <script src="lib/evidence.js"></script>
+  <script src="evidence.js"></script>
+</body>
+</html>
