@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Replace SITE_URL with your public base URL (no trailing slash) before deploying. -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>SITE_URL/index.html</loc>
+  </url>
+  <url>
+    <loc>SITE_URL/rollback-github-pages.html</loc>
+  </url>
+</urlset>
