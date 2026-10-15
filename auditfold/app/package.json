@@ -1,0 +1,7 @@
+{
+  "name": "auditfold",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Example build: single-page SEO audit that runs locally.",
+  "scripts": { "test": "node --test" }
+}
