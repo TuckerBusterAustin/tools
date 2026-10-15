@@ -4,5 +4,11 @@
     "tagline": "Paste a failed S3 signature error and see exactly what differs. Runs locally.",
     "title": "Presign Pad: debug AWS SigV4 and S3 presigned URL errors locally",
     "updated": "2026-10-15"
+  },
+  "rollwell": {
+    "has_app": true,
+    "tagline": "Deploy static sites to Netlify, Vercel and GitHub Pages. Roll back from one place.",
+    "title": "Rollwell: one deploy and rollback history for client static sites (waitlist)",
+    "updated": "2026-10-15"
   }
 }
