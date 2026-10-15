@@ -1,4 +1,10 @@
 {
+  "auditfold": {
+    "has_app": true,
+    "tagline": "Paste a page's HTML, get a ranked plain-language SEO fix list and client report.",
+    "title": "Auditfold: page SEO audit to client-ready fix list (early version)",
+    "updated": "2026-10-15"
+  },
   "presign-pad": {
     "has_app": true,
     "tagline": "Paste a failed S3 signature error and see exactly what differs. Runs locally.",
