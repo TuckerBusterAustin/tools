@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /stats.html
+
+# Replace SITE_URL with your public base URL before deploying.
+Sitemap: SITE_URL/sitemap.xml
