@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>How to roll back a GitHub Pages deployment | Rollwell</title>
+  <meta name="description" content="Roll back a GitHub Pages deployment step by step: find the last good commit, git revert it, push, and check the Actions run. Or redeploy an earlier commit.">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="top-bar container">
+    <span class="wordmark">Rollwell</span>
+    <span class="pill">Coming soon · not built yet</span>
+    <a class="top-link" href="index.html#waitlist">Join the waitlist</a>
+  </header>
+
+  <main class="container">
+    <p><a class="text-link" href="index.html">← Rollwell home</a></p>
+
+    <article class="article">
+      <h1>How to roll back a GitHub Pages deployment</h1>
+      <p>GitHub Pages has no rollback button. To roll back, you put the last good version of your site back on the branch or workflow that Pages publishes from, then let the deployment run again. The usual way is to revert the bad commit with git and push.</p>
+
+      <nav aria-label="On this page">
+        <h2 class="toc-title">On this page</h2>
+        <ul>
+          <li><a class="text-link" href="#find-commit">Find the last good commit</a></li>
+          <li><a class="text-link" href="#revert-push">Revert and push</a></li>
+          <li><a class="text-link" href="#check-actions">Check the Actions run</a></li>
+          <li><a class="text-link" href="#redeploy">Or redeploy an earlier commit</a></li>
+          <li><a class="text-link" href="#docs">Official docs</a></li>
+        </ul>
+      </nav>
+
+      <h2 id="find-commit">Find the last good commit</h2>
+      <p>Look at the recent history of the branch your site publishes from. Find the commit where the site still worked, and the commit that broke it.</p>
+      <pre tabindex="0" aria-label="Command"><code>git log --oneline -10</code></pre>
+      <p>Note the short hash of the bad commit. If you are not sure which one it is, open the site at an earlier commit locally and compare.</p>
+
+      <h2 id="revert-push">Revert and push</h2>
+      <p><code>git revert</code> adds a new commit that undoes the bad one. It keeps your history intact, so it is safe on a shared branch.</p>
+      <pre tabindex="0" aria-label="Command"><code>git revert &lt;bad-commit-hash&gt;
+git push origin main</code></pre>
+      <p>Replace <code>main</code> with the branch your site publishes from. If the bad change spans several commits, revert each one, newest first.</p>
+
+      <h2 id="check-actions">Check the Actions run</h2>
+      <p>The push starts a new deployment. Open the Actions tab of your repository and look for the newest run. When it finishes with a green check, reload your site. A browser or CDN cache can show the old page for a short time, so try a hard refresh.</p>
+      <p>If the run fails, open it and read the log of the failed step.</p>
+
+      <h2 id="redeploy">Or redeploy an earlier commit</h2>
+      <p>If your site is published by a GitHub Actions workflow, you may be able to run it again for an older commit. Check out the good commit in a new branch, and push that branch if your workflow allows it as a deployment source.</p>
+      <pre tabindex="0" aria-label="Command"><code>git switch -c rollback-good-state &lt;good-commit-hash&gt;
+git push origin rollback-good-state</code></pre>
+      <p>Whether this deploys depends on your workflow and on any environment protection rules you have set. Read the docs below for your setup.</p>
+
+      <h2 id="docs">Official docs</h2>
+      <p>Settings differ between setups, so check GitHub's own pages:</p>
+      <ul>
+        <li><a class="text-link" href="https://docs.github.com/en/pages">https://docs.github.com/en/pages</a></li>
+        <li><a class="text-link" href="https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site">https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site</a></li>
+        <li><a class="text-link" href="https://git-scm.com/docs/git-revert">https://git-scm.com/docs/git-revert</a></li>
+      </ul>
+
+      <section class="cta-panel" aria-labelledby="cta-h">
+        <h2 id="cta-h">Rolling back on several hosts?</h2>
+        <p>Rollwell is not built yet. It is planned to roll back sites on Netlify, Vercel and GitHub Pages from one place. Nothing is charged.</p>
+        <p><a class="btn btn-primary" href="index.html#waitlist">Join the Rollwell waitlist</a></p>
+      </section>
+    </article>
+  </main>
+
+  <footer class="container">
+    <p class="small muted">Rollwell is not built yet. Nothing is charged.</p>
+  </footer>
+</body>
+</html>
