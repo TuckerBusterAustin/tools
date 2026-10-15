@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Rollwell stats (this browser only)</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="container stats-header">
+    <div>
+      <h1>Rollwell stats (this browser only)</h1>
+    </div>
+    <div class="stats-download">
+      <button type="button" id="csv-btn" class="btn btn-primary" aria-describedby="csv-help">Download CSV</button>
+      <p id="csv-help" class="help"></p>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="notice" id="data-notice">
+      <p class="small">Only shows what this browser has stored. Sign-ups sent by email are not counted here.</p>
+      <p class="small" id="empty-note" hidden>No visits recorded in this browser yet. Open index.html in this same browser to see events here. Data from other visitors' browsers never appears on this page.</p>
+    </div>
+
+    <div class="stat-grid" id="stat-cards"></div>
+
+    <section aria-labelledby="headline-h" class="stats-section">
+      <h2 id="headline-h">Headline test</h2>
+      <p id="headline-status" class="small"></p>
+      <table class="stats-table">
+        <thead>
+          <tr><th scope="col">Variant</th><th scope="col">Visitors</th><th scope="col">Sign-ups</th><th scope="col">Conversion</th></tr>
+        </thead>
+        <tbody id="variant-rows"></tbody>
+      </table>
+    </section>
+
+    <section aria-labelledby="criteria-h" class="stats-section">
+      <h2 id="criteria-h">Success criteria</h2>
+      <ul class="check-list" id="criteria-list"></ul>
+    </section>
+
+    <section aria-labelledby="kill-h" class="stats-section">
+      <h2 id="kill-h">Kill signals</h2>
+      <ul class="check-list" id="kill-list"></ul>
+    </section>
+
+    <p id="live" class="visually-hidden" role="status" aria-live="polite"></p>
+  </main>
+
+  <script src="config.js"></script>
+  <script src="src/events.js"></script>
+  <script src="src/stats.js"></script>
+  <script src="stats-page.js"></script>
+</body>
+</html>
