@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Ferrywise owner page (local only)</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <h1>Ferrywise owner page</h1>
+    <p class="notice">Data lives only in this browser's localStorage. Visitors' data on their own browsers is never sent here, so use export and import to move data between browsers. Clearing site data erases it.</p>
+  </header>
+  <main>
+    <section>
+      <h2>Gate status</h2>
+      <p id="gate-status"></p>
+    </section>
+
+    <section>
+      <h2>Evidence threads</h2>
+      <p><a href="evidence.html">Add or review evidence threads</a> (one list, one gate, shared with the status above).</p>
+    </section>
+
+    <section>
+      <h2>Results</h2>
+      <p class="notice">Local recording only shows the flow works; it cannot measure real visitors. Enter visitor counts from an owner-approved source by hand below. (Inputs are wired up in src/admin.js.)</p>
+      <label for="visitors-a">Visitors, variant A</label>
+      <input id="visitors-a" type="number" min="0" step="1">
+      <label for="visitors-b">Visitors, variant B</label>
+      <input id="visitors-b" type="number" min="0" step="1">
+      <p id="totals"></p>
+      <h3>Per variant</h3>
+      <table>
+        <thead><tr><th>Variant</th><th>Visitors</th><th>Sign-ups</th><th>Sign-up rate</th><th>Tier clicks</th><th>Tier click rate</th></tr></thead>
+        <tbody id="variant-rows"></tbody>
+      </table>
+      <h3>Tier clicks</h3>
+      <table>
+        <thead><tr><th>Tier</th><th>Clicks</th></tr></thead>
+        <tbody id="tier-rows"></tbody>
+      </table>
+      <h3>Deposits</h3>
+      <p>Deposits are deferred in this phase: not tested.</p>
+      <h3>Criteria</h3>
+      <table>
+        <thead><tr><th>Criterion</th><th>Status</th></tr></thead>
+        <tbody id="criteria-rows"></tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>7-day breakage log (3 workflows)</h2>
+      <form id="breakage-form" novalidate>
+        <label for="b-day">Day (1-7)</label>
+        <input id="b-day" type="number" min="1" max="7" step="1">
+        <label for="b-workflow">Workflow</label>
+        <input id="b-workflow" type="text">
+        <label for="b-broke">Did it break?</label>
+        <select id="b-broke"><option value="no">No</option><option value="yes">Yes</option></select>
+        <label for="b-minutes">Fix minutes</label>
+        <input id="b-minutes" type="number" min="0" step="1">
+        <p id="breakage-errors" class="error" role="alert"></p>
+        <button type="submit">Add entry</button>
+      </form>
+      <table>
+        <thead><tr><th>Day</th><th>Workflow</th><th>Broke</th><th>Fix minutes</th></tr></thead>
+        <tbody id="breakage-rows"></tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>Export and import</h2>
+      <button type="button" id="export-json">Export JSON</button>
+      <button type="button" id="export-csv">Export sign-ups CSV</button>
+      <label for="import-json">Import JSON</label>
+      <input id="import-json" type="file" accept="application/json,.json">
+      <p id="import-status" role="status"></p>
+    </section>
+  </main>
+  <script src="src/store.js"></script>
+  <script src="src/metrics.js"></script>
+  <script src="src/csv.js"></script>
+  <script src="lib/evidence.js"></script>
+  <script src="src/admin.js"></script>
+  <script>FerrywiseAdmin.init(document, window.localStorage);</script>
+</body>
+</html>
