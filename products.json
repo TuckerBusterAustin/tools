@@ -1,0 +1,8 @@
+{
+  "presign-pad": {
+    "has_app": true,
+    "tagline": "Paste a failed S3 signature error and see exactly what differs. Runs locally.",
+    "title": "Presign Pad: debug AWS SigV4 and S3 presigned URL errors locally",
+    "updated": "2026-10-15"
+  }
+}
