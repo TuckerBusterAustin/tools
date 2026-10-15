@@ -1,0 +1,11 @@
+{
+  "name": "ferrywise-demand-test",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Static demand-test site for Ferrywise (coming soon; the extension is not built).",
+  "scripts": {
+    "test": "node --test"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}
