@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ferrywise – coming soon: copy client details between sites</title>
+  <meta name="description" content="Ferrywise is coming soon and is not built yet. Join the waitlist for a planned browser extension that will copy client details from one site into a form on another, at one flat price.">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <span class="wordmark">Ferrywise</span>
+      <a class="nav-link" href="#pricing">Pricing</a>
+      <span class="badge">Coming soon · not built yet</span>
+    </div>
+  </header>
+  <main id="main">
+    <section class="hero">
+      <div class="container">
+        <!-- No-JS default is variant A; landing.js swaps in B when assigned. -->
+        <h1 id="headline">One flat price. No credits, no runtime meter.</h1>
+        <p id="subheadline" class="lead">Ferrywise will capture client details on one website and let you preview the fill on another.</p>
+        <p><a class="cta" id="join-cta" href="#waitlist">Join the waitlist</a></p>
+        <p class="note">Ferrywise is an unreleased prototype and is not built yet. Nothing is for sale today.</p>
+        <p class="note local-only"><span aria-hidden="true">🔒</span> Records stay in this browser. Nothing is sent anywhere.</p>
+      </div>
+    </section>
+
+    <section class="band">
+      <div class="container">
+        <h2>Sound familiar?</h2>
+        <ul id="problems" class="plain two-col">
+          <li>You retype the same client details into portals every week.</li>
+          <li>Copying data between tabs eats billable hours.</li>
+          <li>One wrong paste into a client form means rework later.</li>
+          <li>Every client portal asks for the same details in a different layout.</li>
+          <li>Per-fill credits and usage meters make the monthly bill hard to predict.</li>
+          <li>Browser autofill does not carry details from one site to another.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <h2>What Ferrywise will do</h2>
+        <ul id="features" class="plain">
+          <li>Will capture client details on one site with a click.</li>
+          <li>Will preview the fill on another site before anything is entered.</li>
+          <li>Coming: a review step so you approve each fill before it is submitted.</li>
+          <li>Planned: saved client profiles that stay in your browser.</li>
+          <li>Will keep one flat price, with no credits and no usage meter.</li>
+          <li class="scope-note">The first version covers cross-site copy and form filling only.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section" id="pricing">
+      <div class="container">
+        <h2>Planned pricing</h2>
+        <div id="tiers" class="tiers"></div>
+        <p id="pricing-note" class="note">One flat price: no credits, no meter.</p>
+      </div>
+    </section>
+
+    <section class="band" id="waitlist-band">
+      <div class="container">
+        <h2>Join the waitlist</h2>
+        <div id="waitlist" class="form-box">
+          <p id="chosen" hidden></p>
+          <p id="waitlist-note"></p>
+          <form id="waitlist-form" novalidate>
+            <label for="workflow" id="workflow-label">What repeat task would you automate first? (optional)</label>
+            <textarea id="workflow" rows="3"></textarea>
+            <label for="email">Email</label>
+            <input id="email" type="email" autocomplete="email" aria-describedby="form-error">
+            <p id="form-error" class="error" role="alert"></p>
+            <button type="submit">Register interest</button>
+          </form>
+          <p id="thanks" hidden>Thank you! Your interest is saved in this browser only. Ferrywise is coming, not built yet, and this page does not send your details to anyone.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <h2>FAQ</h2>
+        <details>
+          <summary>Can I buy Ferrywise today?</summary>
+          <p>No. Ferrywise is not built yet and nothing is for sale. The buttons only register interest.</p>
+        </details>
+        <details>
+          <summary>Will I be charged when I reserve?</summary>
+          <p>No. Nothing is charged, no payment details are asked for, and nothing you enter leaves your browser.</p>
+        </details>
+        <details>
+          <summary>Is there a free plan?</summary>
+          <p>No free plan is planned. The pricing shown is what we are testing.</p>
+        </details>
+        <details>
+          <summary>When will it launch?</summary>
+          <p>Coming only if enough people show interest. There is no launch date.</p>
+        </details>
+        <details>
+          <summary>Does Ferrywise send my details anywhere?</summary>
+          <p>No. This page keeps what you enter in this browser only.</p>
+        </details>
+        <details>
+          <summary>Which sites will it work with?</summary>
+          <p>The first version is planned to cover cross-site copy and form filling only. The list of sites is not decided.</p>
+        </details>
+      </div>
+    </section>
+  </main>
+
+  <dialog id="reserve-dialog" aria-labelledby="reserve-title">
+    <form id="reserve-form" method="dialog" novalidate>
+      <h2 id="reserve-title">Reserve a plan</h2>
+      <p id="reserve-chosen"></p>
+      <p>Nothing is charged. Ferrywise is not built yet, and your pick is saved in this browser only.</p>
+      <label for="reserve-email">Email</label>
+      <input id="reserve-email" type="email" autocomplete="email">
+      <p id="reserve-error" class="error" role="alert"></p>
+      <button type="submit" id="reserve-submit">Register interest</button>
+      <button type="button" class="secondary" id="reserve-close">Close</button>
+    </form>
+  </dialog>
+
+  <footer>
+    <div class="container">
+      <p>Ferrywise is an unreleased prototype. It is coming, not built yet.</p>
+      <p><a href="guide.html">Read the freelancer how-to guide</a></p>
+    </div>
+  </footer>
+  <script src="src/content.js"></script>
+  <script src="src/store.js"></script>
+  <script src="src/variant.js"></script>
+  <script src="js/tracking.js"></script>
+  <script src="src/landing.js"></script>
+  <script>FerrywiseLanding.init(document, window.localStorage);</script>
+<script data-goatcounter="https://tuckertools.goatcounter.com/count" async src="../gc.js"></script>
+</body>
+</html>
