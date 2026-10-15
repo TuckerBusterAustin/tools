@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Auditfold</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <h1>Auditfold</h1>
+    <p class="muted">Check a page. Get a fix list you can send to a client.</p>
+    <p class="notice"><span class="info" aria-hidden="true">i</span>Example build: runs on this page only, nothing is uploaded. The browser extension is coming and is not built yet.</p>
+  </header>
+  <main>
+    <div class="cols">
+      <section class="card input-card" aria-labelledby="audit-h">
+        <h2 id="audit-h">Audit a page</h2>
+        <details id="howto">
+          <summary>How to copy a page's source</summary>
+          <ol>
+            <li>Open the page you want to check.</li>
+            <li>Press Ctrl+U (Cmd+Option+U on Mac) to open View Source.</li>
+            <li>Select all, copy, and paste it below.</li>
+          </ol>
+        </details>
+        <form id="form" novalidate>
+          <div class="field">
+            <label for="html">Page HTML</label>
+            <textarea id="html" rows="8" spellcheck="false" aria-describedby="html-err" placeholder="&lt;!doctype html&gt;&#10;&lt;html&gt;…"></textarea>
+            <p id="html-err" class="error" hidden></p>
+          </div>
+          <div class="field">
+            <label for="url">Page URL (optional)</label>
+            <input id="url" type="text" placeholder="https://client-site.com/page" autocomplete="off">
+          </div>
+          <div class="field">
+            <label for="client">Client name (optional)</label>
+            <input id="client" type="text" placeholder="Acme Bakery" autocomplete="off">
+          </div>
+          <div class="field">
+            <label for="consultant">Your name or business (optional, shown on the report)</label>
+            <input id="consultant" type="text" placeholder="Jo Smith SEO" autocomplete="off">
+          </div>
+          <div class="run">
+            <button type="submit" id="run" class="primary">Run audit</button>
+            <span class="muted">or press Ctrl+Enter</span>
+          </div>
+        </form>
+      </section>
+
+      <section class="results" id="results" aria-labelledby="results-h">
+        <h2 id="results-h" tabindex="-1">Results</h2>
+        <p id="live" class="sr-only" aria-live="polite"></p>
+        <div id="empty" class="card dashed">
+          <h3>No audit yet</h3>
+          <p>Paste a page's HTML <span class="where">on the left</span> and press Run audit. Your fix list will appear here, most important fix first.</p>
+          <button type="button" id="show-howto" class="text-btn">Not sure how? Show me how to copy page source</button>
+        </div>
+        <div class="actions" id="actions">
+          <button type="button" class="secondary" id="copy-md" disabled>Copy as Markdown</button>
+          <button type="button" class="secondary" id="download" disabled>Download report (HTML)</button>
+          <button type="button" class="secondary" id="print" disabled>Print or save as PDF</button>
+          <button type="button" class="text-btn" id="copy-txt" disabled>Copy as plain text</button>
+        </div>
+        <p id="hint" class="muted">Run an audit to enable these.</p>
+        <div id="output" hidden>
+          <p id="saved-note" class="muted" hidden></p>
+          <div class="card summary">
+            <div class="score-block">
+              <p class="score"><span id="score">0</span> <span class="muted">out of 100</span></p>
+              <div class="bar" id="bar" role="img" aria-label="Score 0 out of 100"><span id="bar-fill"></span></div>
+            </div>
+            <p id="counts" class="counts"></p>
+          </div>
+          <div id="fallback" hidden>
+            <textarea id="fallback-text" readonly rows="8" aria-label="Report text"></textarea>
+            <p class="muted">Press Ctrl+C (Cmd+C on Mac) to copy.</p>
+          </div>
+          <h2>Fix list, most important first</h2>
+          <div id="no-issues" class="ok" hidden></div>
+          <ol id="fixes" class="fixes"></ol>
+          <details id="passed" class="passed"><summary id="passed-sum">Passed checks</summary><ul id="passed-list"></ul></details>
+        </div>
+      </section>
+    </div>
+
+    <section class="card" id="history-card" aria-labelledby="hist-h">
+      <h2 id="hist-h">Recent audits</h2>
+      <p class="muted">Saved in this browser only. Last 20.</p>
+      <p id="hist-warn" class="error" hidden>Recent audits can't be saved in this browser. Your current audit still works; download the report to keep it.</p>
+      <p id="hist-empty" class="muted">No saved audits yet. Each audit you run is saved here, in this browser only.</p>
+      <ul id="hist-list" class="hist"></ul>
+      <div id="clear-row" hidden>
+        <button type="button" id="clear" class="text-btn">Clear history</button>
+        <span id="confirm" hidden><span id="confirm-text"></span>
+          <button type="button" id="clear-yes" class="text-btn danger">Clear</button>
+          <button type="button" id="clear-no" class="text-btn">Cancel</button></span>
+      </div>
+    </section>
+
+    <!-- Print-only report, filled by app.js -->
+    <div id="print-area" aria-hidden="true"></div>
+  </main>
+  <footer class="muted">Example build. Nothing leaves your browser. Extension coming, not yet built.</footer>
+
+  <div id="toast" class="toast" hidden aria-live="polite">
+    <span id="toast-text"></span>
+    <button type="button" id="toast-x" aria-label="Dismiss">×</button>
+  </div>
+
+  <script src="src/parse.js"></script>
+  <script src="src/checks.js"></script>
+  <script src="src/audit.js"></script>
+  <script src="src/report.js"></script>
+  <script src="src/history.js"></script>
+  <script src="app.js"></script>
+<script data-goatcounter="https://tuckertools.goatcounter.com/count" async src="../gc.js"></script>
+</body>
+</html>
