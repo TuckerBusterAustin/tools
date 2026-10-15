@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Presign Pad</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <h1>Presign Pad</h1>
+  <p class="note" id="memory-note">Sign AWS requests locally. <strong>Secrets are kept only in memory unless you save them</strong> (see Profile).</p>
+
+  <form id="request-form" autocomplete="off">
+    <fieldset>
+      <legend>Profile</legend>
+      <p class="note" id="local-notice">Profiles are saved only in this browser (localStorage). Nothing is uploaded.</p>
+      <select id="profile-select"><option value="">(none)</option></select>
+      <input id="profile-name" placeholder="Profile name">
+      <div class="row">
+      <button type="button" id="btn-profile-save">Save</button>
+      <button type="button" id="btn-profile-delete">Delete</button>
+      <button type="button" id="btn-clear-data">Clear saved data</button>
+      </div>
+      <label class="inline"><input type="checkbox" id="save-secrets">
+        Also save my secret key and session token in this browser (unencrypted, readable by anything on this origin)</label>
+    </fieldset>
+
+    <label>Method <input name="method" value="GET"></label>
+    <label>Host <input name="host" placeholder="examplebucket.s3.amazonaws.com"></label>
+    <label>Path <input name="path" value="/"></label>
+    <label>Query <input name="query"></label>
+    <label>Region <input name="region" value="us-east-1"></label>
+    <label>Service <input name="service" value="s3"></label>
+    <label>Date (YYYYMMDDTHHMMSSZ, blank = now) <input name="amzDate" placeholder="20130524T000000Z"></label>
+    <label>Expires, presign only (seconds) <input name="expires" value="86400"></label>
+    <label>Access key ID <input name="accessKeyId"></label>
+    <label>Secret key <input name="secretAccessKey" type="password"></label>
+    <label>Session token <input name="sessionToken" type="password"></label>
+    <label>Headers (one "Name: value" per line; Host is added for you)
+      <textarea name="headers" rows="3"></textarea></label>
+    <label>Body <textarea name="body" rows="3"></textarea></label>
+    <label class="inline"><input type="checkbox" name="unsignedPayload"> Unsigned payload (S3)</label>
+
+    <ul id="lint" class="lint" aria-live="polite"></ul>
+    <p id="error" class="error" role="alert"></p>
+
+    <div class="row actions">
+    <button type="button" id="btn-sign" class="primary">Sign</button>
+    <button type="button" id="btn-presign" class="secondary">Presign (S3 URL)</button>
+    <button type="button" id="btn-send" class="tertiary">Send via fetch</button>
+    </div>
+    <p class="note">Send needs the server to allow CORS from a file:// page. S3 buckets usually
+      do not, so a "network error" can mean CORS rather than a bad signature. Use curl then
+      paste the response below.</p>
+  </form>
+
+  <section id="output">
+    <h2>Output</h2>
+    <h3>Canonical request <button type="button" data-copy="out-canonical">Copy</button></h3>
+    <pre id="out-canonical"></pre>
+    <h3>String to sign <button type="button" data-copy="out-sts">Copy</button></h3>
+    <pre id="out-sts"></pre>
+    <h3>Signature <button type="button" data-copy="out-signature">Copy</button></h3>
+    <pre id="out-signature"></pre>
+    <h3>Authorization header <button type="button" data-copy="out-auth">Copy</button></h3>
+    <pre id="out-auth"></pre>
+    <h3>Presigned URL <button type="button" data-copy="out-url">Copy</button></h3>
+    <pre id="out-url"></pre>
+    <h3>curl <button type="button" id="btn-copy-curl">Copy curl</button></h3>
+    <pre id="out-curl"></pre>
+  </section>
+
+  <section id="explainer">
+    <h2>Failure response</h2>
+    <textarea id="response" rows="8" placeholder="Paste the XML or JSON error body here"></textarea>
+    <button type="button" id="btn-explain">Explain</button>
+    <div id="explanation"></div>
+  </section>
+
+  <section id="inspector">
+    <h2>Inspect a presigned URL</h2>
+    <textarea id="inspect-url" rows="3" placeholder="Paste a presigned URL"></textarea>
+    <label>Secret key (optional, only to verify the signature; not saved)
+      <input id="inspect-secret" type="password" autocomplete="off"></label>
+    <button type="button" id="btn-inspect">Inspect</button>
+    <div id="inspect-result"></div>
+  </section>
+
+  <!-- Plain script tags so this works from file://. crypto-node.js is Node-only (tests). -->
+  <script src="src/sigv4.js"></script>
+  <script src="src/presign.js"></script>
+  <script src="src/explain.js"></script>
+  <script src="src/inspect.js"></script>
+  <script src="src/export.js"></script>
+  <script src="src/lint.js"></script>
+  <script src="src/profiles.js"></script>
+  <script src="src/crypto-web.js"></script>
+  <script src="src/app.js"></script>
+<script data-goatcounter="https://tuckertools.goatcounter.com/count" async src="../gc.js"></script>
+</body>
+</html>
