@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Ferrywise prototype</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="title">Ferrywise</span> <span class="badge">PROTOTYPE</span></div>
+    <div class="profile-pick">
+      <label for="active-profile" class="sr-only">Active profile</label>
+      <select id="active-profile"></select>
+    </div>
+  </header>
+  <nav>
+    <div role="tablist" aria-label="Ferrywise sections" class="tabs">
+      <button role="tab" id="tab-fill" aria-selected="true" aria-controls="panel-fill">Fill</button>
+      <button role="tab" id="tab-profiles" aria-selected="false" aria-controls="panel-profiles" tabindex="-1">Profiles</button>
+      <button role="tab" id="tab-links" aria-selected="false" aria-controls="panel-links" tabindex="-1">Links</button>
+      <button role="tab" id="tab-rules" aria-selected="false" aria-controls="panel-rules" tabindex="-1">Rules</button>
+      <button role="tab" id="tab-backup" aria-selected="false" aria-controls="panel-backup" tabindex="-1">Backup</button>
+    </div>
+  </nav>
+  <main>
+    <section role="tabpanel" id="panel-fill" aria-labelledby="tab-fill">
+      <p class="muted" id="domain"></p>
+      <p class="error" id="unreadable" hidden>Ferrywise can't read this page. Browsers block extensions on their own pages. Try it on a normal website.</p>
+      <p id="no-profile" hidden>No client profile yet. Capture details from this page, or add a profile by hand.</p>
+      <div class="card">
+        <h2>1. Capture from this page</h2>
+        <p class="muted">Run this on the site that has the client's details.</p>
+        <button type="button" class="btn" id="capture-btn">Capture from this page</button>
+        <button type="button" class="btn link" id="add-profile-btn" hidden>Add profile</button>
+        <p class="muted" id="capture-empty" hidden>No labelled fields with values found here. Try selecting the text you want and press Capture again.</p>
+        <form id="capture-form" hidden>
+          <ul class="rows" id="capture-list" aria-label="Captured details"></ul>
+          <button type="submit" class="btn" id="capture-save">Save details</button>
+        </form>
+      </div>
+      <div class="card">
+        <h2>2. Preview fill</h2>
+        <p class="muted">Run this on the site with the form. Nothing is written until you have seen the preview.</p>
+        <button type="button" class="btn primary" id="preview-btn">Preview fill</button>
+        <p class="muted" id="preview-empty" hidden>No fields on this page match your profile. Add a rule in the Rules tab to map one.</p>
+        <p id="preview-summary" aria-live="polite"></p>
+        <ul class="rows" id="preview-list" aria-label="Fill preview"></ul>
+      </div>
+      <div class="sticky-foot">
+        <button type="button" class="btn primary" id="fill-btn" disabled aria-disabled="true">Fill</button>
+        <button type="button" class="btn link" id="cancel-btn">Cancel</button>
+      </div>
+    </section>
+
+    <section role="tabpanel" id="panel-profiles" aria-labelledby="tab-profiles" hidden>
+      <ul class="rows" id="profile-list" aria-label="Profiles"></ul>
+      <button type="button" class="btn" id="new-profile-btn">New profile</button>
+      <form id="profile-editor" class="card" hidden>
+        <h2 id="editor-title">Edit profile</h2>
+        <label for="profile-name">Profile name</label>
+        <input id="profile-name" type="text" autocomplete="off" placeholder="Acme Ltd">
+        <p class="error" id="profile-error" role="alert" hidden></p>
+        <div id="profile-rows"></div>
+        <button type="button" class="btn" id="add-field-btn">Add field</button>
+        <div class="actions">
+          <button type="submit" class="btn primary">Save</button>
+          <button type="button" class="btn link danger" id="delete-profile-btn">Delete profile</button>
+        </div>
+        <p id="delete-confirm" hidden>Delete this profile?
+          <button type="button" class="btn link danger" id="delete-yes">Yes, delete</button>
+          <button type="button" class="btn link" id="delete-no">Keep it</button>
+        </p>
+      </form>
+    </section>
+
+    <section role="tabpanel" id="panel-links" aria-labelledby="tab-links" hidden>
+      <label for="link-filter">Filter by text or URL</label>
+      <input id="link-filter" type="text" autocomplete="off" placeholder="invoice">
+      <button type="button" class="btn primary" id="links-btn">Extract links</button>
+      <p class="muted" id="links-count" aria-live="polite"></p>
+      <ul class="rows scroll" id="links-list" aria-label="Links"></ul>
+      <div class="actions">
+        <button type="button" class="btn" id="copy-text-btn">Copy as text</button>
+        <button type="button" class="btn" id="copy-csv-btn">Copy as CSV</button>
+      </div>
+    </section>
+
+    <section role="tabpanel" id="panel-rules" aria-labelledby="tab-rules" hidden>
+      <h2>Rules for this site</h2>
+      <ul class="rows" id="rules-here" aria-label="Rules for this site"></ul>
+      <h2>All rules</h2>
+      <ul class="rows" id="rules-all" aria-label="All rules"></ul>
+      <form id="rule-form" class="card">
+        <label for="rule-domain">Domain</label>
+        <input id="rule-domain" type="text" autocomplete="off" placeholder="example.com">
+        <label for="rule-field">Field (label or selector)</label>
+        <input id="rule-field" type="text" autocomplete="off" placeholder="Billing email">
+        <label for="rule-key">Profile key</label>
+        <select id="rule-key"></select>
+        <p class="error" id="rule-error" role="alert" hidden></p>
+        <p class="muted">A rule for example.com also applies to app.example.com. Use the field label first; #id or [name="x"] also work.</p>
+        <button type="submit" class="btn">Add rule</button>
+      </form>
+    </section>
+
+    <section role="tabpanel" id="panel-backup" aria-labelledby="tab-backup" hidden>
+      <button type="button" class="btn" id="export-btn">Export profiles and rules</button>
+      <label for="import-file">Import from file</label>
+      <input id="import-file" type="file" accept=".json,application/json">
+      <p class="muted">Stored only in this browser. Nothing is sent anywhere.</p>
+    </section>
+  </main>
+  <div id="toast"></div>
+  <script src="lib/storage.js"></script>
+  <script src="lib/fieldmatch.js"></script>
+  <script src="lib/profiles.js"></script>
+  <script src="lib/rules.js"></script>
+  <script src="lib/links.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>
