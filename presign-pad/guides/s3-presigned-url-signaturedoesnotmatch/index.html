@@ -1,16 +1,18 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>How to fix SignatureDoesNotMatch on an S3 presigned URL</title>
-<meta name="description" content="A step-by-step way to find out why S3 says &quot;The request signature we calculated does not match the signature you provided&quot;, using the error XML S3 sends…">
+<meta name="description" content="A step-by-step way to find out why S3 rejects your presigned URL with SignatureDoesNotMatch, using the error XML S3 sends back.">
 <link rel="canonical" href="https://tuckertooling.com/presign-pad/guides/s3-presigned-url-signaturedoesnotmatch/">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23635bff'/%3E%3Ctext x='32' y='44' font-size='36' text-anchor='middle' fill='white' font-family='system-ui,sans-serif' font-weight='bold'%3EH%3C/text%3E%3C/svg%3E">
 <meta property="og:type" content="website">
 <meta property="og:title" content="How to fix SignatureDoesNotMatch on an S3 presigned URL">
-<meta property="og:description" content="A step-by-step way to find out why S3 says &quot;The request signature we calculated does not match the signature you provided&quot;, using the error XML S3 sends…">
+<meta property="og:description" content="A step-by-step way to find out why S3 rejects your presigned URL with SignatureDoesNotMatch, using the error XML S3 sends back.">
 <meta property="og:url" content="https://tuckertooling.com/presign-pad/guides/s3-presigned-url-signaturedoesnotmatch/">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="How to fix SignatureDoesNotMatch on an S3 presigned URL">
-<meta name="twitter:description" content="A step-by-step way to find out why S3 says &quot;The request signature we calculated does not match the signature you provided&quot;, using the error XML S3 sends…"><style>:root{--accent:#4f46e5;--ink:#111827;--muted:#5b6170;--line:#e5e7eb}*{box-sizing:border-box} body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;color:var(--ink);line-height:1.7;font-size:18px}nav{border-bottom:1px solid var(--line)} nav div{max-width:760px;margin:0 auto;padding:18px 24px;display:flex;justify-content:space-between;font-size:15px}nav a{color:var(--muted);text-decoration:none} nav a.home{color:var(--ink);font-weight:700}main,article{max-width:760px;margin:0 auto;padding:40px 24px 64px}h1{font-size:clamp(30px,5vw,44px);line-height:1.15;letter-spacing:-.02em}h2{margin-top:2em;letter-spacing:-.01em} a{color:var(--accent)}code{background:#f3f4f6;padding:1px 5px;border-radius:4px}a.cta{display:inline-block;margin:28px 0;padding:13px 22px;background:var(--accent);color:#fff;border-radius:10px;text-decoration:none;font-weight:600}</style></head><body><nav><div><a class="home" href="https://tuckertooling.com/">Tucker Tooling</a><a href="https://tuckertooling.com/presign-pad/">The tool</a></div></nav><article><h1>How to fix SignatureDoesNotMatch on an S3 presigned URL</h1><h2>What the error means</h2>
-<p>When you use a presigned URL, S3 rebuilds the signature from the request it actually received and compares it with the <code>X-Amz-Signature</code> in the URL. <code>SignatureDoesNotMatch</code> means the two differ. Either the secret key is wrong, or the request S3 received is not the one that was signed. Usually it&#x27;s the second.</p>
-<p>The good news is that S3 tells you what it computed. The error body looks roughly like this:</p>
+<meta name="twitter:description" content="A step-by-step way to find out why S3 rejects your presigned URL with SignatureDoesNotMatch, using the error XML S3 sends back."><style>:root{--accent:#4f46e5;--ink:#111827;--muted:#5b6170;--line:#e5e7eb}*{box-sizing:border-box} body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;color:var(--ink);line-height:1.7;font-size:18px}nav{border-bottom:1px solid var(--line)} nav div{max-width:760px;margin:0 auto;padding:18px 24px;display:flex;justify-content:space-between;font-size:15px}nav a{color:var(--muted);text-decoration:none} nav a.home{color:var(--ink);font-weight:700}main,article{max-width:760px;margin:0 auto;padding:40px 24px 64px}h1{font-size:clamp(30px,5vw,44px);line-height:1.15;letter-spacing:-.02em}h2{margin-top:2em;letter-spacing:-.01em} a{color:var(--accent)}code{background:#f3f4f6;padding:1px 5px;border-radius:4px}a.cta{display:inline-block;margin:28px 0;padding:13px 22px;background:var(--accent);color:#fff;border-radius:10px;text-decoration:none;font-weight:600}</style></head><body><nav><div><a class="home" href="https://tuckertooling.com/">Tucker Tooling</a><a href="https://tuckertooling.com/presign-pad/">The tool</a></div></nav><article><h1>How to fix SignatureDoesNotMatch on an S3 presigned URL</h1><h2>What the error means</h2>
+<p><code>SignatureDoesNotMatch</code> means S3 got your request, rebuilt the signature from what it received, and got a different value from the one in your URL. The signing key itself is usually fine. Most of the time, something in the request S3 received is different from the request you signed: a header, the path encoding, the method or the region.</p>
+<p>You don&#x27;t have to guess. S3 tells you what it signed.</p>
+<h2>Step 1: Read the error XML in full</h2>
+<p>A failed S3 request returns XML like this (shortened):</p>
 <p><code>`</code>xml</p>
 <p>&lt;Error&gt;</p>
 <p>  &lt;Code&gt;SignatureDoesNotMatch&lt;/Code&gt;</p>
@@ -19,41 +21,41 @@
 <p>  &lt;StringToSign&gt;AWS4-HMAC-SHA256</p>
 <p>20261016T120000Z</p>
 <p>20261016/us-east-1/s3/aws4_request</p>
-<p>9f2c...&lt;/StringToSign&gt;</p>
-<p>  &lt;SignatureProvided&gt;3b1a...&lt;/SignatureProvided&gt;</p>
+<p>...&lt;/StringToSign&gt;</p>
 <p>  &lt;CanonicalRequest&gt;PUT</p>
-<p>/uploads/report%20final.pdf</p>
+<p>/my-bucket/report%202026.pdf</p>
 <p>X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;amp;...</p>
-<p>content-type:application/pdf</p>
-<p>host:my-bucket.s3.us-east-1.amazonaws.com</p>
-<p>content-type;host</p>
+<p>host:s3.amazonaws.com</p>
+<p>host</p>
 <p>UNSIGNED-PAYLOAD&lt;/CanonicalRequest&gt;</p>
 <p>&lt;/Error&gt;</p>
 <p><code>`</code></p>
-<p>The <code>CanonicalRequest</code> is S3&#x27;s view of your request. To find the problem, compare it line by line with the canonical request your code signed.</p>
-<h2>Step 1: Read the canonical request S3 built</h2>
-<p>A SigV4 canonical request has six parts, one per line:</p>
-<p>1. HTTP method (<code>GET</code>, <code>PUT</code>, ...)</p>
-<p>2. Canonical URI (the URL-encoded object path)</p>
-<p>3. Canonical query string (every query parameter except <code>X-Amz-Signature</code>, sorted)</p>
-<p>4. Canonical headers (<code>name:value</code>, lowercase, one per line, then a blank line)</p>
-<p>5. Signed headers (<code>content-type;host</code>)</p>
-<p>6. Payload hash (for presigned S3 URLs, usually <code>UNSIGNED-PAYLOAD</code>)</p>
-<p>To get your side of the comparison, log the canonical request when you generate the URL. Most SDKs can print it with debug logging turned on. Then diff the two. The first line that differs is almost always the cause.</p>
-<h2>Step 2: Check the usual suspects</h2>
-<p>These are the most common causes, roughly in order of how often they come up:</p>
-<ul><li><strong>Wrong HTTP method.</strong> A URL signed for <code>GetObject</code> fails with <code>PUT</code>, and the reverse is true too. The first line of the canonical request shows the method. AWS&#x27;s own <a href="https://repost.aws/knowledge-center/s3-presigned-url-signature-mismatch">troubleshooting article</a> lists this first.</li><li><strong>Headers that differ from the signed ones.</strong> If <code>content-type</code> is in the signed headers, the upload must send exactly that <code>Content-Type</code>. Browsers and HTTP libraries often add or change it, for example to <code>application/octet-stream</code> or by adding <code>; charset=utf-8</code>. Either sign without the content type or send exactly the value you signed.</li><li><strong>Region mismatch.</strong> The credential scope (<code>20261016/us-east-1/s3/aws4_request</code>) must name the region the bucket is in. Signing for <code>us-east-1</code> against a bucket in <code>eu-west-1</code> fails.</li><li><strong>A different host.</strong> The <code>host:</code> line must match the host the request went to. Watch out for virtual-hosted vs path-style URLs, custom domains, CDNs and proxies. Classmethod has <a href="https://dev.classmethod.jp/articles/s3-presigned-url-signature-mismatch-after-bucket-creation">documented</a> presigned URLs for brand-new buckets failing for a while because a redirect changed the host.</li><li><strong>Key encoding.</strong> Spaces, <code>+</code>, <code>%</code>, and non-ASCII characters in object keys get encoded differently by different tools. Compare the canonical URI line: <code>report%20final.pdf</code> and <code>report+final.pdf</code> are different paths.</li><li><strong>The URL was changed after signing.</strong> A framework, logger or email client may re-encode the query string, add a tracking parameter, or decode <code>%2F</code>. Any change to a signed parameter breaks the signature.</li><li><strong>Missing session token.</strong> If you signed with temporary credentials (a role, SSO, Lambda, EC2), the URL must carry <code>X-Amz-Security-Token</code>.</li><li><strong>Wrong secret.</strong> If the canonical requests match exactly but the signature still differs, check the secret key. Look for a trailing newline or space from copying it out of a file or console, or keys from a different profile.</li></ul>
-<h2>Step 3: If the canonical requests match</h2>
-<p>If the canonical request is identical on both sides, compare the <code>StringToSign</code>:</p>
+<p>The <code>CanonicalRequest</code> and <code>StringToSign</code> blocks are S3&#x27;s version. Your SDK or code built its own version when it signed. The bug is wherever the two differ.</p>
+<p>Tip: browsers often show only the first line. Open the network tab, or run the request with <code>curl -i</code> so you see the whole body.</p>
+<h2>Step 2: Get your own canonical request</h2>
+<p>Most SDKs can log what they signed:</p>
+<ul><li>AWS CLI: add <code>--debug</code>. The output includes the canonical request and string to sign.</li><li>boto3: turn on debug logging for <code>botocore.auth</code>.</li><li>Your own code: print the canonical request before you hash it.</li></ul>
+<p>The canonical request has six parts, one per line:</p>
 <p><code>`</code></p>
-<p>AWS4-HMAC-SHA256</p>
-<p>&lt;X-Amz-Date, e.g. 20261016T120000Z&gt;</p>
-<p>&lt;date&gt;/&lt;region&gt;/s3/aws4_request</p>
-<p>&lt;hex SHA-256 of the canonical request&gt;</p>
+<p>HTTP method</p>
+<p>URI path (encoded)</p>
+<p>query string (sorted, encoded)</p>
+<p>canonical headers (lowercase name:value, one per line)</p>
+<p>signed header names (semicolon-separated)</p>
+<p>payload hash (UNSIGNED-PAYLOAD for most S3 presigned URLs)</p>
 <p><code>`</code></p>
-<p>If that matches as well, the only thing left is the signing key, which comes from the secret, date, region and service. That points to the wrong secret, or to a secret that doesn&#x27;t belong to the <code>AWSAccessKeyId</code> shown in the error.</p>
-<h2>Pitfalls</h2>
-<ul><li>Don&#x27;t &quot;fix&quot; the error by making the URL longer-lived or the bucket public. Neither changes the signature.</li><li>Test with <code>curl</code> before debugging browser code. <code>curl -X PUT -T file.pdf -H &quot;Content-Type: application/pdf&quot; &quot;&lt;url&gt;&quot;</code> sends only what you tell it to. If curl works and the browser fails, the browser is changing a header.</li><li>Remember that <code>&amp;amp;</code> in the XML is just an escaped <code>&amp;</code>. Unescape it before you diff.</li></ul>
-<h2>Doing the diff faster</h2>
-<p>You can do all of this by hand with debug logs and a text diff. We make Presign Pad, a free browser tool that does it in one step. Paste the <code>SignatureDoesNotMatch</code> XML and it shows a line-by-line diff against the canonical request and string to sign it computed. It can also sign the request and give you a working <code>curl</code> command to compare against.</p>
-<p><a href="https://tuckertooling.com/presign-pad/">Try it</a></p></article><a class="cta" href="https://tuckertooling.com/presign-pad/?ref=guide">Try it</a></body></html>
+<h2>Step 3: Compare line by line</h2>
+<p>Put the two versions side by side. Check these first:</p>
+<p>1. <strong>Method.</strong> A URL signed for <code>GET</code> won&#x27;t work for <code>PUT</code>. A URL signed for <code>PUT</code> won&#x27;t work for <code>POST</code>.</p>
+<p>2. <strong>Path encoding.</strong> Spaces must be <code>%20</code>, not <code>+</code>. Watch for <code>+</code>, <code>#</code>, <code>?</code> and non-ASCII characters in object keys. S3 doesn&#x27;t double-encode the path. If your key looks encoded twice (<code>%2520</code>), you encoded it before passing it to the SDK.</p>
+<p>3. <strong>Signed headers.</strong> If <code>content-type</code> is in the signed header list, the upload must send the exact same <code>Content-Type</code>. This is the most common cause on browser <code>PUT</code> uploads: the URL was signed with <code>image/png</code> and the browser sent <code>image/jpeg</code>, or the reverse, or <code>fetch</code> added nothing at all.</p>
+<p>4. <strong>Host.</strong> Virtual-hosted (<code>bucket.s3.region.amazonaws.com</code>) and path-style (<code>s3.region.amazonaws.com/bucket</code>) URLs give different canonical requests. A proxy or CDN that rewrites <code>Host</code> breaks the signature.</p>
+<p>5. <strong>Region in the credential scope.</strong> The scope line (<code>20261016/us-east-1/s3/aws4_request</code>) must name the bucket&#x27;s region.</p>
+<p>6. <strong>Query string.</strong> Every parameter is part of the signature. Adding <code>?download=1</code> after signing breaks it.</p>
+<h2>Step 4: Rule out the key itself</h2>
+<p>If every line of the canonical request matches and the signature still differs, look at the credentials:</p>
+<ul><li>The secret key doesn&#x27;t belong to the access key ID shown in <code>AWSAccessKeyId</code>.</li><li>There&#x27;s stray whitespace or a newline in the secret (common when it&#x27;s read from an env file).</li><li>You used temporary credentials but didn&#x27;t include the session token (<code>X-Amz-Security-Token</code>).</li></ul>
+<h2>Common pitfalls</h2>
+<ul><li><strong>Frontend adds headers.</strong> Some HTTP libraries add <code>Content-Type</code> or other headers on their own. Set them yourself and make them match what you signed.</li><li><strong>Copying the URL through a tool that re-encodes it.</strong> Chat apps, email clients and some loggers turn <code>%2F</code> into <code>/</code> or escape <code>&amp;</code>. Test with the raw URL.</li><li><strong>Signing on one host, sending to another.</strong> A URL signed for the S3 endpoint fails if you send it through a CloudFront domain without a matching setup.</li></ul>
+<h2>A faster way to do the diff</h2>
+<p>You can do all of this by hand with a text diff tool. We make Presign Pad, a free browser tool that does the comparison in one step: paste the <code>SignatureDoesNotMatch</code> XML and it shows a line-by-line diff against the canonical request and string to sign it computed for your request.</p></article><a class="cta" href="https://tuckertooling.com/presign-pad/?ref=guide">Try it</a></body></html>
