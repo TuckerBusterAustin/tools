@@ -30,6 +30,7 @@
     "updated": "2026-10-16"
   },
   "presign-pad": {
+    "bucket": "developer",
     "has_app": true,
     "image": true,
     "price": "$5/month",
