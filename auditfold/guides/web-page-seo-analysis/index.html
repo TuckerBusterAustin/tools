@@ -1,0 +1,55 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>How to do a web page SEO analysis, step by step (and turn it into a client fix list)</title>
+<meta name="description" content="A practical checklist for analysing a single web page&#x27;s SEO: title, meta description, headings, content, internal links, images and structured data. It…">
+<link rel="canonical" href="https://tuckertooling.com/auditfold/guides/web-page-seo-analysis/">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23635bff'/%3E%3Ctext x='32' y='44' font-size='36' text-anchor='middle' fill='white' font-family='system-ui,sans-serif' font-weight='bold'%3EH%3C/text%3E%3C/svg%3E">
+<meta property="og:type" content="website">
+<meta property="og:title" content="How to do a web page SEO analysis, step by step (and turn it into a client fix list)">
+<meta property="og:description" content="A practical checklist for analysing a single web page&#x27;s SEO: title, meta description, headings, content, internal links, images and structured data. It…">
+<meta property="og:url" content="https://tuckertooling.com/auditfold/guides/web-page-seo-analysis/">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="How to do a web page SEO analysis, step by step (and turn it into a client fix list)">
+<meta name="twitter:description" content="A practical checklist for analysing a single web page&#x27;s SEO: title, meta description, headings, content, internal links, images and structured data. It…"><style>:root{--accent:#4f46e5;--ink:#111827;--muted:#5b6170;--line:#e5e7eb}*{box-sizing:border-box} body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;color:var(--ink);line-height:1.7;font-size:18px}nav{border-bottom:1px solid var(--line)} nav div{max-width:760px;margin:0 auto;padding:18px 24px;display:flex;justify-content:space-between;font-size:15px}nav a{color:var(--muted);text-decoration:none} nav a.home{color:var(--ink);font-weight:700}main,article{max-width:760px;margin:0 auto;padding:40px 24px 64px}h1{font-size:clamp(30px,5vw,44px);line-height:1.15;letter-spacing:-.02em}h2{margin-top:2em;letter-spacing:-.01em} a{color:var(--accent)}code{background:#f3f4f6;padding:1px 5px;border-radius:4px}a.cta{display:inline-block;margin:28px 0;padding:13px 22px;background:var(--accent);color:#fff;border-radius:10px;text-decoration:none;font-weight:600}</style></head><body><nav><div><a class="home" href="https://tuckertooling.com/">Tucker Tooling</a><a href="https://tuckertooling.com/auditfold/">The tool</a></div></nav><article><h1>How to do a web page SEO analysis, step by step (and turn it into a client fix list)</h1><p>A web page SEO analysis checks one URL, not a whole site. You look at whether the page is set up to be found, understood and clicked for the search it is meant to win. It is the right tool when a client asks &quot;why isn&#x27;t this page ranking?&quot; or before you rewrite a landing page.</p>
+<p>The steps below need only a browser, the page source and Google&#x27;s free tools.</p>
+<h2>Step 0: Decide what the page should rank for</h2>
+<p>You can&#x27;t judge a page without a target. Write down:</p>
+<ul><li><strong>The main query</strong>, e.g. <code>emergency plumber leeds</code></li><li><strong>The search intent</strong>: does the searcher want to buy, compare, learn or find a place?</li><li><strong>What already ranks</strong>: search the query and look at the top results. If they are all guides and your page is a sales page (or the other way round), that mismatch is your first finding. Tweaking tags won&#x27;t fix it.</li></ul>
+<h2>Step 1: Check the page can be indexed</h2>
+<p>Check this before anything else. Everything after it is wasted if Google can&#x27;t index the page.</p>
+<ul><li>View the source (<code>Ctrl+U</code> / <code>Cmd+Option+U</code>) and search for <code>noindex</code> in a <code>&lt;meta name=&quot;robots&quot;&gt;</code> tag.</li><li>Find the <code>&lt;link rel=&quot;canonical&quot;&gt;</code> tag. It should point to this URL, or deliberately to another one.</li><li>In Google Search Console, run <strong>URL Inspection</strong> on the page to see whether it is indexed and which canonical Google chose.</li><li>Make sure the page returns a 200 status and isn&#x27;t blocked in <code>robots.txt</code>.</li></ul>
+<p><strong>Pitfall:</strong> staging-site <code>noindex</code> tags often survive a launch. Always check.</p>
+<h2>Step 2: Title tag</h2>
+<p>Find <code>&lt;title&gt;</code> in the source.</p>
+<ul><li>Does it contain the main query, or a close variant, near the start?</li><li>Is it unique on the site? Duplicate titles across templates are common.</li><li>Would a person click it? Specific beats generic: &quot;Emergency Plumber in Leeds – 24/7, Fixed Call-Out Fee&quot; beats &quot;Home | Smith Plumbing&quot;.</li><li>Length: Google cuts titles by display width, not by a fixed character count. Around 50–60 characters is a common rule of thumb, not a Google rule.</li></ul>
+<p>Google may rewrite titles it finds unhelpful. Its <a href="https://developers.google.com/search/docs/appearance/title-link">title link guidance</a> explains why.</p>
+<h2>Step 3: Meta description</h2>
+<p>Find <code>&lt;meta name=&quot;description&quot;&gt;</code>. It doesn&#x27;t directly affect rankings, but it often becomes the snippet, so it affects clicks.</p>
+<ul><li>Is there one at all, and is it unique to this page?</li><li>Does it say what the page offers and why to click?</li><li>Google may show other text from the page instead. Its <a href="https://developers.google.com/search/docs/appearance/snippet">snippet guidance</a> covers this.</li></ul>
+<h2>Step 4: Headings</h2>
+<p>List the headings in order. A quick way is the browser console:</p>
+<p><code>`</code>js</p>
+<p>document.querySelectorAll(&#x27;h1,h2,h3&#x27;).forEach(h =&gt; console.log(h.tagName, h.textContent.trim()))</p>
+<p><code>`</code></p>
+<p>Check that:</p>
+<ul><li>there is one clear <code>H1</code> that matches the topic, not a logo or &quot;Welcome&quot;</li><li>the <code>H2</code>s read like an outline of what the searcher needs</li><li>headings aren&#x27;t being used just for styling</li></ul>
+<h2>Step 5: Content</h2>
+<p>This is where most of the value is.</p>
+<ul><li><strong>Does it answer the query?</strong> Compare it with the top results. Which questions do they answer that this page skips?</li><li><strong>Is the main point near the top?</strong> Or is it buried under a hero image and slogans?</li><li><strong>Is it specific?</strong> Prices, areas served, steps, examples and proof beat generic claims.</li><li><strong>Thin or duplicate content:</strong> a page that mostly repeats another page on the site is competing with it.</li><li><strong>Freshness:</strong> check for outdated dates, prices or product names.</li></ul>
+<h2>Step 6: Internal links</h2>
+<ul><li><strong>Links into the page:</strong> search <code>site:example.com &quot;topic&quot;</code> or use Search Console&#x27;s Links report. Important pages should be linked from relevant pages, not only from the footer.</li><li><strong>Links out of the page:</strong> does it point readers to the next logical step?</li><li><strong>Anchor text:</strong> &quot;click here&quot; tells Google nothing. Describe the target page instead.</li><li><strong>Broken links:</strong> hover over or click through a few. A crawler is faster on big pages.</li></ul>
+<h2>Step 7: Images</h2>
+<ul><li>Every meaningful image needs <code>alt</code> text that describes it. Decorative images can use <code>alt=&quot;&quot;</code>.</li><li>File names like <code>IMG_4482.jpg</code> are a missed chance. Something like <code>boiler-repair-leeds.jpg</code> is better.</li><li>Oversized images slow the page. Run it through <a href="https://pagespeed.web.dev/">PageSpeed Insights</a> and note the image warnings.</li></ul>
+<h2>Step 8: Structured data (schema)</h2>
+<p>Paste the URL into Google&#x27;s <a href="https://search.google.com/test/rich-results">Rich Results Test</a>. It shows which structured data it finds (JSON-LD, Microdata or RDFa) and any errors.</p>
+<ul><li>A local business page might use <code>LocalBusiness</code>. An article might use <code>Article</code>. A product page might use <code>Product</code>.</li><li>Only mark up what is actually visible on the page.</li><li>Fix errors first. Treat warnings as optional.</li></ul>
+<h2>Step 9: Turn the findings into a client fix list</h2>
+<p>A list of 40 issues in random order won&#x27;t get acted on. For each finding, record:</p>
+<p>| Issue | Why it matters | Fix | Impact | Effort |</p>
+<p>|---|---|---|---|---|</p>
+<p>| Page has <code>noindex</code> | Can&#x27;t appear in Google | Remove tag | High | Low |</p>
+<p>| Title is &quot;Home&quot; | Weak relevance and clicks | Rewrite with query | High | Low |</p>
+<p>| No section on pricing | Top results all cover it | Add pricing section | Medium | Medium |</p>
+<p>Then sort by <strong>impact first, effort second</strong>. High-impact, low-effort fixes go at the top. Write each fix so the client, or their developer, can do it without you. &quot;Change the title to: …&quot; is better than &quot;optimise title&quot;.</p>
+<p><strong>Common pitfalls</strong></p>
+<ul><li>Reporting tool scores instead of problems. Clients care about the fix, not the number.</li><li>Ignoring intent and polishing tags on a page that&#x27;s the wrong type for the query.</li><li>Analysing the desktop view only. Google mainly uses the mobile version of a page.</li><li>Making changes without first saving the current title, description and rankings, so you can&#x27;t show what improved.</li></ul>
+<h2>Doing this faster</h2>
+<p>Done by hand, this takes roughly 30–60 minutes per page (our estimate). That&#x27;s fine for one page but slow across a client&#x27;s ten key pages. We&#x27;re building <strong>Auditfold</strong>, a browser extension that will run these page-level checks in one step and produce the ranked fix list described above. It&#x27;s one option. The manual steps here work just as well if you prefer to do them yourself.</p></article><a class="cta" href="https://tuckertooling.com/auditfold/?ref=guide">Try it</a></body></html>
