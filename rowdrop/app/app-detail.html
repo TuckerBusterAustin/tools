@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Export history · Rowdrop preview</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body data-app>
+<a class="skip" href="#main">Skip to main content</a>
+<div class="preview-banner"><div class="wrap"><span><span class="preview-label">Preview: not live yet.</span> Rowdrop is not live yet. Nothing here sends real files.</span></div></div>
+<header class="topbar"><div class="wrap">
+  <a class="wordmark" href="index.html">Rowdrop</a>
+  <button type="button" class="btn btn-secondary menu-btn" aria-expanded="false" aria-controls="app-nav">Menu</button>
+  <nav class="nav app-nav" id="app-nav" aria-label="App">
+    <a href="app-exports.html">Exports</a><a href="app-detail.html" aria-current="page">History</a><a href="app-settings.html">Settings</a>
+  </nav>
+</div></header>
+
+<main id="main"><div class="wrap">
+  <p class="small"><a href="app-exports.html">All exports</a></p>
+
+  <div class="card card-center wide" id="detail-empty" hidden>
+    <h1>No exports yet</h1>
+    <p style="margin-inline:auto">Create an export and its history will appear here.</p>
+    <a class="btn btn-primary" href="app-edit.html">New export</a>
+  </div>
+
+  <div id="detail" hidden>
+    <div class="page-head">
+      <div>
+        <h1 id="d-name"></h1>
+        <p class="mono" style="margin:0" id="d-meta"></p>
+        <p class="small muted" style="margin:8px 0 0" id="d-status"></p>
+      </div>
+      <div class="actions-row">
+        <button type="button" class="btn btn-primary" id="d-run">Run now</button>
+        <button type="button" class="btn btn-secondary" id="d-pause">Pause</button>
+        <a class="btn btn-secondary" id="d-edit" href="app-edit.html">Edit</a>
+      </div>
+    </div>
+    <div class="field" id="d-switch-wrap" hidden>
+      <label for="d-switch">Show history for</label>
+      <select id="d-switch"></select>
+    </div>
+
+    <h2 style="margin-top:24px">Email draft</h2>
+    <p class="muted" style="margin-top:0">Rowdrop does not send email yet. Run the export, then open this draft and attach the downloaded file yourself.</p>
+    <p><a class="btn btn-secondary" id="d-mailto" href="#">Open email draft</a> <span class="small muted" id="d-mailto-help"></span></p>
+
+    <h2 style="margin-top:24px">Preview</h2>
+    <p class="small muted" id="d-preview-note"></p>
+    <div class="table-wrap" id="d-preview"></div>
+
+    <h2 style="margin-top:24px">Run history</h2>
+    <div class="table-wrap" id="run-log">
+      <table>
+        <caption class="sr-only">Runs, newest first</caption>
+        <thead><tr><th scope="col">Date</th><th scope="col">Rows</th><th scope="col">File size</th><th scope="col">Recipients</th><th scope="col">Result</th></tr></thead>
+        <tbody id="run-rows"></tbody>
+      </table>
+    </div>
+    <div class="card card-center wide" id="history-empty" hidden>
+      <p style="margin:0 auto">No runs yet. Your first file will appear here after you press Run now.</p>
+    </div>
+  </div>
+</div></main>
+<script src="lib/browser-shim.js"></script><script src="lib/csv.js"></script><script src="lib/schedule.js"></script><script src="lib/jobs.js"></script><script src="lib/xlsx.js"></script><script src="lib/runner.js"></script><script src="lib/storage.js"></script><script src="lib/license.js"></script><script src="lib/shim-end.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
