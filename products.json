@@ -54,7 +54,9 @@
   "presign-pad": {
     "bucket": "developer",
     "guides": [
+      "https://tuckertooling.com/presign-pad/guides/aws-requesttimetooskewed-fix/",
       "https://tuckertooling.com/presign-pad/guides/curl-aws-sigv4/",
+      "https://tuckertooling.com/presign-pad/guides/s3-presigned-url-expired-early/",
       "https://tuckertooling.com/presign-pad/guides/s3-presigned-url-signaturedoesnotmatch/",
       "https://tuckertooling.com/presign-pad/guides/verify-hmac-webhook-signature/"
     ],
