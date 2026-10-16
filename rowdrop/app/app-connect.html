@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Connect HubSpot · Rowdrop preview</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body data-app data-connect="1">
+<a class="skip" href="#main">Skip to main content</a>
+<div class="preview-banner"><div class="wrap"><span><span class="preview-label">Preview: not live yet.</span> Rowdrop is not live yet. Nothing here sends real files.</span></div></div>
+<header class="topbar"><div class="wrap">
+  <a class="wordmark" href="index.html">Rowdrop</a>
+  <nav class="nav" aria-label="Main"><a href="index.html">Back to landing page</a></nav>
+</div></header>
+<main id="main"><div class="wrap">
+  <form class="card card-center" id="import-form" aria-labelledby="c-h" novalidate>
+    <h1 id="c-h">Connect your HubSpot account</h1>
+    <p><strong>Rowdrop does not connect to HubSpot yet.</strong> The live, read-only connection to your lists, reports and objects is coming soon. For now, import the CSV you already export from HubSpot. It stays in this browser.</p>
+    <p id="c-err" class="error" role="alert" hidden></p>
+    <div class="field" style="text-align:left">
+      <label for="csv-file">HubSpot CSV file</label>
+      <input id="csv-file" type="file" accept=".csv,text/csv" aria-describedby="csv-help">
+      <p class="help" id="csv-help">The first row must be the column names, as HubSpot exports it.</p>
+    </div>
+    <div class="field" style="text-align:left">
+      <label for="src-name">Name for this import</label>
+      <input id="src-name" type="text" placeholder="e.g. Deals pipeline" aria-describedby="name-help">
+      <p class="help" id="name-help">Optional. Importing the same name again updates it.</p>
+    </div>
+    <button type="submit" class="btn btn-primary btn-block">Import CSV</button>
+    <p class="help" style="margin:16px 0 0">Rowdrop will not send email yet either. It builds the file for you to download.</p>
+  </form>
+  <section class="card" aria-labelledby="imp-h" id="imports" style="margin-top:24px" hidden>
+    <h2 id="imp-h">Your imports</h2>
+    <ul id="imports-list" class="plain"></ul>
+    <a class="btn btn-secondary" href="app-exports.html">Go to your exports</a>
+  </section>
+</div></main>
+<script src="lib/browser-shim.js"></script><script src="lib/csv.js"></script><script src="lib/schedule.js"></script><script src="lib/jobs.js"></script><script src="lib/xlsx.js"></script><script src="lib/runner.js"></script><script src="lib/storage.js"></script><script src="lib/license.js"></script><script src="lib/shim-end.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
