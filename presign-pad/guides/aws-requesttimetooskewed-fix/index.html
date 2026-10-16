@@ -1,0 +1,48 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>How to fix RequestTimeTooSkewed in AWS S3</title>
+<meta name="description" content="Why AWS says &quot;The difference between the request time and the current time is too large&quot;, and how to fix the clock or the timestamp that causes it.">
+<link rel="canonical" href="https://tuckertooling.com/presign-pad/guides/aws-requesttimetooskewed-fix/">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23635bff'/%3E%3Ctext x='32' y='44' font-size='36' text-anchor='middle' fill='white' font-family='system-ui,sans-serif' font-weight='bold'%3EH%3C/text%3E%3C/svg%3E">
+<meta property="og:type" content="website">
+<meta property="og:title" content="How to fix RequestTimeTooSkewed in AWS S3">
+<meta property="og:description" content="Why AWS says &quot;The difference between the request time and the current time is too large&quot;, and how to fix the clock or the timestamp that causes it.">
+<meta property="og:url" content="https://tuckertooling.com/presign-pad/guides/aws-requesttimetooskewed-fix/">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="How to fix RequestTimeTooSkewed in AWS S3">
+<meta name="twitter:description" content="Why AWS says &quot;The difference between the request time and the current time is too large&quot;, and how to fix the clock or the timestamp that causes it."><style>:root{--accent:#4f46e5;--ink:#111827;--muted:#5b6170;--line:#e5e7eb}*{box-sizing:border-box} body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;color:var(--ink);line-height:1.7;font-size:18px}nav{border-bottom:1px solid var(--line)} nav div{max-width:760px;margin:0 auto;padding:18px 24px;display:flex;justify-content:space-between;font-size:15px}nav a{color:var(--muted);text-decoration:none} nav a.home{color:var(--ink);font-weight:700}main,article{max-width:760px;margin:0 auto;padding:40px 24px 64px}h1{font-size:clamp(30px,5vw,44px);line-height:1.15;letter-spacing:-.02em}h2{margin-top:2em;letter-spacing:-.01em} a{color:var(--accent)}code{background:#f3f4f6;padding:1px 5px;border-radius:4px}a.cta{display:inline-block;margin:28px 0;padding:13px 22px;background:var(--accent);color:#fff;border-radius:10px;text-decoration:none;font-weight:600}</style></head><body><nav><div><a class="home" href="https://tuckertooling.com/">Tucker Tooling</a><a href="https://tuckertooling.com/presign-pad/">The tool</a></div></nav><article><h1>How to fix RequestTimeTooSkewed in AWS S3</h1><h2>What the error means</h2>
+<p>Every SigV4 request carries a timestamp, either the <code>X-Amz-Date</code> header or the <code>X-Amz-Date</code> query parameter on presigned URLs. S3 rejects a request when that time is more than <strong>15 minutes</strong> away from its own clock:</p>
+<p><code>`</code>xml</p>
+<p>&lt;Error&gt;</p>
+<p>  &lt;Code&gt;RequestTimeTooSkewed&lt;/Code&gt;</p>
+<p>  &lt;Message&gt;The difference between the request time and the current time is too large.&lt;/Message&gt;</p>
+<p>  &lt;RequestTime&gt;20261016T091500Z&lt;/RequestTime&gt;</p>
+<p>  &lt;ServerTime&gt;2026-10-16T10:02:11Z&lt;/ServerTime&gt;</p>
+<p>  ...</p>
+<p>&lt;/Error&gt;</p>
+<p><code>`</code></p>
+<p>Start by comparing <code>RequestTime</code> with <code>ServerTime</code>. How far apart they are usually tells you the cause:</p>
+<ul><li><strong>An exact number of hours apart</strong> (1h, 5h, 8h): a time-zone bug. Local time was written as if it were UTC.</li><li><strong>A few minutes to an hour apart:</strong> the machine&#x27;s clock has drifted.</li><li><strong>Days apart, or always the same value:</strong> a hardcoded or cached timestamp.</li></ul>
+<h2>Step 1: Fix the machine&#x27;s clock</h2>
+<p>Sync the clock with NTP on whatever machine signs the request:</p>
+<ul><li><strong>Windows:</strong> check the time zone first (Settings → Time &amp; language). Then run <code>w32tm /resync</code> from an elevated prompt.</li><li><strong>Linux (systemd):</strong> <code>timedatectl</code> shows whether NTP sync is active. <code>sudo timedatectl set-ntp true</code> turns it on.</li><li><strong>Linux (chrony):</strong> <code>chronyc tracking</code> shows the current offset.</li><li><strong>macOS:</strong> turn on &quot;Set time and date automatically&quot; in System Settings.</li></ul>
+<p>A wrong time zone on a fresh Windows install is a known cause. A <a href="https://help.2brightsparks.com/support/solutions/articles/43000336089-request-time-and-current-time-difference-too-large">support article from 2BrightSparks</a> recommends checking the time zone before the clock itself.</p>
+<h2>Step 2: Check containers and VMs</h2>
+<p>A container uses its host&#x27;s clock. On a laptop, Docker runs inside a VM, and that VM&#x27;s clock can fall behind after the laptop sleeps. If the error only shows up in a container, compare <code>date -u</code> inside the container with the host. If they differ, restart the VM or Docker Desktop.</p>
+<p>The same applies to CI runners and old on-prem servers with no NTP access. Check <code>date -u</code> on the machine that actually signs, not on your workstation.</p>
+<h2>Step 3: Check how your code builds the timestamp</h2>
+<p>If you sign requests yourself rather than through an SDK, the timestamp must be in UTC and in the basic ISO 8601 format:</p>
+<p><code>`</code></p>
+<p>20261016T100211Z</p>
+<p><code>`</code></p>
+<p>Common bugs:</p>
+<ul><li>Formatting local time and adding a <code>Z</code>. In JavaScript, <code>new Date().toISOString()</code> is UTC, but building the string from <code>getHours()</code> gives local time.</li><li>In Python, using <code>datetime.now()</code> instead of <code>datetime.now(timezone.utc)</code>.</li><li>Computing the timestamp once at startup and reusing it for every request.</li><li>Retrying a failed request with the original signed headers instead of signing it again.</li></ul>
+<h2>Step 4: Let the SDK correct for skew (if you can&#x27;t fix the clock)</h2>
+<p>Some AWS SDKs can adjust for clock skew by reading the server&#x27;s time from an error response. The JavaScript SDK v2 has a <code>correctClockSkew</code> option, and NetApp&#x27;s <a href="https://kb.netapp.com/on-prem/ontap/da/S3/S3-Issues/CONTAP-228787">knowledge base</a> notes that SDK v3 applies the correction automatically. Treat this as a safety net. A machine with the wrong time will also break TLS checks, logs and token expiry.</p>
+<h2>Presigned URLs are different</h2>
+<p>For a presigned URL, the time is fixed when the URL is created: it&#x27;s <code>X-Amz-Date</code> in the query string. A skewed clock on the machine that generated the URL can cause two problems:</p>
+<ul><li>If the generator&#x27;s clock is behind, the URL can look expired as soon as it&#x27;s created.</li><li>If it&#x27;s ahead, S3 can refuse the URL because its time is in the future.</li></ul>
+<p>In both cases, fix the clock where the URL is generated. The clock of the person clicking the link doesn&#x27;t matter.</p>
+<h2>Pitfalls</h2>
+<ul><li>Don&#x27;t loosen anything on the AWS side. The 15-minute window can&#x27;t be configured.</li><li>Some S3-compatible services use different limits. An <a href="https://opendev.org/openstack/swift/commit/10d9a737d8d6e5fcc70a0be07df89a1fb57b9739">OpenStack Swift commit</a> notes older Swift versions allowed only 5 minutes, so test against the real target.</li></ul>
+<h2>Checking a timestamp quickly</h2>
+<p>We make Presign Pad, a free browser tool for SigV4 requests. Paste the <code>RequestTimeTooSkewed</code> error and it explains the cause in plain words. Paste a presigned URL and it shows the signing date, expiry and time left, along with warnings.</p>
+<p><a href="https://tuckertooling.com/presign-pad/">Try it</a></p></article><a class="cta" href="https://tuckertooling.com/presign-pad/?ref=guide">Try it</a></body></html>
