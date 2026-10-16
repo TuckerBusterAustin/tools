@@ -94,7 +94,14 @@
       re = /<a\b((?:"[^"]*"|'[^']*'|[^>"'])*)>([\s\S]*?)(?:<\/a\s*>|(?=<a\b)|$)/gi;
       while ((m = re.exec(html))) {
         a = attrs(m[1]);
-        if (a.href !== undefined) result.links.push({ href: a.href.trim(), text: textOf(m[2]) });
+        if (a.href !== undefined) {
+          var link = { href: a.href.trim(), text: textOf(m[2]) };
+          // Accessible name when there is no visible text: aria-label, title or an inner image's alt.
+          var img = /<img\b[^>]*\balt\s*=\s*(?:"([^"]+)"|'([^']+)')/i.exec(m[2]);
+          var label = a['aria-label'] || a.title || (img && (img[1] || img[2]));
+          if (label && label.trim()) link.label = label.trim();
+          result.links.push(link);
+        }
       }
 
       // Word count: visible text only (no head, scripts, styles, comments).
