@@ -13,8 +13,11 @@
   },
   "lapsewatch": {
     "has_app": true,
-    "tagline": "See days left on every client SSL certificate in one sorted list",
-    "title": "Lapsewatch: SSL Expiry List for Client Domains",
+    "image": true,
+    "price": "$9/month",
+    "stage": "live",
+    "tagline": "See which client certificates run out next, soonest first.",
+    "title": "Lapsewatch: SSL expiry list for client domains",
     "updated": "2026-10-16"
   },
   "presign-pad": {
