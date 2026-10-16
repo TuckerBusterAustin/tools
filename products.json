@@ -15,6 +15,10 @@
   },
   "ferrywise": {
     "bucket": "client_data",
+    "guides": [
+      "https://tuckertooling.com/ferrywise/guides/autofill-in-google-chrome/",
+      "https://tuckertooling.com/ferrywise/guides/record-macro-in-chrome/"
+    ],
     "has_app": true,
     "image": true,
     "price": "",
