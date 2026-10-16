@@ -27,7 +27,10 @@
       const ok = await crypto.subtle.verify("Ed25519", key, b64urlDecode(sig),
         new TextEncoder().encode(body));
       const claims = JSON.parse(new TextDecoder().decode(b64urlDecode(body)));
-      return ok && claims.slug === cfg.slug;
+      // a bundle license names every product it unlocks in `slugs`
+      const covers = claims.slug === cfg.slug ||
+        (Array.isArray(claims.slugs) && claims.slugs.includes(cfg.slug));
+      return ok && covers ? claims : false;
     } catch (e) {
       return false;
     }
@@ -38,8 +41,13 @@
   }
 
   async function save(token) {
-    if (!(await verify(token))) return false;
-    try { localStorage.setItem(KEY, token.trim()); } catch (e) { /* private mode */ }
+    const claims = await verify(token);
+    if (!claims) return false;
+    // every product shares the domain, so a bundle key is saved for each product it covers
+    const slugs = [cfg.slug, ...(Array.isArray(claims.slugs) ? claims.slugs : [])];
+    try {
+      for (const s of slugs) localStorage.setItem(`vs-license:${s}`, token.trim());
+    } catch (e) { /* private mode */ }
     return true;
   }
 
@@ -71,7 +79,7 @@
   }
 
   window.VSLicense = {
-    isUnlocked: async () => verify(stored()),
+    isUnlocked: async () => Boolean(await verify(stored())),
     save, claimFromUrl, unlockBox, verify,
     buyUrl: BUY,
   };
