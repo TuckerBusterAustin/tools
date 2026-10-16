@@ -1,8 +1,8 @@
 {
   "auditfold": {
     "has_app": true,
-    "tagline": "Paste a page's HTML, get a ranked plain-language SEO fix list and client report.",
-    "title": "Auditfold: page SEO audit to client-ready fix list (early version)",
+    "tagline": "Paste a page's HTML, get a ranked plain-language SEO fix list for clients",
+    "title": "Auditfold: SEO fix list and client report from a page's HTML",
     "updated": "2026-10-16"
   },
   "ferrywise": {
