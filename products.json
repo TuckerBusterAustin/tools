@@ -12,10 +12,10 @@
     "updated": "2026-10-16"
   },
   "lapsewatch": {
-    "has_app": false,
-    "tagline": "Know which client certificates run out next",
-    "title": "Lapsewatch",
-    "updated": "2026-10-15"
+    "has_app": true,
+    "tagline": "See days left on every client SSL certificate in one sorted list",
+    "title": "Lapsewatch: SSL Expiry List for Client Domains",
+    "updated": "2026-10-16"
   },
   "presign-pad": {
     "has_app": true,
