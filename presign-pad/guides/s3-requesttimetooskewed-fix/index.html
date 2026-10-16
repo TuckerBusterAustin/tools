@@ -1,0 +1,52 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>How to fix RequestTimeTooSkewed in AWS S3</title>
+<meta name="description" content="What RequestTimeTooSkewed means, how to check your clock, and how to fix it on servers, containers and laptops.">
+<link rel="canonical" href="https://tuckertooling.com/presign-pad/guides/s3-requesttimetooskewed-fix/">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23635bff'/%3E%3Ctext x='32' y='44' font-size='36' text-anchor='middle' fill='white' font-family='system-ui,sans-serif' font-weight='bold'%3EH%3C/text%3E%3C/svg%3E">
+<meta property="og:type" content="website">
+<meta property="og:title" content="How to fix RequestTimeTooSkewed in AWS S3">
+<meta property="og:description" content="What RequestTimeTooSkewed means, how to check your clock, and how to fix it on servers, containers and laptops.">
+<meta property="og:url" content="https://tuckertooling.com/presign-pad/guides/s3-requesttimetooskewed-fix/">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="How to fix RequestTimeTooSkewed in AWS S3">
+<meta name="twitter:description" content="What RequestTimeTooSkewed means, how to check your clock, and how to fix it on servers, containers and laptops."><style>:root{--accent:#4f46e5;--ink:#111827;--muted:#5b6170;--line:#e5e7eb}*{box-sizing:border-box} body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;color:var(--ink);line-height:1.7;font-size:18px}nav{border-bottom:1px solid var(--line)} nav div{max-width:760px;margin:0 auto;padding:18px 24px;display:flex;justify-content:space-between;font-size:15px}nav a{color:var(--muted);text-decoration:none} nav a.home{color:var(--ink);font-weight:700}main,article{max-width:760px;margin:0 auto;padding:40px 24px 64px}h1{font-size:clamp(30px,5vw,44px);line-height:1.15;letter-spacing:-.02em}h2{margin-top:2em;letter-spacing:-.01em} a{color:var(--accent)}code{background:#f3f4f6;padding:1px 5px;border-radius:4px}a.cta{display:inline-block;margin:28px 0;padding:13px 22px;background:var(--accent);color:#fff;border-radius:10px;text-decoration:none;font-weight:600}</style></head><body><nav><div><a class="home" href="https://tuckertooling.com/">Tucker Tooling</a><a href="https://tuckertooling.com/presign-pad/">The tool</a></div></nav><article><h1>How to fix RequestTimeTooSkewed in AWS S3</h1><h2>What the error means</h2>
+<p>AWS rejects a signed request with <code>RequestTimeTooSkewed</code> when the time in the request is too far from AWS&#x27;s own clock. For S3 the allowed gap is 15 minutes. The request time comes from the <code>X-Amz-Date</code> header or query parameter, which your SDK fills in from your machine&#x27;s clock.</p>
+<p>So this error almost always means <strong>your clock is wrong</strong>. Your credentials and your code are fine.</p>
+<p>The error XML shows both times:</p>
+<p><code>`</code>xml</p>
+<p>&lt;Error&gt;</p>
+<p>  &lt;Code&gt;RequestTimeTooSkewed&lt;/Code&gt;</p>
+<p>  &lt;Message&gt;The difference between the request time and the current time is too large.&lt;/Message&gt;</p>
+<p>  &lt;RequestTime&gt;20261016T091502Z&lt;/RequestTime&gt;</p>
+<p>  &lt;ServerTime&gt;2026-10-16T09:47:11Z&lt;/ServerTime&gt;</p>
+<p>  &lt;MaxAllowedSkewMilliseconds&gt;900000&lt;/MaxAllowedSkewMilliseconds&gt;</p>
+<p>&lt;/Error&gt;</p>
+<p><code>`</code></p>
+<p>Subtract one from the other and you know how far off you are.</p>
+<h2>Step 1: Check the clock</h2>
+<p>Compare your clock in UTC with a trusted source.</p>
+<ul><li>Linux / macOS: <code>date -u</code></li><li>Windows (PowerShell): <code>(Get-Date).ToUniversalTime()</code></li><li>Ask a server for its time: <code>curl -sI https://s3.amazonaws.com | grep -i &#x27;^date&#x27;</code></li></ul>
+<p>If the difference is minutes or hours, you&#x27;ve found the cause.</p>
+<h2>Step 2: Fix the clock for your environment</h2>
+<p><strong>Linux servers and EC2</strong></p>
+<ul><li>Check sync status with <code>timedatectl status</code>. Look for <code>System clock synchronized: yes</code>.</li><li>Turn on NTP: <code>sudo timedatectl set-ntp true</code>, or install and enable <code>chrony</code>.</li><li>On EC2, you can point chrony at the Amazon Time Sync Service (<code>169.254.169.123</code>).</li></ul>
+<p><strong>Windows</strong></p>
+<ul><li>Settings → Time &amp; language → Date &amp; time → &quot;Sync now&quot;.</li><li>Or from an admin shell: <code>w32tm /resync</code>.</li></ul>
+<p><strong>macOS</strong></p>
+<ul><li>System Settings → General → Date &amp; Time → turn on &quot;Set time and date automatically&quot;.</li></ul>
+<p><strong>Docker and WSL</strong></p>
+<p>Containers use the host&#x27;s clock, so fix the host. WSL 2 and Docker Desktop VMs can drift after the laptop sleeps. Restarting the VM (<code>wsl --shutdown</code>, or restarting Docker Desktop) usually brings the clock back in line.</p>
+<p><strong>Virtual machines in general</strong></p>
+<p>VMs that are suspended and resumed often wake up with an old clock. Turn on guest time sync or run NTP inside the VM.</p>
+<h2>Step 3: Check for a timezone bug in your own code</h2>
+<p>If the clock is right but the error persists, look at how the timestamp is made:</p>
+<ul><li><code>X-Amz-Date</code> must be <strong>UTC</strong> in the format <code>YYYYMMDDTHHMMSSZ</code>. Local time with a <code>Z</code> stuck on the end will be off by your UTC offset. An error that&#x27;s off by exactly a whole number of hours points to this.</li><li>If you sign requests by hand, make sure the date in the credential scope (<code>YYYYMMDD</code>) uses the same UTC date as <code>X-Amz-Date</code>.</li></ul>
+<h2>Step 4: Check for stale or replayed requests</h2>
+<p>The 15-minute window counts from when the request was signed. You can hit this error with a correct clock if a signed request is sent too late. That happens with:</p>
+<ul><li>Retry queues that resend an already-signed request after a long delay.</li><li>Requests built in a batch and sent much later.</li></ul>
+<p>Sign each request right before you send it.</p>
+<h2>Presigned URLs work differently</h2>
+<p>A presigned URL is meant to be used later, so the 15-minute rule doesn&#x27;t apply in the same way. Its lifetime comes from <code>X-Amz-Expires</code>. When it runs out you get a different error (<code>Request has expired</code>). A wrong clock on the machine that <strong>creates</strong> the URL still matters, though. A URL created by a server that&#x27;s an hour behind will expire an hour earlier than you expect, or may already be expired when it&#x27;s made.</p>
+<h2>Quick checklist</h2>
+<ul><li>[ ] Compare <code>RequestTime</code> and <code>ServerTime</code> in the error</li><li>[ ] Clock synced with NTP on the machine that signs</li><li>[ ] Timestamp generated in UTC</li><li>[ ] Request signed right before it&#x27;s sent, not queued</li></ul>
+<h2>Getting a plain-words explanation</h2>
+<p>If you&#x27;d rather not decode the XML by hand: we make Presign Pad, a free browser tool. Paste the error and it explains <code>RequestTimeTooSkewed</code>, <code>ExpiredToken</code>, <code>AccessDenied</code> and similar errors in plain words, next to the request it signed.</p></article><a class="cta" href="https://tuckertooling.com/presign-pad/?ref=guide">Try it</a></body></html>
