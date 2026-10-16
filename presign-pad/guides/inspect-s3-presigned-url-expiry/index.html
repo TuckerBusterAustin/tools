@@ -1,0 +1,60 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>How to check when an S3 presigned URL expires</title>
+<meta name="description" content="How to read the X-Amz-* parameters in an S3 presigned URL to find its expiry, time left, region and signed headers, and why URLs sometimes die early.">
+<link rel="canonical" href="https://tuckertooling.com/presign-pad/guides/inspect-s3-presigned-url-expiry/">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23635bff'/%3E%3Ctext x='32' y='44' font-size='36' text-anchor='middle' fill='white' font-family='system-ui,sans-serif' font-weight='bold'%3EH%3C/text%3E%3C/svg%3E">
+<meta property="og:type" content="website">
+<meta property="og:title" content="How to check when an S3 presigned URL expires">
+<meta property="og:description" content="How to read the X-Amz-* parameters in an S3 presigned URL to find its expiry, time left, region and signed headers, and why URLs sometimes die early.">
+<meta property="og:url" content="https://tuckertooling.com/presign-pad/guides/inspect-s3-presigned-url-expiry/">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="How to check when an S3 presigned URL expires">
+<meta name="twitter:description" content="How to read the X-Amz-* parameters in an S3 presigned URL to find its expiry, time left, region and signed headers, and why URLs sometimes die early."><style>:root{--accent:#4f46e5;--ink:#111827;--muted:#5b6170;--line:#e5e7eb}*{box-sizing:border-box} body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;color:var(--ink);line-height:1.7;font-size:18px}nav{border-bottom:1px solid var(--line)} nav div{max-width:760px;margin:0 auto;padding:18px 24px;display:flex;justify-content:space-between;font-size:15px}nav a{color:var(--muted);text-decoration:none} nav a.home{color:var(--ink);font-weight:700}main,article{max-width:760px;margin:0 auto;padding:40px 24px 64px}h1{font-size:clamp(30px,5vw,44px);line-height:1.15;letter-spacing:-.02em}h2{margin-top:2em;letter-spacing:-.01em} a{color:var(--accent)}code{background:#f3f4f6;padding:1px 5px;border-radius:4px}a.cta{display:inline-block;margin:28px 0;padding:13px 22px;background:var(--accent);color:#fff;border-radius:10px;text-decoration:none;font-weight:600}</style></head><body><nav><div><a class="home" href="https://tuckertooling.com/">Tucker Tooling</a><a href="https://tuckertooling.com/presign-pad/">The tool</a></div></nav><article><h1>How to check when an S3 presigned URL expires</h1><h2>Everything you need is in the URL</h2>
+<p>An S3 presigned URL (Signature Version 4) carries its signing details as query parameters. You can read them without any credentials. Here&#x27;s an example, split onto lines for readability:</p>
+<p><code>`</code></p>
+<p>https://my-bucket.s3.eu-west-1.amazonaws.com/reports/q3.pdf</p>
+<p>  ?X-Amz-Algorithm=AWS4-HMAC-SHA256</p>
+<p>  &amp;X-Amz-Credential=AKIAEXAMPLE%2F20261016%2Feu-west-1%2Fs3%2Faws4_request</p>
+<p>  &amp;X-Amz-Date=20261016T080000Z</p>
+<p>  &amp;X-Amz-Expires=3600</p>
+<p>  &amp;X-Amz-SignedHeaders=host</p>
+<p>  &amp;X-Amz-Signature=5d6c...</p>
+<p><code>`</code></p>
+<h2>Step 1: Find when it was signed</h2>
+<p><code>X-Amz-Date</code> is the signing time in UTC: <code>20261016T080000Z</code> means 16 October 2026, 08:00:00 UTC.</p>
+<h2>Step 2: Add the lifetime</h2>
+<p><code>X-Amz-Expires</code> is the lifetime in seconds from <code>X-Amz-Date</code>. <code>3600</code> is one hour, so this URL stops working at 09:00:00 UTC.</p>
+<p><code>`</code></p>
+<p>expires_at = X-Amz-Date + X-Amz-Expires seconds</p>
+<p>time_left  = expires_at - now (UTC)</p>
+<p><code>`</code></p>
+<p>A quick Python check:</p>
+<p><code>`</code>python</p>
+<p>from datetime import datetime, timedelta, timezone</p>
+<p>from urllib.parse import urlparse, parse_qs</p>
+<p>q = parse_qs(urlparse(url).query)</p>
+<p>signed = datetime.strptime(q[&quot;X-Amz-Date&quot;][0], &quot;%Y%m%dT%H%M%SZ&quot;).replace(tzinfo=timezone.utc)</p>
+<p>expires = signed + timedelta(seconds=int(q[&quot;X-Amz-Expires&quot;][0]))</p>
+<p>print(expires, expires - datetime.now(timezone.utc))</p>
+<p><code>`</code></p>
+<p>The largest value SigV4 allows for <code>X-Amz-Expires</code> is <code>604800</code> (7 days). Anything larger is rejected.</p>
+<h2>Step 3: Read the credential scope</h2>
+<p><code>X-Amz-Credential</code> is URL-encoded. Decoded, it reads <code>AKIAEXAMPLE/20261016/eu-west-1/s3/aws4_request</code>:</p>
+<ul><li><strong>Access key ID</strong>: who signed it. Keys starting with <code>AKIA</code> are long-term IAM user keys. <code>ASIA</code> means temporary credentials.</li><li><strong>Date</strong>: must match the date part of <code>X-Amz-Date</code>.</li><li><strong>Region</strong>: must be the bucket&#x27;s region. A mismatch here is a common reason a URL fails right away.</li><li><strong>Service</strong>: <code>s3</code>.</li></ul>
+<h2>Step 4: Check the signed headers</h2>
+<p><code>X-Amz-SignedHeaders</code> lists headers the request must send with the exact signed values. <code>host</code> alone is the easiest case. If you see <code>content-type</code> or <code>x-amz-*</code> headers here, the client using the URL has to send those same headers with the same values, or S3 returns <code>SignatureDoesNotMatch</code>.</p>
+<h2>Why a URL can die before its expiry</h2>
+<p>The math above gives the latest possible expiry. A URL can stop working sooner:</p>
+<p>1. <strong>Temporary credentials expired.</strong> If the URL was signed with an <code>ASIA...</code> key (from a role, SSO or STS), you&#x27;ll also see <code>X-Amz-Security-Token</code>. The URL stops working when those credentials expire, even if <code>X-Amz-Expires</code> says longer. URLs signed from a Lambda function or an EC2 instance role often hit this, and you&#x27;ll get <code>ExpiredToken</code>.</p>
+<p>2. <strong>The signing key was deactivated or deleted.</strong> Every URL signed with it stops working.</p>
+<p>3. <strong>Permissions changed.</strong> The URL only carries the signer&#x27;s permissions at the time of the request. If the IAM policy or bucket policy no longer allows the action, you get <code>AccessDenied</code>.</p>
+<p>4. <strong>Clock skew on the signing machine.</strong> If the server that created the URL had a wrong clock, <code>X-Amz-Date</code> is wrong, and the expiry moves with it.</p>
+<h2>Creating a URL with a known expiry</h2>
+<p>With the AWS CLI (GET URLs only):</p>
+<p><code>`</code>bash</p>
+<p>aws s3 presign s3://my-bucket/reports/q3.pdf --expires-in 3600</p>
+<p><code>`</code></p>
+<p>For <code>PUT</code> uploads, use an SDK, for example <code>generate_presigned_url</code> in boto3 with <code>ClientMethod=&#x27;put_object&#x27;</code>.</p>
+<h2>Pitfalls</h2>
+<ul><li>Treat presigned URLs as secrets until they expire. Anyone holding one can use it.</li><li>Don&#x27;t log full presigned URLs in places many people can read.</li><li>If you shorten or re-encode the URL, check that the query string survives exactly as it was.</li></ul>
+<h2>Inspecting a URL in one paste</h2>
+<p>We make Presign Pad, a free browser tool that does this in one step. Paste a presigned URL and it shows the credential scope, signing date, expiry, time left, signed headers and warnings. You can also add your secret to check whether the signature matches.</p></article><a class="cta" href="https://tuckertooling.com/presign-pad/?ref=guide">Try it</a></body></html>
