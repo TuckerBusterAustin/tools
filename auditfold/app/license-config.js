@@ -1,1 +1,1 @@
-window.VS_LICENSE_CONFIG = {"slug": "auditfold", "publicX": "_aL9_iIlB7mESOO_Zg-SWm_cppDKrZa2hhOvGK6xMyY", "api": "https://venture-studio-api.austinbillimek.workers.dev", "buyUrl": "https://buy.stripe.com/test_bJe3co8Kr2OVcmvbjd1Fe04"};
+window.VS_LICENSE_CONFIG = {"slug": "auditfold", "publicX": "_aL9_iIlB7mESOO_Zg-SWm_cppDKrZa2hhOvGK6xMyY", "api": "https://venture-studio-api.austinbillimek.workers.dev", "buyUrl": "https://buy.stripe.com/6oUbJ13Gx6hV9Qjfmj9ws02"};
