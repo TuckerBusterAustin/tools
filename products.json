@@ -25,6 +25,10 @@
   },
   "lapsewatch": {
     "bucket": "website_care",
+    "guides": [
+      "https://tuckertooling.com/lapsewatch/guides/check-ssl-certificate-expiry/",
+      "https://tuckertooling.com/lapsewatch/guides/monitor-ssl-expiry-many-sites/"
+    ],
     "has_app": true,
     "image": true,
     "price": "$9/month",
