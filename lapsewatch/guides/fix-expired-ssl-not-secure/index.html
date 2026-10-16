@@ -1,0 +1,48 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>SSL certificate expired and the website says &#x27;Not Secure&#x27;: how to fix it</title>
+<meta name="description" content="Step-by-step recovery when a site&#x27;s SSL certificate has expired: confirm the cause, renew in cPanel, Certbot or your CDN, find out why auto-renewal…">
+<link rel="canonical" href="https://tuckertooling.com/lapsewatch/guides/fix-expired-ssl-not-secure/">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23635bff'/%3E%3Ctext x='32' y='44' font-size='36' text-anchor='middle' fill='white' font-family='system-ui,sans-serif' font-weight='bold'%3ES%3C/text%3E%3C/svg%3E">
+<meta property="og:type" content="website">
+<meta property="og:title" content="SSL certificate expired and the website says &#x27;Not Secure&#x27;: how to fix it">
+<meta property="og:description" content="Step-by-step recovery when a site&#x27;s SSL certificate has expired: confirm the cause, renew in cPanel, Certbot or your CDN, find out why auto-renewal…">
+<meta property="og:url" content="https://tuckertooling.com/lapsewatch/guides/fix-expired-ssl-not-secure/">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="SSL certificate expired and the website says &#x27;Not Secure&#x27;: how to fix it">
+<meta name="twitter:description" content="Step-by-step recovery when a site&#x27;s SSL certificate has expired: confirm the cause, renew in cPanel, Certbot or your CDN, find out why auto-renewal…"><style>:root{--accent:#4f46e5;--ink:#111827;--muted:#5b6170;--line:#e5e7eb}*{box-sizing:border-box} body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;color:var(--ink);line-height:1.7;font-size:18px}nav{border-bottom:1px solid var(--line)} nav div{max-width:760px;margin:0 auto;padding:18px 24px;display:flex;justify-content:space-between;font-size:15px}nav a{color:var(--muted);text-decoration:none} nav a.home{color:var(--ink);font-weight:700}main,article{max-width:760px;margin:0 auto;padding:40px 24px 64px}h1{font-size:clamp(30px,5vw,44px);line-height:1.15;letter-spacing:-.02em}h2{margin-top:2em;letter-spacing:-.01em} a{color:var(--accent)}code{background:#f3f4f6;padding:1px 5px;border-radius:4px}a.cta{display:inline-block;margin:28px 0;padding:13px 22px;background:var(--accent);color:#fff;border-radius:10px;text-decoration:none;font-weight:600}</style></head><body><nav><div><a class="home" href="https://tuckertooling.com/">Tucker Tooling</a><a href="https://tuckertooling.com/lapsewatch/">The tool</a></div></nav><article><h1>SSL certificate expired and the website says &#x27;Not Secure&#x27;: how to fix it</h1><h2>First, confirm it really is expiry</h2>
+<p>&quot;Not Secure&quot; can mean several different things. Check which one you have before you change anything:</p>
+<ul><li><strong>Full-page warning with <code>NET::ERR_CERT_DATE_INVALID</code></strong> (Chrome), or &quot;certificate expired&quot; (Firefox, Safari): the certificate has expired. This page is for you.</li><li><strong><code>NET::ERR_CERT_COMMON_NAME_INVALID</code>:</strong> the certificate doesn&#x27;t cover this hostname. A common example is <code>www</code> missing from the certificate.</li><li><strong>No full-page warning, but &quot;Not Secure&quot; in the address bar:</strong> usually the page is loaded over plain <code>http://</code>, or the page includes insecure (mixed) content. That&#x27;s a different fix.</li><li><strong>Only one person sees it:</strong> check the clock on their device before anything else.</li></ul>
+<p>Confirm from a terminal:</p>
+<p><code>`</code>bash</p>
+<p>echo | openssl s_client -connect example.com:443 -servername example.com 2&gt;/dev/null \</p>
+<p>  | openssl x509 -noout -enddate -issuer</p>
+<p><code>`</code></p>
+<p>The <code>issuer</code> tells you who issued the certificate, for example Let&#x27;s Encrypt, Sectigo or a cPanel AutoSSL provider. That tells you where to go next.</p>
+<h2>Step 1: Find where the certificate is managed</h2>
+<p>| Issuer / setup | Where to renew |</p>
+<p>|---|---|</p>
+<p>| Shared hosting with cPanel AutoSSL | cPanel → <strong>SSL/TLS Status</strong> |</p>
+<p>| Let&#x27;s Encrypt on your own server | Certbot (or another ACME client) on the server |</p>
+<p>| Cloudflare edge certificate | Cloudflare dashboard → SSL/TLS → Edge Certificates |</p>
+<p>| Paid certificate (bought from a CA or reseller) | Reissue or renew with the vendor, then install |</p>
+<p>| Managed platform (e.g. a hosted WordPress or site builder) | The platform&#x27;s support or domain settings |</p>
+<h2>Step 2: Renew</h2>
+<p><strong>cPanel AutoSSL:</strong> open <strong>SSL/TLS Status</strong>, select the domains and click <strong>Run AutoSSL</strong>. If a domain fails, the status page shows a reason. The most common one is that DNS doesn&#x27;t point at this server.</p>
+<p><strong>Certbot:</strong></p>
+<p><code>`</code>bash</p>
+<p>sudo certbot renew --cert-name example.com</p>
+<p>sudo systemctl reload nginx    # or apache2 / httpd</p>
+<p><code>`</code></p>
+<p>If it fails, run <code>sudo certbot renew --dry-run -v</code> to see the full error.</p>
+<p><strong>Paid certificate:</strong> create a new CSR, complete validation with the vendor, then install the new certificate <strong>with its intermediate chain</strong>. If the chain is missing, some browsers and most API clients will still fail even though the certificate itself is valid.</p>
+<p><strong>Cloudflare:</strong> edge certificates normally renew on their own. If the browser error shows an expired *origin* certificate, renew the certificate on your server, or install a Cloudflare Origin CA certificate there.</p>
+<h2>Step 3: Verify</h2>
+<ul><li>Run the <code>openssl</code> command again and check the new <code>notAfter</code> date.</li><li>Test <code>www</code> and the bare domain separately.</li><li>Load the site in a private window. If you reloaded the web server and still see the old certificate, another server or load balancer is serving it.</li><li>Because of HSTS, visitors to sites that use it can&#x27;t click past the warning at all. Once the site serves a valid certificate it will load normally again; visitors don&#x27;t need to do anything.</li></ul>
+<h2>Step 4: Find out why auto-renewal failed</h2>
+<p>If you skip this step, it will happen again at the next renewal. Common causes:</p>
+<ul><li><strong>DNS moved.</strong> The domain now points at a CDN or a new host, so the old server can&#x27;t pass the HTTP challenge.</li><li><strong>The challenge path is blocked.</strong> A redirect rule, security plugin, <code>.htaccess</code> rule or firewall blocks <code>/.well-known/acme-challenge/</code>.</li><li><strong>A CAA DNS record</strong> doesn&#x27;t allow the CA that&#x27;s trying to issue.</li><li><strong>The renewal job isn&#x27;t running.</strong> Check with <code>systemctl list-timers | grep certbot</code> or look in the crontab.</li><li><strong>Renewed but not reloaded.</strong> The new file is on disk, but the web server is still serving the old certificate from memory. Add a deploy hook: <code>--deploy-hook &quot;systemctl reload nginx&quot;</code>.</li><li><strong>Card or account expired</strong> for a paid certificate or hosting plan.</li></ul>
+<h2>Step 5: Make sure you hear about it next time</h2>
+<p>Renewals are getting more frequent. The CA/Browser Forum&#x27;s ballot SC-081 caps public certificate lifetimes at 200 days from March 15, 2026, 100 days from 2027 and 47 days from 2029 (<a href="https://support.dnsimple.com/articles/announcement-ssl-certificate-validity-changes/">DNSimple</a>). Let&#x27;s Encrypt <a href="https://letsencrypt.org/2025/06/26/expiration-notification-service-has-ended/">no longer sends expiry reminder emails</a>. So add an outside check:</p>
+<ul><li>a daily job that alerts when any certificate has fewer than about 21 days left. Auto-renewal normally runs well before that, so an alert means renewal has failed;</li><li>alerts sent to a shared channel, not one person&#x27;s inbox;</li><li>every client hostname on the list, including <code>www</code>, subdomains and mail.</li></ul>
+<p>The <a href="https://docs.openssl.org/master/man1/openssl-x509/">openssl <code>-checkend</code> flag</a> makes a one-line check: it exits non-zero if the certificate expires within the given number of seconds.</p>
+<h2>A note for agencies</h2>
+<p>If this happened on a client site, it will probably happen on another one. We&#x27;re building <strong>Lapsewatch</strong>, which will keep one list of every client domain with days-to-expiry and send an email or Slack alert before any certificate lapses. It isn&#x27;t live yet; the page below explains what&#x27;s coming.</p></article><a class="cta" href="https://tuckertooling.com/lapsewatch/?ref=guide">Try it</a></body></html>
