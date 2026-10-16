@@ -59,8 +59,10 @@
     "guides": [
       "https://tuckertooling.com/presign-pad/guides/aws-requesttimetooskewed-fix/",
       "https://tuckertooling.com/presign-pad/guides/curl-aws-sigv4/",
+      "https://tuckertooling.com/presign-pad/guides/inspect-s3-presigned-url-expiry/",
       "https://tuckertooling.com/presign-pad/guides/s3-presigned-url-expired-early/",
       "https://tuckertooling.com/presign-pad/guides/s3-presigned-url-signaturedoesnotmatch/",
+      "https://tuckertooling.com/presign-pad/guides/s3-requesttimetooskewed-fix/",
       "https://tuckertooling.com/presign-pad/guides/verify-hmac-webhook-signature/"
     ],
     "has_app": true,
