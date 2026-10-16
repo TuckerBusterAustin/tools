@@ -28,8 +28,11 @@
   },
   "presign-pad": {
     "has_app": true,
-    "tagline": "Paste a failed S3 signature error and see exactly what differs. Runs locally.",
-    "title": "Presign Pad: debug AWS SigV4 and S3 presigned URL errors locally",
+    "image": true,
+    "price": "$5/month",
+    "stage": "live",
+    "tagline": "Sign an AWS request. See exactly why it fails.",
+    "title": "Presign Pad: Debug AWS SigV4 and S3 Presigned URLs",
     "updated": "2026-10-16"
   },
   "rollwell": {
