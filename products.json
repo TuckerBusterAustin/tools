@@ -10,6 +10,7 @@
     "updated": "2026-10-16"
   },
   "ferrywise": {
+    "bucket": "client_data",
     "has_app": true,
     "image": true,
     "price": "",
