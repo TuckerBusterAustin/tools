@@ -15,23 +15,60 @@
 <meta name="twitter:image" content="https://tuckertooling.com/rollwell/og.png">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareApplication", "name": "Rollwell: deploy and roll back static sites across hosts (waitlist)", "description": "Coming soon: one rollback history for Netlify, Vercel and GitHub Pages sites. Rollwell is a planned tool for freelance front-end developers and small web agencies who look after static client sites on more than one host. It is not built yet. This listing is a waitlist, and nothing is charged…", "url": "https://tuckertooling.com/rollwell/", "applicationCategory": "DeveloperApplication", "operatingSystem": "Web", "offers": [{"@type": "Offer", "name": "Solo", "price": "9", "priceCurrency": "USD"}, {"@type": "Offer", "name": "Agency", "price": "19", "priceCurrency": "USD"}, {"@type": "Offer", "name": "Agency Annual", "price": "182", "priceCurrency": "USD"}]}</script>
 <style>
-a.cta{display:inline-block;padding:10px 18px;background:#635bff;color:#fff;border-radius:6px;
-  text-decoration:none;font-weight:bold}
-body{font-family:system-ui,sans-serif;max-width:760px;margin:0 auto;padding:24px;
-  color:#222;line-height:1.5}
-h1{font-size:2.1em;margin-bottom:.2em} .sub{font-size:1.2em;color:#555}
-.tiers{display:flex;gap:12px;flex-wrap:wrap}
-.tier{border:1px solid #ddd;border-radius:8px;padding:12px;flex:1;min-width:180px}
-.price{font-size:1.4em;font-weight:bold}
-form{margin:24px 0;padding:16px;background:#f6f3ee;border-radius:8px}
-input{padding:8px;width:60%} button{padding:8px 16px} dt{font-weight:bold;margin-top:8px}
-.note{color:#666;font-size:.9em}
+:root{--accent:#1D4ED8;--ink:#14171f;--muted:#5b6170;--line:#e6e8ee;--soft:#f6f7fb}
+*{box-sizing:border-box} html{-webkit-text-size-adjust:100%}
+body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  color:var(--ink);background:#fff;line-height:1.6;font-size:17px}
+.wrap{max-width:1040px;margin:0 auto;padding:0 24px}
+nav{border-bottom:1px solid var(--line)} nav .wrap{display:flex;align-items:center;
+  justify-content:space-between;height:64px} .brand{font-weight:700;letter-spacing:-.01em}
+.brand::before{content:"";display:inline-block;width:12px;height:12px;border-radius:4px;
+  background:var(--accent);margin-right:8px;vertical-align:baseline}
+.badge{display:inline-block;font-size:13px;color:var(--muted);border:1px solid var(--line);
+  border-radius:999px;padding:3px 10px}
+.hero{padding:88px 0 56px;text-align:center}
+.hero h1{font-size:clamp(34px,6vw,58px);line-height:1.08;letter-spacing:-.03em;
+  margin:18px auto 16px;max-width:820px}
+.hero p.sub{font-size:clamp(18px,2.4vw,21px);color:var(--muted);max-width:640px;margin:0 auto}
+.actions{margin-top:30px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+a.cta,button{display:inline-block;background:var(--accent);color:#fff;border:0;border-radius:10px;
+  padding:13px 22px;font:600 16px/1 inherit;font-family:inherit;text-decoration:none;cursor:pointer;
+  box-shadow:0 1px 2px rgba(16,24,40,.08)}
+a.ghost{display:inline-block;padding:13px 22px;border-radius:10px;border:1px solid var(--line);
+  color:var(--ink);text-decoration:none;font-weight:600}
+button[disabled]{opacity:.55;cursor:not-allowed}
+section{padding:56px 0;border-top:1px solid var(--line)}
+section h2{font-size:clamp(24px,3.2vw,32px);letter-spacing:-.02em;margin:0 0 8px;text-align:center}
+section p.lead{color:var(--muted);text-align:center;margin:0 auto 32px;max-width:600px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+.card{border:1px solid var(--line);border-radius:14px;padding:20px 22px;background:#fff}
+.card h3{margin:0 0 6px;font-size:17px} .card p{margin:0;color:var(--muted)}
+.card p.pt{color:var(--ink)} .card p.pt::before{content:"";display:block;width:22px;height:3px;
+  border-radius:2px;background:var(--accent);margin-bottom:12px}
+.soft{background:var(--soft)}
+.tier{border:1px solid var(--line);border-radius:16px;padding:26px;background:#fff}
+.tier.top{border-color:var(--accent);box-shadow:0 8px 28px rgba(16,24,40,.08)}
+.price{font-size:34px;font-weight:700;letter-spacing:-.02em;margin:6px 0 12px}
+.tier ul{padding-left:18px;margin:0;color:var(--muted)}
+form.join{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:28px auto 0;
+  max-width:520px} form.join label{flex:1 1 260px}
+input[type=email]{width:100%;padding:13px 14px;border:1px solid var(--line);border-radius:10px;
+  font:inherit} input:focus,a:focus,button:focus{outline:3px solid var(--accent);outline-offset:2px}
+.note{color:var(--muted);font-size:14px;text-align:center;margin-top:12px;width:100%}
+details{border:1px solid var(--line);border-radius:12px;padding:14px 18px;margin:10px auto;
+  max-width:760px;background:#fff} summary{font-weight:600;cursor:pointer}
+details p{color:var(--muted);margin:10px 0 0}
+footer{border-top:1px solid var(--line);padding:28px 0;color:var(--muted);font-size:14px}
+@media (max-width:640px){.hero{padding:56px 0 40px} section{padding:40px 0}}
 </style></head><body>
-<p class="note">Rollwell is in development.</p>
+<nav><div class="wrap"><span class="brand">Rollwell</span><a class="ghost" href="app/">Open the app</a></div></nav>
+<header class="hero"><div class="wrap"><span class="badge">Early access</span>
 <h1>Deploy any client site in one click. Roll back from one place.</h1><p class="sub">Rollwell is coming soon. It will let freelancers and small agencies deploy static sites to Netlify, Vercel and GitHub Pages, and undo a bad deploy from one history view. It is not built yet. Join the waitlist to help shape it.</p>
-<h2>The problem</h2><ul><li>Your client sites live on different hosts. Each host has its own deploy flow.</li><li>Each host also has its own way to roll back. GitHub Pages has no one-click rollback. You revert a commit and redeploy.</li><li>When a deploy breaks a client site, you lose time working out how to undo it on that host.</li><li>Free host tiers are fine. The cost is your time, not your hosting bill.</li><li>Scripts and CI workflows for each host work, but you have to build and maintain them for every site.</li></ul>
-<h2>What it will do</h2><ul><li>Connect your repos once. Rollwell will keep your sites in one list.</li><li>One-click deploy of a static site to Netlify, Vercel or GitHub Pages. These are the three hosts planned for the first version.</li><li>One deploy history across your sites, so you can see what went live and when.</li><li>Rollback from that history. Rollwell will do the host-specific steps for you.</li><li>Basic analytics on your deploys.</li><li>Built for one freelancer or a small team. It is not a hosting service. Your sites stay on your own hosts.</li></ul>
-<h2>Planned pricing</h2><div class="tiers"><div class='tier'><h3>Solo</h3><p class='price'>$9/month</p><ul><li>Up to 10 sites (planned)</li><li>One-click deploy to Netlify, Vercel, Cloudflare Pages and GitHub Pages (planned)</li><li>Unified deploy and rollback history (planned)</li><li>1 user</li><li>Landing page button: &quot;I&#x27;d pay $9/month: notify me at launch&quot; (no card, nothing charged)</li></ul></div><div class='tier'><h3>Agency</h3><p class='price'>$19/month</p><ul><li>Up to 40 sites (planned)</li><li>Everything in Solo (planned)</li><li>Up to 5 team members (planned)</li><li>Shared client-site dashboard (planned)</li><li>Landing page button: &quot;I&#x27;d pay $19/month: notify me at launch&quot; (no card, nothing charged)</li></ul></div><div class='tier'><h3>Agency Annual</h3><p class='price'>$182/year</p><ul><li>Same as Agency, about 20% off (roughly two months free)</li><li>Proposed founder price for the first year, if Rollwell ships (planned)</li><li>Landing page button: &quot;I&#x27;d pay $182/year: notify me at launch&quot; (no card, nothing charged)</li></ul></div></div>
-<form><a class="cta" href="https://buy.stripe.com/test_eVq14g0dVgFLcmvdrl1Fe06" rel="noopener">Join the waitlist</a><p class="note">Joining means we will email you once when Rollwell launches, and may send a short question or two about how you deploy. No spam. No card is asked for. No discount is promised. Nothing is charged today.</p></form>
-<h2>FAQ</h2><dl><dt>Can I use Rollwell today?</dt><dd>No. Rollwell is not built yet. This page tests whether enough people want it. If you join the waitlist, you help us decide whether to build it.</dd><dt>Who is it for?</dt><dd>Freelance front-end developers and small web agencies who look after several static client sites on different hosts and handle deploys and rollbacks themselves.</dd><dt>Which hosts will it support?</dt><dd>The plan for the first version is three hosts: Netlify, Vercel and GitHub Pages. Cloudflare Pages is not part of that plan yet. If you need it, tell us when you join. We will treat that as input, not a promise.</dd><dt>Will Rollwell host my sites?</dt><dd>No. Your sites stay on the hosts you already use. Rollwell will sit on top and run the deploy and rollback steps.</dd><dt>How will rollback work?</dt><dd>You will pick an earlier deploy from one history view and roll back to it. Hosts handle this differently, so how it works under the hood will vary by host. Details are still to be decided.</dd><dt>What will it cost?</dt><dd>Planned prices are shown on this page. They are not final until launch. Nothing is charged today.</dd><dt>What does the &#x27;I&#x27;d pay&#x27; button on a plan do?</dt><dd>It tells us you would pay that planned price once Rollwell exists. You leave your email and we notify you at launch. No card is taken. No trial starts, because there is nothing to try yet. Nothing is charged.</dd><dt>Why not use scripts or GitHub Actions?</dt><dd>You can, and many people do. Rollwell is aimed at people who do not want to write and maintain a separate setup for every client site. We still need to learn whether that is worth paying for.</dd></dl><script data-goatcounter="https://tuckertools.goatcounter.com/count" async src="gc.js"></script>
+<div class="actions"><a class="cta" href="https://buy.stripe.com/test_eVq14g0dVgFLcmvdrl1Fe06" rel="noopener">Join the waitlist</a></div><p class="note">Joining means we will email you once when Rollwell launches, and may send a short question or two about how you deploy. No spam. No card is asked for. No discount is promised. Nothing is charged today.</p></div></header>
+<section class="soft"><div class="wrap"><h2>The problem</h2><div class="grid" style="margin-top:28px"><div class="card"><h3>Your client sites live on different hosts</h3><p>Each host has its own deploy flow.</p></div><div class="card"><h3>Each host also has its own way to roll back</h3><p>GitHub Pages has no one-click rollback. You revert a commit and redeploy.</p></div><div class="card"><p class="pt">When a deploy breaks a client site, you lose time working out how to undo it on that host.</p></div><div class="card"><h3>Free host tiers are fine</h3><p>The cost is your time, not your hosting bill.</p></div><div class="card"><p class="pt">Scripts and CI workflows for each host work, but you have to build and maintain them for every site.</p></div></div></div></section>
+<section><div class="wrap"><h2>What it does</h2><div class="grid" style="margin-top:28px"><div class="card"><h3>Connect your repos once</h3><p>Rollwell will keep your sites in one list.</p></div><div class="card"><h3>One-click deploy of a static site to Netlify, Vercel or GitHub Pages</h3><p>These are the three hosts planned for the first version.</p></div><div class="card"><p class="pt">One deploy history across your sites, so you can see what went live and when.</p></div><div class="card"><h3>Rollback from that history</h3><p>Rollwell will do the host-specific steps for you.</p></div><div class="card"><p class="pt">Basic analytics on your deploys.</p></div><div class="card"><h3>Built for one freelancer or a small team</h3><p>It is not a hosting service. Your sites stay on your own hosts.</p></div></div></div></section>
+<section><div class="wrap"><h2>Pricing</h2><p class="lead">Simple, no surprises.</p><div class="grid"><div class="tier top"><h3>Solo</h3><p class="price">$9/month</p><ul><li>Up to 10 sites (planned)</li><li>One-click deploy to Netlify, Vercel, Cloudflare Pages and GitHub Pages (planned)</li><li>Unified deploy and rollback history (planned)</li><li>1 user</li><li>Landing page button: &quot;I&#x27;d pay $9/month: notify me at launch&quot; (no card, nothing charged)</li></ul></div><div class="tier"><h3>Agency</h3><p class="price">$19/month</p><ul><li>Up to 40 sites (planned)</li><li>Everything in Solo (planned)</li><li>Up to 5 team members (planned)</li><li>Shared client-site dashboard (planned)</li><li>Landing page button: &quot;I&#x27;d pay $19/month: notify me at launch&quot; (no card, nothing charged)</li></ul></div><div class="tier"><h3>Agency Annual</h3><p class="price">$182/year</p><ul><li>Same as Agency, about 20% off (roughly two months free)</li><li>Proposed founder price for the first year, if Rollwell ships (planned)</li><li>Landing page button: &quot;I&#x27;d pay $182/year: notify me at launch&quot; (no card, nothing charged)</li></ul></div></div></div></section>
+<section class="soft"><div class="wrap"><h2>Questions</h2><details><summary>Can I use Rollwell today?</summary><p>No. Rollwell is not built yet. This page tests whether enough people want it. If you join the waitlist, you help us decide whether to build it.</p></details><details><summary>Who is it for?</summary><p>Freelance front-end developers and small web agencies who look after several static client sites on different hosts and handle deploys and rollbacks themselves.</p></details><details><summary>Which hosts will it support?</summary><p>The plan for the first version is three hosts: Netlify, Vercel and GitHub Pages. Cloudflare Pages is not part of that plan yet. If you need it, tell us when you join. We will treat that as input, not a promise.</p></details><details><summary>Will Rollwell host my sites?</summary><p>No. Your sites stay on the hosts you already use. Rollwell will sit on top and run the deploy and rollback steps.</p></details><details><summary>How will rollback work?</summary><p>You will pick an earlier deploy from one history view and roll back to it. Hosts handle this differently, so how it works under the hood will vary by host. Details are still to be decided.</p></details><details><summary>What will it cost?</summary><p>Planned prices are shown on this page. They are not final until launch. Nothing is charged today.</p></details><details><summary>What does the &#x27;I&#x27;d pay&#x27; button on a plan do?</summary><p>It tells us you would pay that planned price once Rollwell exists. You leave your email and we notify you at launch. No card is taken. No trial starts, because there is nothing to try yet. Nothing is charged.</p></details><details><summary>Why not use scripts or GitHub Actions?</summary><p>You can, and many people do. Rollwell is aimed at people who do not want to write and maintain a separate setup for every client site. We still need to learn whether that is worth paying for.</p></details></div></section>
+<footer><div class="wrap">© Rollwell · a small, focused tool</div></footer>
+<script data-goatcounter="https://tuckertools.goatcounter.com/count" async src="gc.js"></script>
 </body></html>
