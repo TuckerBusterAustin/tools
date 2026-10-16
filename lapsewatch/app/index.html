@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><script src="license-config.js"></script><script src="license.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lapsewatch: know which client certificates run out next (coming soon)</title>
+  <meta name="description" content="Lapsewatch is coming soon. Paste your client domains, see days left in one list, and get a reminder before an SSL certificate runs out.">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to main content</a>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="wordmark" href="index.html">Lapsewatch</a>
+    <span class="tag header-tag">Coming soon</span>
+    <nav class="site-nav" id="site-nav" aria-label="Main">
+      <a href="#checker">Checker</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#faq">FAQ</a>
+      <a href="app-domains.html">App preview</a>
+      <span class="tag nav-menu-tag">Coming soon</span>
+    </nav>
+    <div class="header-actions">
+      <a class="btn btn-secondary" href="#waitlist" aria-label="Join the waitlist"><span class="btn-label-short">Waitlist</span><span class="btn-label-long">Join the waitlist</span></a>
+      <button class="menu-btn" id="menu-btn" type="button" aria-expanded="false" aria-controls="site-nav">Menu</button>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+  <!-- Hero -->
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="wrap hero-grid">
+      <div>
+        <h1 id="hero-title">Know which client certificates run out next</h1>
+        <p class="sub">Paste your client domains and see one list, soonest expiry first. Email and Slack alerts before a certificate runs out are coming. Lapsewatch does not check certificates itself and sends no emails or Slack messages in this version.</p>
+        <p class="banner strip">Not built yet. Join the waitlist and we'll email you once at launch. Reminders only; it never renews certificates.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#waitlist">Join the waitlist</a>
+          <a href="#checker">Try the free checker</a>
+        </div>
+      </div>
+      <figure class="card mock" style="margin:0">
+        <div class="mock-head" aria-hidden="true"><span>Domain, expires</span><span>Days left</span></div>
+        <div role="list" aria-label="Sample domain list, days left">
+          <div class="mock-row" role="listitem"><span class="mock-domain">brightdental.co</span><span class="mock-days">-3</span><span class="mock-sub"><span class="status st-red"><span class="marker" aria-hidden="true">!</span>Expired</span><span class="mock-exp">12 Oct 2026</span></span></div>
+          <div class="mock-row" role="listitem"><span class="mock-domain">oakleafcafe.com</span><span class="mock-days">5</span><span class="mock-sub"><span class="status st-red"><span class="marker" aria-hidden="true">!</span>7 days or fewer</span><span class="mock-exp">20 Oct 2026</span></span></div>
+          <div class="mock-row" role="listitem"><span class="mock-domain">clientsite.com</span><span class="mock-days">19</span><span class="mock-sub"><span class="status st-soon"><span class="hollow" aria-hidden="true"></span>Soon</span><span class="mock-exp">3 Nov 2026</span></span></div>
+          <div class="mock-row" role="listitem"><span class="mock-domain">harborvet.com</span><span class="mock-days">64</span><span class="mock-sub"><span class="status st-ok"><span class="marker" aria-hidden="true">✓</span>OK</span><span class="mock-exp">18 Dec 2026</span></span></div>
+        </div>
+        <figcaption class="small mock-caption">Illustration, sample domains</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- Free checker -->
+  <section class="section band checker-section" id="checker" aria-labelledby="checker-title">
+    <div class="wrap">
+      <h2 id="checker-title" class="checker-head">Free multi-domain checker</h2>
+      <form class="checker-form card" id="checker-form" data-mode="entered" novalidate>
+        <div class="field" style="margin-top:0">
+          <label for="domains">Client domains, one per line</label>
+          <textarea id="domains" rows="6" spellcheck="false" autocapitalize="off" aria-describedby="domains-help dates-note domains-error line-errors" placeholder="clientsite.com, 2026-12-01&#10;harborvet.com, 2027-02-11"></textarea>
+          <p class="help" id="domains-help">Paste up to 50 domains, one per line, like clientsite.com</p>
+          <p class="help pro-note" id="dates-note">Prototype: add each expiry date after a comma, like clientsite.com, 2026-12-01. Results are samples worked out from your dates; nothing is stored or sent. <a href="ssl-expiry-checker.html">Open the checker on its own page</a>.</p>
+          <p class="err-text" id="domains-error" hidden></p>
+          <ul class="err-text" id="line-errors"></ul>
+        </div>
+        <div class="checker-actions">
+          <button class="btn btn-primary" id="check-btn" type="submit"><span class="spin" aria-hidden="true"></span><span class="lbl">Check expiry dates</span></button>
+        </div>
+      </form>
+      <div class="results" id="results" aria-live="polite">
+        <p class="banner" id="results-empty">Your results will show here, soonest expiry first.</p>
+        <div id="results-done" hidden>
+          <h3>Sample results</h3>
+          <p class="summary-line" id="results-summary"></p>
+          <div class="table-box">
+            <table class="domain-table">
+              <caption>Days left, from the expiry dates you entered</caption>
+              <thead><tr><th scope="col">Domain</th><th scope="col" class="num">Days left <span class="sr-only">sorted, soonest first</span></th><th scope="col">Status</th><th scope="col">Expires</th></tr></thead>
+              <tbody id="results-body"></tbody>
+            </table>
+          </div>
+          <p class="small" style="margin-top:12px">Worked out just now from your dates. These results are not monitored; Lapsewatch will watch them for you. <a href="#waitlist">Join the waitlist</a></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Problem -->
+  <section class="section" aria-labelledby="problem-title">
+    <div class="wrap">
+      <h2 id="problem-title">Expired certificates are quiet until a client calls</h2>
+      <div class="grid-2">
+        <div class="card"><h3>Nothing warns you</h3><p>A certificate runs out on a date nobody wrote down. The first sign is a client's phone call.</p></div>
+        <div class="card"><h3>Every domain is somewhere else</h3><p>Clients use different hosts and issuers. There is no single place to look.</p></div>
+        <div class="card"><h3>Auto-renew fails without a sound</h3><p>A changed DNS record or a moved site can stop a renewal. You find out when the browser says "Not Secure".</p></div>
+        <div class="card"><h3>A spreadsheet goes stale</h3><p>It works for ten domains. At fifty, someone forgets to update it.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How it will work -->
+  <section class="section" style="padding-top:0" aria-labelledby="how-title">
+    <div class="wrap">
+      <h2 id="how-title">How it will work</h2>
+      <ol class="steps">
+        <li><span class="step-num">1</span><h3>Paste your client domains</h3></li>
+        <li><span class="step-num">2</span><h3>See one list, soonest first</h3></li>
+        <li><span class="step-num">3</span><h3>Get an email or Slack alert at 30, 14 and 7 days</h3></li>
+      </ol>
+      <p class="small" style="margin-top:24px">Lapsewatch will only remind you. It will not renew certificates.</p>
+    </div>
+  </section>
+
+  <!-- Pricing -->
+  <section class="section band" id="pricing" aria-labelledby="pricing-title">
+    <div class="wrap">
+      <h2 id="pricing-title">Pricing, when it launches</h2>
+      <div class="tiers">
+        <article class="card tier featured">
+          <p class="tag" style="align-self:flex-start">Most agencies</p>
+          <h3>Agency</h3>
+          <p class="price">$19<span>/mo</span></p>
+          <ul class="includes"><li>Up to 100 domains</li><li>Email alerts at 30, 14 and 7 days</li><li>Slack alerts</li></ul>
+          <a class="btn btn-primary" href="#waitlist" data-plan="agency">Join the waitlist for this plan</a>
+        </article>
+        <article class="card tier">
+          <h3>Freelancer</h3>
+          <p class="price">$9<span>/mo</span></p>
+          <ul class="includes"><li>Up to 25 domains</li><li>Email alerts at 30, 14 and 7 days</li></ul>
+          <a class="btn btn-secondary" href="#waitlist" data-plan="freelancer">Join the waitlist for this plan</a>
+        </article>
+        <article class="card tier">
+          <h3>Agency Annual</h3>
+          <p class="price">$182<span>/yr</span></p>
+          <ul class="includes"><li>Everything in Agency</li><li>Two months free compared with monthly</li></ul>
+          <a class="btn btn-secondary" href="#waitlist" data-plan="annual">Join the waitlist for this plan</a>
+        </article>
+      </div>
+      <p class="small" style="margin-top:16px">Nothing is charged now. Picking a plan doesn't commit you to buy.</p>
+    </div>
+  </section>
+
+  <!-- Waitlist -->
+  <section class="section" id="waitlist" aria-labelledby="waitlist-title">
+    <div class="wrap">
+      <div class="card waitlist-card">
+        <form id="waitlist-form" novalidate>
+          <h2 id="waitlist-title">Join the waitlist</h2>
+          <div class="err-summary" id="wl-errors" role="alert" tabindex="-1" hidden></div>
+          <div class="banner error" id="wl-net" role="alert" hidden style="margin-top:16px">! We couldn't save your place. Your answers are still here. Try again in a moment.</div>
+
+          <div class="field">
+            <label for="email">Email <span class="req">(required)</span></label>
+            <input type="email" id="email" name="email" autocomplete="email" aria-describedby="email-error">
+            <p class="err-text" id="email-error" hidden></p>
+          </div>
+
+          <fieldset id="count-group" aria-describedby="count-error">
+            <legend>How many client domains do you manage? <span class="req">(required)</span></legend>
+            <label class="radio-row"><input type="radio" name="count" value="1-3">1-3</label>
+            <label class="radio-row"><input type="radio" name="count" value="4-9">4-9</label>
+            <label class="radio-row"><input type="radio" name="count" value="10-25">10-25</label>
+            <label class="radio-row"><input type="radio" name="count" value="26-100">26-100</label>
+            <label class="radio-row"><input type="radio" name="count" value="100+">More than 100</label>
+            <p class="err-text" id="count-error" hidden></p>
+          </fieldset>
+
+          <fieldset id="alerts-group" aria-describedby="alerts-error">
+            <legend>Do your current tools already alert you about SSL expiry? <span class="req">(required)</span></legend>
+            <label class="radio-row"><input type="radio" name="alerts" value="yes">Yes</label>
+            <label class="radio-row"><input type="radio" name="alerts" value="no">No</label>
+            <label class="radio-row"><input type="radio" name="alerts" value="unsure">Not sure</label>
+            <p class="err-text" id="alerts-error" hidden></p>
+            <div class="field">
+              <label for="tool">Which tool? <span class="req">(optional)</span></label>
+              <input type="text" id="tool" name="tool">
+            </div>
+          </fieldset>
+
+          <fieldset id="plan-group" aria-describedby="plan-error">
+            <legend>Which plan would you pick? <span class="req">(required)</span></legend>
+            <label class="radio-row"><input type="radio" name="plan" value="freelancer">Freelancer, $9/mo</label>
+            <label class="radio-row"><input type="radio" name="plan" value="agency">Agency, $19/mo</label>
+            <label class="radio-row"><input type="radio" name="plan" value="annual">Agency Annual, $182/yr</label>
+            <p class="err-text" id="plan-error" hidden></p>
+          </fieldset>
+
+          <fieldset id="pay-group" aria-describedby="pay-error">
+            <legend>Would you pay <span id="pay-price">this plan</span> for this? <span class="req">(required)</span></legend>
+            <label class="radio-row"><input type="radio" name="pay" value="yes">Yes</label>
+            <label class="radio-row"><input type="radio" name="pay" value="maybe">Maybe</label>
+            <label class="radio-row"><input type="radio" name="pay" value="no">No</label>
+            <p class="err-text" id="pay-error" hidden></p>
+          </fieldset>
+
+          <p class="small" style="margin:24px 0 16px">We'll email you once, when Lapsewatch launches. Nothing is charged. It will only remind you; it will not renew certificates.</p>
+          <button class="btn btn-primary btn-block" id="join-btn" type="submit"><span class="spin" aria-hidden="true"></span><span class="lbl">Join the waitlist</span></button>
+          <p class="small proto-hint">Prototype: an email starting "fail@" shows the network error.</p>
+        </form>
+
+        <div class="success" id="wl-success" hidden>
+          <p class="big-check" aria-hidden="true">✓</p>
+          <h2 id="wl-success-title" tabindex="-1" style="color:var(--green);margin-top:12px">You're on the list.</h2>
+          <p>We'll email you once when Lapsewatch launches. Nothing is charged.</p>
+          <p style="margin-top:16px"><a href="#checker">Back to the free checker</a></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="section band" id="faq" aria-labelledby="faq-title" style="background:var(--ground);padding-top:0">
+    <div class="wrap">
+      <h2 id="faq-title">Questions</h2>
+      <div class="faq">
+        <details open><summary>Can I use Lapsewatch today?</summary><p>No. Lapsewatch is not built yet. You can join the waitlist, and we'll email you once at launch. The free checker works today with expiry dates you enter yourself.</p></details>
+        <details><summary>Will Lapsewatch renew my certificates?</summary><p>No. It will only remind you. Renew the certificate yourself or ask your host.</p></details>
+        <details><summary>How will the alerts work?</summary><p>Email and Slack alerts at 30, 14 and 7 days are coming; they are not built yet. Version 1 sends nothing. It gives you reminder text to paste and a calendar file (.ics) for Pro.</p></details>
+        <details><summary>How many domains will it handle?</summary><p>It is planned for about 10 to 100 client domains. The free checker takes up to 50 at a time.</p></details>
+        <details><summary>What will it cost?</summary><p>Freelancer $9/mo, Agency $19/mo, or Agency Annual $182/yr. Nothing is charged now.</p></details>
+        <details><summary>Is the free checker live?</summary><p>Partly. The checker on this page and <a href="ssl-expiry-checker.html">on its own page</a> works today: you enter each expiry date and it sorts the days left. Reading certificates for you is coming and will need a server.</p></details>
+        <details><summary>What happens to my email address?</summary><p>We will use it once, to tell you Lapsewatch has launched. Read the <a href="#faq">privacy note</a> when it is published.</p></details>
+        <details><summary>Which certificates will it check?</summary><p>Public HTTPS sites on port 443. Domains that don't answer will show as "Couldn't check", with a reason.</p></details>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div>
+      <p><strong>Lapsewatch</strong></p>
+      <p class="small">Lapsewatch is coming soon. It will send reminders; it will not renew certificates.</p>
+      <div id="unlock-box"></div>
+    </div>
+    <ul class="footer-links">
+      <li><a href="ssl-expiry-checker.html">Checker</a></li>
+      <li><a href="app-domains.html">Domains</a></li>
+      <li><a href="app-alerts.html">Alerts</a></li>
+      <li><a href="#pricing">Pricing</a></li>
+      <li><a href="#faq">FAQ</a></li>
+      <li><a href="#faq">Privacy</a></li>
+    </ul>
+  </div>
+</footer>
+<div id="toast-region"></div>
+<script src="lib/domains.js"></script>
+<script src="lib/render.js"></script>
+<script src="lib/license.js"></script>
+<script src="app.js"></script>
+<script data-goatcounter="https://tuckertools.goatcounter.com/count" async src="../gc.js"></script>
+</body>
+</html>
