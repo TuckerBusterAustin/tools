@@ -1,60 +1,62 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>How to check when an SSL certificate expires</title>
-<meta name="description" content="Three quick ways to find a website&#x27;s SSL certificate expiry date: the browser padlock, the openssl command line, and an online checker. Plus the mistakes…">
+<meta name="description" content="Five ways to find a site&#x27;s SSL certificate expiry date: in the browser, with openssl, curl or PowerShell. Includes a one-line test that flags…">
 <link rel="canonical" href="https://tuckertooling.com/lapsewatch/guides/check-ssl-certificate-expiry/">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23635bff'/%3E%3Ctext x='32' y='44' font-size='36' text-anchor='middle' fill='white' font-family='system-ui,sans-serif' font-weight='bold'%3EH%3C/text%3E%3C/svg%3E">
 <meta property="og:type" content="website">
 <meta property="og:title" content="How to check when an SSL certificate expires">
-<meta property="og:description" content="Three quick ways to find a website&#x27;s SSL certificate expiry date: the browser padlock, the openssl command line, and an online checker. Plus the mistakes…">
+<meta property="og:description" content="Five ways to find a site&#x27;s SSL certificate expiry date: in the browser, with openssl, curl or PowerShell. Includes a one-line test that flags…">
 <meta property="og:url" content="https://tuckertooling.com/lapsewatch/guides/check-ssl-certificate-expiry/">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="How to check when an SSL certificate expires">
-<meta name="twitter:description" content="Three quick ways to find a website&#x27;s SSL certificate expiry date: the browser padlock, the openssl command line, and an online checker. Plus the mistakes…"><style>:root{--accent:#4f46e5;--ink:#111827;--muted:#5b6170;--line:#e5e7eb}*{box-sizing:border-box} body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;color:var(--ink);line-height:1.7;font-size:18px}nav{border-bottom:1px solid var(--line)} nav div{max-width:760px;margin:0 auto;padding:18px 24px;display:flex;justify-content:space-between;font-size:15px}nav a{color:var(--muted);text-decoration:none} nav a.home{color:var(--ink);font-weight:700}main,article{max-width:760px;margin:0 auto;padding:40px 24px 64px}h1{font-size:clamp(30px,5vw,44px);line-height:1.15;letter-spacing:-.02em}h2{margin-top:2em;letter-spacing:-.01em} a{color:var(--accent)}code{background:#f3f4f6;padding:1px 5px;border-radius:4px}a.cta{display:inline-block;margin:28px 0;padding:13px 22px;background:var(--accent);color:#fff;border-radius:10px;text-decoration:none;font-weight:600}</style></head><body><nav><div><a class="home" href="https://tuckertooling.com/">Tucker Tooling</a><a href="https://tuckertooling.com/lapsewatch/">The tool</a></div></nav><article><h1>How to check when an SSL certificate expires</h1><h2>The short answer</h2>
-<p>Every SSL/TLS certificate carries an expiry date, shown as <strong>Expires On</strong> or <strong>Not After</strong>. You can read it in a few seconds three ways:</p>
-<p>1. <strong>In your browser</strong>, from the padlock or site-info icon.</p>
-<p>2. <strong>On the command line</strong>, with <code>openssl</code>.</p>
-<p>3. <strong>With an online checker</strong> that connects to the site for you.</p>
-<p>It matters more than it used to. Under CA/Browser Forum ballot SC-081, the longest lifetime for a publicly trusted certificate fell to 200 days on 15 March 2026. It drops to 100 days in March 2027 and to 47 days in March 2029 (<a href="https://www.appviewx.com/blogs/certificate-validity-period-47-days/">summary of the timeline</a>). So renewals come round more often, and so do chances for one to fail.</p>
-<h2>Method 1: The browser padlock</h2>
-<p>This is the fastest way to check one site you can open.</p>
-<p><strong>Chrome / Edge</strong></p>
-<p>1. Open the site over <code>https://</code>.</p>
-<p>2. Click the icon to the left of the address bar.</p>
-<p>3. Choose <strong>Connection is secure</strong>, then <strong>Certificate is valid</strong>.</p>
-<p>4. On the <strong>General</strong> tab, read <strong>Expires On</strong>.</p>
-<p><strong>Firefox</strong></p>
-<p>1. Click the padlock, then <strong>Connection secure</strong>, then <strong>More information</strong>.</p>
-<p>2. Click <strong>View Certificate</strong>.</p>
-<p>3. Under <strong>Validity</strong>, read <strong>Not After</strong>.</p>
-<p><strong>Safari (macOS)</strong></p>
-<p>1. Click the padlock in the address bar.</p>
-<p>2. Click <strong>Show Certificate</strong>, then expand <strong>Details</strong> and find <strong>Expires</strong>.</p>
-<p><strong>Pitfall:</strong> the browser shows the certificate it received. If the site sits behind a CDN or proxy such as Cloudflare, that&#x27;s the edge certificate. The certificate on your origin server can be different and can expire separately.</p>
-<h2>Method 2: The openssl command line</h2>
-<p>Use this for servers you can&#x27;t easily open in a browser, for scripts, or for checking many hosts. It works on macOS, Linux and WSL on Windows:</p>
+<meta name="twitter:description" content="Five ways to find a site&#x27;s SSL certificate expiry date: in the browser, with openssl, curl or PowerShell. Includes a one-line test that flags…"><style>:root{--accent:#4f46e5;--ink:#111827;--muted:#5b6170;--line:#e5e7eb}*{box-sizing:border-box} body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;color:var(--ink);line-height:1.7;font-size:18px}nav{border-bottom:1px solid var(--line)} nav div{max-width:760px;margin:0 auto;padding:18px 24px;display:flex;justify-content:space-between;font-size:15px}nav a{color:var(--muted);text-decoration:none} nav a.home{color:var(--ink);font-weight:700}main,article{max-width:760px;margin:0 auto;padding:40px 24px 64px}h1{font-size:clamp(30px,5vw,44px);line-height:1.15;letter-spacing:-.02em}h2{margin-top:2em;letter-spacing:-.01em} a{color:var(--accent)}code{background:#f3f4f6;padding:1px 5px;border-radius:4px}a.cta{display:inline-block;margin:28px 0;padding:13px 22px;background:var(--accent);color:#fff;border-radius:10px;text-decoration:none;font-weight:600}</style></head><body><nav><div><a class="home" href="https://tuckertooling.com/">Tucker Tooling</a><a href="https://tuckertooling.com/lapsewatch/">The tool</a></div></nav><article><h1>How to check when an SSL certificate expires</h1><h2>The short answer</h2>
+<p>Every TLS certificate has a <code>notAfter</code> date. Once that date passes, browsers show a full-page warning. Chrome&#x27;s version says <code>NET::ERR_CERT_DATE_INVALID</code>. You can read the date in a browser for one site, or with a command to check many sites or to script a check.</p>
+<h2>1. In the browser (one site, no tools)</h2>
+<ul><li><strong>Chrome / Edge:</strong> click the site-information icon to the left of the address bar, open the connection details, then open the certificate viewer. The <strong>Validity</strong> section shows &quot;Expires on&quot;.</li><li><strong>Firefox:</strong> click the padlock, then <strong>Connection secure</strong>, then <strong>More information</strong>, then <strong>View Certificate</strong>. Look for <strong>Not After</strong>.</li><li><strong>Safari:</strong> click the padlock, then <strong>Show Certificate</strong>, then expand <strong>Details</strong>.</li></ul>
+<p>The browser shows the certificate your connection received. If the site sits behind a CDN, that is the CDN&#x27;s edge certificate, which may not be the one installed on the origin server. See the pitfalls section below.</p>
+<h2>2. With openssl (macOS, Linux, WSL)</h2>
 <p><code>`</code>bash</p>
 <p>echo | openssl s_client -connect example.com:443 -servername example.com 2&gt;/dev/null \</p>
 <p>  | openssl x509 -noout -enddate</p>
 <p><code>`</code></p>
-<p>The output looks like this:</p>
+<p>Output:</p>
 <p><code>`</code></p>
-<p>notAfter=Mar  2 12:00:00 2027 GMT</p>
+<p>notAfter=Mar  3 12:00:00 2027 GMT</p>
 <p><code>`</code></p>
-<p>Useful variations:</p>
-<ul><li><strong>Show start and end dates together:</strong> replace <code>-enddate</code> with <code>-dates</code>.</li><li><strong>Ask &quot;does it expire within 30 days?&quot;:</strong> add <code>-checkend 2592000</code> (30 days in seconds) to the <code>x509</code> command. The exit code is <code>0</code> if the certificate is still valid at that point and <code>1</code> if it isn&#x27;t, which makes this handy in cron jobs.</li><li><strong>Check a mail server:</strong> use <code>-connect mail.example.com:465</code>, or <code>-connect mail.example.com:587 -starttls smtp</code>.</li><li><strong>Check a certificate file on disk:</strong> <code>openssl x509 -in cert.pem -noout -enddate</code>.</li></ul>
-<p><strong>On Windows PowerShell</strong> without openssl:</p>
+<p>Notes:</p>
+<ul><li><code>-servername</code> sends SNI. Leave it out and a shared host may hand back its default certificate, which is the wrong one.</li><li><code>echo |</code> closes the connection straight away so the command doesn&#x27;t hang.</li><li>Add <code>-subject -issuer</code> after <code>-enddate</code> to confirm you&#x27;re looking at the right certificate.</li></ul>
+<h3>Is it expiring soon? Get a yes/no answer</h3>
+<p><code>-checkend</code> takes a number of seconds. It exits with status 1 if the certificate expires within that window:</p>
+<p><code>`</code>bash</p>
+<p>echo | openssl s_client -connect example.com:443 -servername example.com 2&gt;/dev/null \</p>
+<p>  | openssl x509 -noout -checkend $((21*86400)) \</p>
+<p>  &amp;&amp; echo &quot;OK for 21+ days&quot; || echo &quot;Expires within 21 days&quot;</p>
+<p><code>`</code></p>
+<p>That exit code is all a cron job or CI step needs.</p>
+<h2>3. With curl</h2>
+<p><code>`</code>bash</p>
+<p>curl -svI https://example.com 2&gt;&amp;1 | grep -i &quot;expire date&quot;</p>
+<p><code>`</code></p>
+<p>This works when curl is built with OpenSSL, which is the usual case on Linux. Some builds, such as Schannel on Windows or Secure Transport on older macOS, don&#x27;t print the date. If you see nothing, use openssl instead.</p>
+<h2>4. With PowerShell (Windows, no extra installs)</h2>
 <p><code>`</code>powershell</p>
-<p>$req = [Net.HttpWebRequest]::Create(&quot;https://example.com&quot;)</p>
-<p>$req.GetResponse().Dispose()</p>
-<p>$req.ServicePoint.Certificate.GetExpirationDateString()</p>
+<p>$h = &quot;example.com&quot;</p>
+<p>$tcp = New-Object Net.Sockets.TcpClient($h, 443)</p>
+<p>$ssl = New-Object Net.Security.SslStream($tcp.GetStream(), $false, { $true })</p>
+<p>$ssl.AuthenticateAsClient($h)</p>
+<p>$cert = New-Object Security.Cryptography.X509Certificates.X509Certificate2($ssl.RemoteCertificate)</p>
+<p>&quot;{0}  expires {1}  ({2} days)&quot; -f $h, $cert.NotAfter, ($cert.NotAfter - (Get-Date)).Days</p>
+<p>$ssl.Dispose(); $tcp.Dispose()</p>
 <p><code>`</code></p>
-<p><strong>Pitfalls:</strong></p>
-<ul><li><strong>Always pass <code>-servername</code>.</strong> Without it, a shared-hosting server may return its default certificate rather than your site&#x27;s. This is a very common reason for a &quot;wrong&quot; date.</li><li><strong>The time is in GMT.</strong> If a certificate expires early in the morning GMT, it can already be invalid during the evening before in the Americas.</li><li><strong>Check <code>www</code> and the bare domain separately.</strong> They can be served by different certificates.</li></ul>
-<h2>Method 3: An online checker</h2>
-<p>An online checker connects to the domain from outside your network and reports the expiry date, the issuer and whether the certificate chain is complete. <a href="https://www.ssllabs.com/ssltest/">Qualys SSL Labs&#x27; SSL Server Test</a> gives a thorough report on each server. It&#x27;s slow, but good for spotting a missing intermediate certificate, which can make some devices show warnings even when the expiry date is fine.</p>
-<p>An online check is the best way to see what visitors see. It&#x27;s also the only one of the three methods that doesn&#x27;t depend on your own machine&#x27;s settings or proxy.</p>
-<h2>What to do with the date</h2>
-<p>Once you have the expiry date:</p>
-<ul><li><strong>More than 30 days left:</strong> nothing to do yet, but write the date down somewhere other than your head.</li><li><strong>Under 30 days on an auto-renewing certificate</strong> (Let&#x27;s Encrypt, cPanel AutoSSL, a host&#x27;s free SSL): most auto-renewal tools try well before expiry. If the date isn&#x27;t moving, renewal is probably failing. Typical causes are DNS pointing somewhere else, a blocked <code>/.well-known/acme-challenge/</code> path, or a domain that was removed from the hosting account.</li><li><strong>Under 30 days on a paid certificate:</strong> start the renewal now. Validation can take time, and you still have to install the new certificate.</li><li><strong>Already expired:</strong> visitors see a &quot;Your connection is not private&quot; or &quot;Not Secure&quot; warning. Renew or reissue the certificate, install it, then re-check with Method 2 or 3 to confirm the new date is live. Your local browser may show a cached result.</li></ul>
-<h2>When one site becomes twenty</h2>
-<p>The methods above are fine for a single domain. They get tedious once you look after a portfolio of client sites. Then the real question is &quot;which of my sites expires next?&quot;, and checking each one by hand every few weeks is the kind of job that quietly stops getting done.</p>
-<p>You can loop the <code>openssl</code> command over a list of domains (our guide on monitoring many sites has a ready-made script). Or you can use a monitoring service. We&#x27;re building <strong>Lapsewatch</strong> for this case. It will show one list of every client domain sorted by days to expiry and send an email or Slack ping before any of them lapse. It&#x27;s one option among several, and the free methods on this page work well if you only have a handful of sites.</p></article><a class="cta" href="https://tuckertooling.com/lapsewatch/?ref=guide">Try it</a></body></html>
+<p>The <code>{ $true }</code> callback accepts any certificate, so the script can still read the date from one that has already expired.</p>
+<h2>5. On the server itself</h2>
+<p>If you have shell access and know where the file is:</p>
+<p><code>`</code>bash</p>
+<p>openssl x509 -in /etc/letsencrypt/live/example.com/cert.pem -noout -enddate</p>
+<p><code>`</code></p>
+<p>If you use Certbot, <code>sudo certbot certificates</code> lists every certificate it manages with its expiry date and days remaining.</p>
+<h2>Pitfalls that give you the wrong date</h2>
+<ul><li><strong>CDN or proxy in front.</strong> Cloudflare and similar services present their own edge certificate. Your origin certificate can expire without visitors noticing, until the proxy refuses to connect to the origin (for example in Cloudflare&#x27;s Full (strict) mode). To check the origin directly, connect to its IP while still sending the real hostname: <code>openssl s_client -connect 203.0.113.10:443 -servername example.com</code>.</li><li><strong><code>www</code> and the bare domain.</strong> They can have separate certificates. Check both.</li><li><strong>Several servers behind one name.</strong> A load balancer or several A/AAAA records can mean one server renewed and another didn&#x27;t. Check each IP.</li><li><strong>Other services.</strong> Mail (<code>-connect mail.example.com:465</code>, or <code>:587 -starttls smtp</code>), APIs and admin panels have their own certificates.</li><li><strong>Wrong local clock.</strong> If one visitor gets a date warning and nobody else does, check the clock on their device before touching the server.</li></ul>
+<h2>Why checking matters more now</h2>
+<p>The CA/Browser Forum is shortening the maximum lifetime of public certificates (ballot SC-081). The cap is 200 days for certificates issued from March 15, 2026, 100 days from March 15, 2027, and 47 days from March 15, 2029 (<a href="https://support.dnsimple.com/articles/announcement-ssl-certificate-validity-changes/">DNSimple summary</a>). Shorter lifetimes mean more renewals, and each renewal is another chance for one to fail without anyone noticing. Let&#x27;s Encrypt also <a href="https://letsencrypt.org/2025/06/26/expiration-notification-service-has-ended/">stopped sending expiration reminder emails</a> in June 2025, so you can no longer count on it to warn you.</p>
+<h2>If you&#x27;re checking more than a handful of sites</h2>
+<p>The commands above work well for one site. For dozens, wrap the openssl command in a loop over a list of domains, sort the results by days left, and schedule it. We&#x27;re building <strong>Lapsewatch</strong> for agencies that need exactly this. It will keep one list of every client domain with days-to-expiry and send an email or Slack alert before any certificate lapses. It isn&#x27;t live yet; you can follow its progress on the page below.</p></article><a class="cta" href="https://tuckertooling.com/lapsewatch/?ref=guide">Try it</a></body></html>
