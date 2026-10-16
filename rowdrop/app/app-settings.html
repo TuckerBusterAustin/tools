@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Settings · Rowdrop preview</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body data-app>
+<a class="skip" href="#main">Skip to main content</a>
+<div class="preview-banner"><div class="wrap"><span><span class="preview-label">Preview: not live yet.</span> Rowdrop is not live yet. Nothing here sends real files.</span></div></div>
+<header class="topbar"><div class="wrap">
+  <a class="wordmark" href="index.html">Rowdrop</a>
+  <button type="button" class="btn btn-secondary menu-btn" aria-expanded="false" aria-controls="app-nav">Menu</button>
+  <nav class="nav app-nav" id="app-nav" aria-label="App">
+    <a href="app-exports.html">Exports</a><a href="app-detail.html">History</a><a href="app-settings.html" aria-current="page">Settings</a>
+  </nav>
+</div></header>
+
+<main id="main"><div class="wrap settings">
+  <h1>Settings</h1>
+
+  <section class="card" aria-labelledby="hs-h">
+    <h2 id="hs-h">HubSpot connection</h2>
+    <div class="kv"><span class="pill pill-paused"><span aria-hidden="true">||</span> Not connected</span></div>
+    <p class="muted">Rowdrop does not connect to HubSpot or send email yet. Both are coming soon. For now you import the CSV you already export, and Rowdrop builds the file for you to download.</p>
+    <a class="btn btn-secondary" href="app-connect.html">Import a CSV</a>
+  </section>
+
+  <section class="card" aria-labelledby="plan-h">
+    <h2 id="plan-h">Plan</h2>
+    <p style="margin:0 0 8px"><strong id="plan-name"></strong></p>
+    <p class="muted" id="plan-usage"></p>
+    <p class="small muted" id="plan-lock" hidden>Pro adds Excel (.xlsx) output, up to 15 saved exports and missed-run alerts. <a href="#license-footer">Unlock with Pro</a></p>
+  </section>
+
+  <section class="card" aria-labelledby="alert-h">
+    <h2 id="alert-h">Missed-run alerts</h2>
+    <p class="muted" id="alert-lock" hidden>Show a banner when a due export was not run. <a href="#license-footer">Unlock with Pro</a></p>
+    <div class="field">
+      <label class="check"><input type="checkbox" id="alert-on"> Show a banner on the exports list when a due export was not run</label>
+      <p class="help">This is an in-app banner only. Rowdrop does not send email yet.</p>
+    </div>
+  </section>
+
+  <section class="card" aria-labelledby="data-h">
+    <h2 id="data-h">Your data</h2>
+    <p class="muted">Everything is stored in this browser only. Download a backup before you clear your browser data or switch computers.</p>
+    <p><button type="button" class="btn btn-secondary" id="backup-btn">Download JSON backup</button></p>
+    <div class="field">
+      <label for="restore-file">Restore from a JSON backup</label>
+      <input id="restore-file" type="file" accept=".json,application/json" aria-describedby="restore-help">
+      <p class="help" id="restore-help">Restoring replaces your current exports, imports and history.</p>
+      <p class="error" id="restore-err" role="alert" hidden></p>
+    </div>
+    <button type="button" class="btn btn-secondary" id="restore-btn">Restore backup</button>
+    <hr>
+    <button type="button" class="btn btn-danger" id="clear-btn">Clear all data</button>
+  </section>
+</div></main>
+<script src="lib/browser-shim.js"></script><script src="lib/csv.js"></script><script src="lib/schedule.js"></script><script src="lib/jobs.js"></script><script src="lib/xlsx.js"></script><script src="lib/runner.js"></script><script src="lib/storage.js"></script><script src="lib/license.js"></script><script src="lib/shim-end.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
