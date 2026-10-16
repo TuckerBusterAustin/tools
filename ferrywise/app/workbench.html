@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Ferrywise workbench (owner only)</title>
+  <link rel="stylesheet" href="css/workbench.css">
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="wb-header">
+    <h1>Ferrywise workbench (owner only)</h1>
+    <div class="localband">
+      <p>All records live only in this browser. Export after each session.</p>
+    </div>
+    <div id="storage-banner" class="banner" role="alert" hidden>Error: this browser won't save data. Export what you have now; new entries can't be stored.</div>
+  </header>
+
+  <main id="main" class="wb-main">
+    <div role="tablist" aria-label="Workbench sections" class="tabs" id="tabs">
+      <button role="tab" id="tab-evidence" aria-controls="panel-evidence" data-tab="evidence">Evidence</button>
+      <button role="tab" id="tab-signups" aria-controls="panel-signups" data-tab="signups">Sign-ups &amp; clicks</button>
+      <button role="tab" id="tab-breakage" aria-controls="panel-breakage" data-tab="breakage">Breakage</button>
+      <button role="tab" id="tab-results" aria-controls="panel-results" data-tab="results">Results</button>
+      <button role="tab" id="tab-data" aria-controls="panel-data" data-tab="data">Data</button>
+    </div>
+
+    <section role="tabpanel" id="panel-evidence" aria-labelledby="tab-evidence" tabindex="0">
+      <h2>Evidence log</h2>
+      <div class="card" id="gate-card" aria-live="polite">
+        <p id="gate-counts" class="gate-counts"></p>
+        <div class="bar-row"><span class="bar-label">Threads logged</span>
+          <div class="bar" role="progressbar" id="bar-total" aria-valuemin="0"><span class="fill"></span></div>
+          <span class="num" id="num-total"></span></div>
+        <div class="bar-row"><span class="bar-label">Free tools didn't solve it</span>
+          <div class="bar" role="progressbar" id="bar-free" aria-valuemin="0"><span class="fill"></span></div>
+          <span class="num" id="num-free"></span></div>
+        <p><span id="gate-badge" class="badge"></span> <span id="gate-missing"></span></p>
+      </div>
+
+      <div class="ev-layout">
+        <form id="thread-form" class="card" novalidate>
+          <h3>Add thread</h3>
+          <div class="field"><label for="f-url">Thread link</label>
+            <input id="f-url" name="url" type="url" inputmode="url" placeholder="https://www.reddit.com/r/…" aria-describedby="f-url-help f-url-err">
+            <p class="help" id="f-url-help">A public thread from the last 12 months.</p><p class="err" id="f-url-err"></p></div>
+          <div class="field"><label for="f-date">Thread date</label>
+            <input id="f-date" name="date" type="date" aria-describedby="f-date-err"><p class="err" id="f-date-err"></p></div>
+          <div class="field"><label for="f-workflow">Workflow</label>
+            <input id="f-workflow" name="workflow" type="text" placeholder="Copy client details into an invoice form" aria-describedby="f-workflow-err"><p class="err" id="f-workflow-err"></p></div>
+          <div class="field"><label for="f-tools">Tools named</label>
+            <input id="f-tools" name="tools" type="text" placeholder="Zapier, Make" aria-describedby="f-tools-help">
+            <p class="help" id="f-tools-help">Separate with commas.</p></div>
+          <label class="check" for="f-free"><input id="f-free" name="freeToolFailed" type="checkbox"> Free tool did not solve it</label>
+          <div class="field"><label for="f-price">Price mentioned (optional)</label>
+            <input id="f-price" name="price" type="number" min="0" step="1" aria-describedby="f-price-err"><p class="err" id="f-price-err"></p></div>
+          <button type="submit" class="btn primary">Add thread</button>
+        </form>
+
+        <div>
+          <table class="data" id="thread-table">
+            <caption>Logged threads</caption>
+            <thead><tr><th scope="col">Date</th><th scope="col">Link</th><th scope="col">Workflow</th><th scope="col">Tools</th><th scope="col">Free tool failed</th><th scope="col">Price</th></tr></thead>
+            <tbody id="thread-body"></tbody>
+          </table>
+          <p id="thread-empty" class="empty">No threads logged yet. Open a public thread from the last 12 months, check it loads, then add it here. The gate needs 15 threads, with 5 where free tools didn't solve it.</p>
+          <p><button type="button" class="btn secondary" id="dl-csv">Download CSV</button></p>
+        </div>
+      </div>
+    </section>
+
+    <section role="tabpanel" id="panel-signups" aria-labelledby="tab-signups" tabindex="0" hidden>
+      <h2>Sign-ups &amp; clicks</h2><p class="help">Coming in a later task.</p>
+    </section>
+    <section role="tabpanel" id="panel-breakage" aria-labelledby="tab-breakage" tabindex="0" hidden>
+      <h2>Breakage</h2>
+      <div class="card" id="br-summary" aria-live="polite">
+        <p id="br-text" class="gate-counts"></p>
+        <p><span id="br-badge" class="badge"></span> <span id="br-incomplete" class="badge" hidden>Incomplete week</span></p>
+      </div>
+      <div class="card">
+        <h3>Workflow names</h3>
+        <div class="br-names" id="br-names"></div>
+        <p class="help">Names are labels only. Each workflow stays in its slot.</p>
+      </div>
+      <div id="br-grid"></div>
+      <form id="br-form" class="card" novalidate hidden>
+        <h3 id="br-form-title">Log a day</h3>
+        <label class="check" for="br-broke"><input id="br-broke" type="checkbox"> It broke</label>
+        <div class="field"><label for="br-fixes">Fixes needed</label>
+          <input id="br-fixes" type="number" min="0" step="1" value="0" aria-describedby="br-fixes-err"><p class="err" id="br-fixes-err"></p></div>
+        <div class="field"><label for="br-minutes">Fix minutes (optional)</label>
+          <input id="br-minutes" type="number" min="0" step="1" aria-describedby="br-minutes-err"><p class="err" id="br-minutes-err"></p></div>
+        <button type="submit" class="btn primary">Save day</button>
+        <button type="button" class="btn secondary" id="br-cancel">Cancel</button>
+      </form>
+    </section>
+    <section role="tabpanel" id="panel-results" aria-labelledby="tab-results" tabindex="0" hidden>
+      <h2>Results</h2>
+      <form id="res-form" class="card" novalidate>
+        <h3>Visitor counts</h3>
+        <div class="field"><label for="res-a">Visitors on headline A</label>
+          <input id="res-a" type="number" min="0" step="1" aria-describedby="res-help"></div>
+        <div class="field"><label for="res-b">Visitors on headline B</label>
+          <input id="res-b" type="number" min="0" step="1" aria-describedby="res-help"></div>
+        <div class="field"><label for="res-imp">Search Console impressions (optional)</label>
+          <input id="res-imp" type="number" min="0" step="1" aria-describedby="res-help"></div>
+        <p class="help" id="res-help">Type these in by hand. This page cannot count visitors from other browsers.</p>
+        <button type="submit" class="btn primary">Update results</button>
+      </form>
+      <div aria-live="polite">
+        <h3>Criteria</h3>
+        <ul id="res-list" class="res-list"></ul>
+        <p id="res-imp-note" class="help" hidden></p>
+        <h3>Kill signals triggered</h3>
+        <ul id="res-kills" class="res-kills"></ul>
+        <p id="res-kills-empty" class="empty">No kill signals triggered by the data entered so far.</p>
+        <h3>Can't be checked here</h3>
+        <ul id="res-cannot"></ul>
+      </div>
+    </section>
+    <section role="tabpanel" id="panel-data" aria-labelledby="tab-data" tabindex="0" hidden>
+      <h2>Data</h2><p class="help">Coming in a later task.</p>
+    </section>
+  </main>
+
+  <div id="toast" class="toast" aria-live="polite" hidden>
+    <span id="toast-text"></span>
+    <button type="button" id="toast-close" aria-label="Dismiss">&times;</button>
+  </div>
+
+  <script src="js/store.js"></script>
+  <script src="js/evidence.js"></script>
+  <script src="js/breakage.js"></script>
+  <script src="js/tracking.js"></script>
+  <script src="js/results.js"></script>
+  <script src="js/workbench.js"></script>
+</body>
+</html>
