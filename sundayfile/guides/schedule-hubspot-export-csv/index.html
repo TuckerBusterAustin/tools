@@ -1,0 +1,59 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>How to schedule an automatic HubSpot export to CSV</title>
+<meta name="description" content="HubSpot&#x27;s manual export, its dashboard email schedules, and how to build a real weekly CSV export of contacts or deals with HubSpot&#x27;s Exports API and a…">
+<link rel="canonical" href="https://tuckertooling.com/sundayfile/guides/schedule-hubspot-export-csv/">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23635bff'/%3E%3Ctext x='32' y='44' font-size='36' text-anchor='middle' fill='white' font-family='system-ui,sans-serif' font-weight='bold'%3EH%3C/text%3E%3C/svg%3E">
+<meta property="og:type" content="website">
+<meta property="og:title" content="How to schedule an automatic HubSpot export to CSV">
+<meta property="og:description" content="HubSpot&#x27;s manual export, its dashboard email schedules, and how to build a real weekly CSV export of contacts or deals with HubSpot&#x27;s Exports API and a…">
+<meta property="og:url" content="https://tuckertooling.com/sundayfile/guides/schedule-hubspot-export-csv/">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="How to schedule an automatic HubSpot export to CSV">
+<meta name="twitter:description" content="HubSpot&#x27;s manual export, its dashboard email schedules, and how to build a real weekly CSV export of contacts or deals with HubSpot&#x27;s Exports API and a…"><style>:root{--accent:#4f46e5;--ink:#111827;--muted:#5b6170;--line:#e5e7eb}*{box-sizing:border-box} body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;color:var(--ink);line-height:1.7;font-size:18px}nav{border-bottom:1px solid var(--line)} nav div{max-width:760px;margin:0 auto;padding:18px 24px;display:flex;justify-content:space-between;font-size:15px}nav a{color:var(--muted);text-decoration:none} nav a.home{color:var(--ink);font-weight:700}main,article{max-width:760px;margin:0 auto;padding:40px 24px 64px}h1{font-size:clamp(30px,5vw,44px);line-height:1.15;letter-spacing:-.02em}h2{margin-top:2em;letter-spacing:-.01em} a{color:var(--accent)}code{background:#f3f4f6;padding:1px 5px;border-radius:4px}a.cta{display:inline-block;margin:28px 0;padding:13px 22px;background:var(--accent);color:#fff;border-radius:10px;text-decoration:none;font-weight:600}</style></head><body><nav><div><a class="home" href="https://tuckertooling.com/">Tucker Tooling</a><a href="https://tuckertooling.com/sundayfile/">The tool</a></div></nav><article><h1>How to schedule an automatic HubSpot export to CSV</h1><p>Many teams want a weekly CSV of their HubSpot contacts and deals, as a backup or for reporting, without anyone having to remember to do it. This page explains what HubSpot does natively and how to build the automation yourself.</p>
+<h2>What HubSpot does natively</h2>
+<p><strong>Manual record exports.</strong> From any contacts or deals view you can click <strong>Export</strong> and get a CSV or Excel file by email (<a href="https://knowledge.hubspot.com/import-and-export/export-records">HubSpot: Export your records</a>). The export includes current property values and associations, and you need export permissions. Someone has to start it each time.</p>
+<p><strong>Scheduled dashboard emails.</strong> HubSpot can email dashboards on a daily, weekly or monthly schedule. That gives you a recurring report, not a raw record file.</p>
+<p><strong>Scheduled record exports.</strong> I could not find HubSpot documentation of a built-in recurring export for record views. A <a href="https://community.hubspot.com/t/schedule-deal-export/6958">HubSpot Community thread</a> asks for exactly this feature. Some third-party articles say recurring exports exist, so check the export settings in your own account in case your plan offers something newer. If it doesn&#x27;t, use the method below.</p>
+<h2>Build it: Exports API + a scheduler</h2>
+<p>HubSpot&#x27;s <a href="https://developers.hubspot.com/docs/api-reference/crm-exports-v3/guide">CRM Exports API</a> runs the same export as the button, for a view or a list, from code.</p>
+<h3>1. Create credentials</h3>
+<p>Create a private app (or an OAuth app) in HubSpot with the <code>crm.export</code> scope. HubSpot&#x27;s guide notes that with OAuth, the installing user must be a <strong>Super Admin</strong> to grant this scope. Store the token as a secret, never in the script itself.</p>
+<h3>2. Start an export</h3>
+<p>Send a <code>POST</code> to <code>/crm/v3/exports/export/async</code>. A typical request body looks like this (check field names against the current guide):</p>
+<p><code>`</code>json</p>
+<p>{</p>
+<p>  &quot;exportType&quot;: &quot;VIEW&quot;,</p>
+<p>  &quot;exportName&quot;: &quot;weekly-contacts&quot;,</p>
+<p>  &quot;format&quot;: &quot;CSV&quot;,</p>
+<p>  &quot;language&quot;: &quot;EN&quot;,</p>
+<p>  &quot;objectType&quot;: &quot;CONTACT&quot;,</p>
+<p>  &quot;objectProperties&quot;: [&quot;email&quot;, &quot;firstname&quot;, &quot;lastname&quot;, &quot;lifecyclestage&quot;, &quot;hubspot_owner_id&quot;]</p>
+<p>}</p>
+<p><code>`</code></p>
+<p>Use <code>&quot;objectType&quot;: &quot;DEAL&quot;</code> with properties like <code>dealname</code>, <code>dealstage</code>, <code>amount</code> and <code>closedate</code> for deals. List the properties explicitly. That keeps the columns the same every week and the file small.</p>
+<h3>3. Poll and download</h3>
+<p>The POST returns a task ID. Check the task&#x27;s status with a <code>GET</code> until it finishes, then download the file from the result link. In Python:</p>
+<p><code>`</code>python</p>
+<p>import os, time, requests, datetime</p>
+<p>H = {&quot;Authorization&quot;: f&quot;Bearer {os.environ[&#x27;HUBSPOT_TOKEN&#x27;]}&quot;}</p>
+<p>API = &quot;https://api.hubapi.com/crm/v3/exports/export/async&quot;</p>
+<p>body = {&quot;exportType&quot;:&quot;VIEW&quot;,&quot;exportName&quot;:&quot;weekly-contacts&quot;,&quot;format&quot;:&quot;CSV&quot;,</p>
+<p>        &quot;language&quot;:&quot;EN&quot;,&quot;objectType&quot;:&quot;CONTACT&quot;,</p>
+<p>        &quot;objectProperties&quot;:[&quot;email&quot;,&quot;firstname&quot;,&quot;lastname&quot;,&quot;lifecyclestage&quot;]}</p>
+<p>task = requests.post(API, json=body, headers=H).json()[&quot;id&quot;]</p>
+<p>while True:</p>
+<p>    s = requests.get(f&quot;{API}/tasks/{task}/status&quot;, headers=H).json()</p>
+<p>    if s[&quot;status&quot;] == &quot;COMPLETE&quot;:</p>
+<p>        break</p>
+<p>    time.sleep(10)</p>
+<p>data = requests.get(s[&quot;result&quot;]).content</p>
+<p>open(f&quot;hubspot-contacts-{datetime.date.today()}.zip&quot;, &quot;wb&quot;).write(data)</p>
+<p><code>`</code></p>
+<p>The download may come as a zip, depending on the export. Unzip it in the script if you want the CSV directly.</p>
+<h3>4. Schedule it</h3>
+<ul><li><strong>cron:</strong> <code>0 6 * * 1 /usr/bin/python3 /opt/exports/hubspot_export.py</code> runs it every Monday at 06:00.</li><li><strong>Windows Task Scheduler:</strong> create a weekly trigger that runs the script.</li><li><strong>GitHub Actions:</strong> a workflow with <code>on: schedule: - cron: &quot;0 6 * * 1&quot;</code> and the token stored in repository secrets.</li></ul>
+<h3>5. Deliver it</h3>
+<p>Save the file into a folder synced to Google Drive or Dropbox, or upload it with that service&#x27;s API. Put the date in the filename so older weeks are never overwritten.</p>
+<h2>Pitfalls</h2>
+<ul><li><strong>Permissions.</strong> Exports fail without export rights, and with OAuth the scope needs a Super Admin.</li><li><strong>Silent failures.</strong> An expired or revoked token stops the job without any warning. Send yourself an alert when a run fails or no new file appears.</li><li><strong>Property names vs. labels.</strong> The API uses internal names (<code>lifecyclestage</code>) while the UI shows labels (&quot;Lifecycle Stage&quot;). Keep this in mind if you compare against manual exports.</li><li><strong>All properties.</strong> Exporting every property produces very wide files that change whenever someone adds a field. Pick a fixed list.</li><li><strong>Personal data.</strong> Contact exports contain personal data. Store them in an access-controlled location and decide how long you keep them.</li></ul>
+<h2>Where Sundayfile fits</h2>
+<p>We make Sundayfile. It does <strong>not</strong> run scheduled exports or connect to HubSpot. If you already have HubSpot contacts or deals CSVs, whether from the Export button or from a script like this one, you can drop them in. It detects the export type, maps common column names to one fixed layout, keeps a profile for each client and gives you a clean <code>client-type-date.csv</code>. Your files then have the same columns every time, even when the raw exports differ.</p></article><a class="cta" href="https://tuckertooling.com/sundayfile/?ref=guide">Try it</a></body></html>
