@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Settings · Sundayfile prototype</title>
+<link rel="stylesheet" href="styles.css">
+<script src="lib/csv.js" defer></script>
+<script src="lib/store.js" defer></script>
+<script src="lib/license.js" defer></script>
+<script src="app.js" defer></script>
+</head>
+<body data-page="settings">
+<a class="skip-link" href="#main">Skip to content</a>
+<div class="banner banner-sticky"><div class="banner-inner"><p>Prototype with sample data. Nothing here connects to real accounts.</p></div></div>
+<header class="topbar"><div class="topbar-inner">
+  <a class="wordmark" href="app.html">Sundayfile</a>
+  <a class="toplink" href="app.html">Clients</a>
+</div></header>
+
+<main id="main" class="wrap narrow">
+  <h1>Settings</h1>
+  <form id="settings-form" novalidate>
+    <section class="card" aria-labelledby="plan-h">
+      <h2 id="plan-h" style="font-size:1.125rem">Plan</h2>
+      <p style="margin:0">Agency <span class="num">· $49/month</span></p>
+      <p class="muted num">3 of 5 client workspaces used</p>
+      <button type="button" class="btn btn-secondary" id="change-plan">Change plan</button>
+      <p class="small muted" style="margin:.5rem 0 0">Sample plan. Nothing is billed in this prototype.</p>
+    </section>
+
+    <section class="card" aria-labelledby="alerts-h">
+      <h2 id="alerts-h" style="font-size:1.125rem">Alerts</h2>
+      <label class="check-row"><input type="checkbox" id="alert-on" checked> Email me if an export fails</label>
+      <div class="field">
+        <label for="alert-email">Alert email</label>
+        <input class="input" type="email" id="alert-email" autocomplete="email" value="name@agency.com" data-check="email" data-empty="Enter an email address like name@agency.com." data-help="alert-help" aria-describedby="alert-help">
+        <p class="help" id="alert-help">We will name the client and the cause in the email.</p>
+      </div>
+    </section>
+
+    <section class="card" aria-labelledby="acc-h">
+      <h2 id="acc-h" style="font-size:1.125rem">Connected accounts</h2>
+      <ul class="account-list">
+        <li><span>HubSpot · name@agency.com</span>
+          <button type="button" class="btn-text btn-danger-text" data-confirm="Disconnect HubSpot" data-title="Disconnect HubSpot? Exports will stop."
+            data-body="Clients that use HubSpot will show a failed export until you reconnect." data-done="HubSpot is disconnected.">Disconnect<span class="sr-only"> HubSpot</span></button></li>
+        <li><span>Trello · name@agency.com</span>
+          <button type="button" class="btn-text btn-danger-text" data-confirm="Disconnect Trello" data-title="Disconnect Trello? Exports will stop."
+            data-body="Clients that use Trello will show a failed export until you reconnect." data-done="Trello is disconnected.">Disconnect<span class="sr-only"> Trello</span></button></li>
+        <li><span>Google Drive · name@agency.com</span>
+          <button type="button" class="btn-text btn-danger-text" data-confirm="Disconnect Drive" data-title="Disconnect Google Drive? Files will not be saved."
+            data-body="Nothing is deleted from Drive. Exports pause until you reconnect." data-done="Google Drive is disconnected.">Disconnect<span class="sr-only"> Google Drive</span></button></li>
+      </ul>
+    </section>
+
+    <section class="card" aria-labelledby="data-h">
+      <h2 id="data-h" style="font-size:1.125rem">Your data</h2>
+      <p class="small muted" style="margin-top:0">Everything is stored in this browser. A backup is a JSON file you keep yourself.</p>
+      <div class="actions">
+        <button type="button" class="btn btn-secondary" id="backup-btn">Download backup</button>
+      </div>
+      <div class="field">
+        <label for="restore-input">Restore from a backup</label>
+        <input class="input" type="file" id="restore-input" accept=".json,application/json" data-help="restore-help" aria-describedby="restore-help">
+        <p class="help" id="restore-help">Restoring replaces the clients and files currently in this browser.</p>
+      </div>
+      <p class="error" id="restore-error" role="alert" hidden></p>
+      <button type="button" class="btn-text btn-danger-text" id="clear-btn">Clear all data</button>
+    </section>
+
+    <div class="save-bar"><button type="submit" class="btn btn-primary" id="save">Save changes</button></div>
+  </form>
+</main>
+</body>
+</html>
