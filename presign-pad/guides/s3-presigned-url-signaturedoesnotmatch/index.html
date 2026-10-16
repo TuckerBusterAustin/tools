@@ -1,0 +1,50 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>How to fix SignatureDoesNotMatch on an S3 presigned URL</title>
+<meta name="description" content="A step-by-step checklist for finding out why an S3 presigned URL returns SignatureDoesNotMatch or AccessDenied, with curl commands to test each cause.">
+<link rel="canonical" href="https://tuckertooling.com/presign-pad/guides/s3-presigned-url-signaturedoesnotmatch/">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23635bff'/%3E%3Ctext x='32' y='44' font-size='36' text-anchor='middle' fill='white' font-family='system-ui,sans-serif' font-weight='bold'%3EH%3C/text%3E%3C/svg%3E">
+<meta property="og:type" content="website">
+<meta property="og:title" content="How to fix SignatureDoesNotMatch on an S3 presigned URL">
+<meta property="og:description" content="A step-by-step checklist for finding out why an S3 presigned URL returns SignatureDoesNotMatch or AccessDenied, with curl commands to test each cause.">
+<meta property="og:url" content="https://tuckertooling.com/presign-pad/guides/s3-presigned-url-signaturedoesnotmatch/">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="How to fix SignatureDoesNotMatch on an S3 presigned URL">
+<meta name="twitter:description" content="A step-by-step checklist for finding out why an S3 presigned URL returns SignatureDoesNotMatch or AccessDenied, with curl commands to test each cause."><style>:root{--accent:#4f46e5;--ink:#111827;--muted:#5b6170;--line:#e5e7eb}*{box-sizing:border-box} body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;color:var(--ink);line-height:1.7;font-size:18px}nav{border-bottom:1px solid var(--line)} nav div{max-width:760px;margin:0 auto;padding:18px 24px;display:flex;justify-content:space-between;font-size:15px}nav a{color:var(--muted);text-decoration:none} nav a.home{color:var(--ink);font-weight:700}main,article{max-width:760px;margin:0 auto;padding:40px 24px 64px}h1{font-size:clamp(30px,5vw,44px);line-height:1.15;letter-spacing:-.02em}h2{margin-top:2em;letter-spacing:-.01em} a{color:var(--accent)}code{background:#f3f4f6;padding:1px 5px;border-radius:4px}a.cta{display:inline-block;margin:28px 0;padding:13px 22px;background:var(--accent);color:#fff;border-radius:10px;text-decoration:none;font-weight:600}</style></head><body><nav><div><a class="home" href="https://tuckertooling.com/">Tucker Tooling</a><a href="https://tuckertooling.com/presign-pad/">The tool</a></div></nav><article><h1>How to fix SignatureDoesNotMatch on an S3 presigned URL</h1><h2>What the error means</h2>
+<p>A presigned URL carries its signature in the query string: <code>X-Amz-Algorithm</code>, <code>X-Amz-Credential</code>, <code>X-Amz-Date</code>, <code>X-Amz-Expires</code>, <code>X-Amz-SignedHeaders</code> and <code>X-Amz-Signature</code>. When S3 receives the request, it builds the signature again from what you actually sent. If its result differs from <code>X-Amz-Signature</code>, you get <code>SignatureDoesNotMatch</code>.</p>
+<p>The signature itself is almost never the problem. The problem is that the request you send isn&#x27;t the request that was signed. Work through the causes below in order. The first two cover most cases.</p>
+<h2>Step 1: Test the URL in isolation with curl</h2>
+<p>Take your browser, frontend code and upload library out of the picture first. Copy the URL exactly as it was generated and wrap it in single quotes so the shell doesn&#x27;t touch the <code>&amp;</code> characters:</p>
+<p><code>`</code>bash</p>
+<p>curl -v &#x27;https://my-bucket.s3.us-east-1.amazonaws.com/report.pdf?X-Amz-Algorithm=...&amp;X-Amz-Signature=...&#x27;</p>
+<p>curl -v -X PUT --upload-file ./report.pdf \</p>
+<p>  -H &#x27;Content-Type: application/pdf&#x27; \</p>
+<p>  &#x27;https://my-bucket.s3.us-east-1.amazonaws.com/report.pdf?X-Amz-Algorithm=...&#x27;</p>
+<p><code>`</code></p>
+<p>If curl works and your app doesn&#x27;t, the URL is fine. Your client is changing the request.</p>
+<h2>Step 2: Check the signed headers</h2>
+<p>Open the URL and read <code>X-Amz-SignedHeaders</code>. Every header listed there must be sent, with the same value used at signing time. A presigned URL holds only the host, path and query parameters, so S3 can&#x27;t fill in a header you forgot to send.</p>
+<p>The most common case is <strong>Content-Type on PUT uploads</strong>. If your server passed <code>ContentType: &#x27;image/png&#x27;</code> when it generated the URL, the client must send <code>Content-Type: image/png</code> exactly. AWS&#x27;s own troubleshooting article calls this out (<a href="https://www.repost.aws/knowledge-center/s3-presigned-url-signature-mismatch">AWS re:Post</a>). Watch for these cases:</p>
+<ul><li><code>fetch</code> or axios adding <code>Content-Type</code> automatically when you pass a <code>Blob</code>, <code>File</code> or JSON body.</li><li><code>multipart/form-data</code> uploads. A presigned PUT expects the raw file bytes as the body, not a form.</li><li>Charset suffixes such as <code>text/plain;charset=UTF-8</code> when you signed <code>text/plain</code>.</li><li>Signing with <code>content-length</code> or <code>content-md5</code> and then sending a different body.</li></ul>
+<p>The fix: either send exactly the signed value, or stop signing that header and let the client send whatever it wants.</p>
+<h2>Step 3: Check that the URL arrived intact</h2>
+<p>The signature covers the path and query string byte for byte. These all break it:</p>
+<ul><li>Decoding or re-encoding the URL, for example turning <code>%2F</code> into <code>/</code> or <code>+</code> into a space in the object key.</li><li>Template engines or JSON serializers that escape <code>&amp;</code> as <code>&amp;amp;</code> or <code>&amp;</code>.</li><li>Proxies, CDNs or link-preview tools that rewrite or reorder query parameters.</li><li>Keys with spaces or non-ASCII characters that were encoded differently at signing and at request time.</li></ul>
+<p>Log the URL right after generation and again right before the request, then diff the two.</p>
+<h2>Step 4: Check region, endpoint and credentials</h2>
+<ul><li><strong>Region.</strong> The region in <code>X-Amz-Credential</code> (for example <code>.../20261016/eu-west-1/s3/aws4_request</code>) must match the bucket&#x27;s region. For Regions launched after March 20, 2019, AWS says you must specify the Region and endpoint explicitly when signing (<a href="https://docs.aws.amazon.com/cli/latest/reference/s3/presign.html">AWS CLI reference</a>).</li><li><strong>Endpoint style.</strong> Signing for a virtual-hosted URL and then calling a path-style one (or the reverse) changes the canonical request.</li><li><strong>Keys.</strong> A wrong secret key or a stale session token gives the same error. If you signed with temporary credentials, <code>X-Amz-Security-Token</code> must be present.</li></ul>
+<h2>Step 5: Check time and expiry</h2>
+<p>Expiry problems usually show up as <code>AccessDenied</code> with &quot;Request has expired&quot; rather than a signature mismatch, but check them anyway:</p>
+<ul><li><code>X-Amz-Date</code> plus <code>X-Amz-Expires</code> (in seconds) must still be in the future.</li><li>With the AWS CLI or SDKs, the maximum lifetime is 7 days (604800 seconds). In the S3 console it is 12 hours (<a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/ShareObjectPreSignedURL.html">AWS docs</a>).</li><li>A URL signed with temporary credentials (an IAM role or STS) stops working when those credentials expire, even if <code>X-Amz-Expires</code> is longer.</li><li>The signing machine&#x27;s clock must be accurate. AWS lists clock sync as one of its checks.</li></ul>
+<h2>Generate a known-good URL to compare against</h2>
+<p>When you&#x27;re stuck, generate a URL with the AWS CLI and try it:</p>
+<p><code>`</code>bash</p>
+<p>aws s3 presign s3://my-bucket/report.pdf --expires-in 3600 --region us-east-1</p>
+<p><code>`</code></p>
+<p>This presigns a GET only. If the CLI URL works and yours doesn&#x27;t, compare the query parameters one by one. The difference usually points straight to the cause.</p>
+<h2>Quick checklist</h2>
+<p>1. Does it work in curl with the URL quoted? If yes, your client is the problem.</p>
+<p>2. Are all headers in <code>X-Amz-SignedHeaders</code> sent with identical values?</p>
+<p>3. Is the URL byte-for-byte identical to what was generated?</p>
+<p>4. Do the region and endpoint style match the bucket?</p>
+<p>5. Are the URL and the signing credentials both still valid?</p>
+<h2>Tools that help</h2>
+<p><a href="https://www.postman.com/">Postman</a> can sign AWS requests and place the signature in headers or in the URL (<a href="https://learning.postman.com/docs/sending-requests/authorization/aws-signature">Postman docs</a>), which is handy for side-by-side comparison. We&#x27;re building Presign Pad, a browser extension that will break a presigned URL into its signed parts and highlight which one doesn&#x27;t match your request. It&#x27;s coming soon. Until then, the curl steps above will get you there.</p></article><a class="cta" href="https://tuckertooling.com/presign-pad/?ref=guide">Try it</a></body></html>
