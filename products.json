@@ -78,6 +78,11 @@
   },
   "sundayfile": {
     "bucket": "client_data",
+    "guides": [
+      "https://tuckertooling.com/sundayfile/guides/automate-trello-csv-export/",
+      "https://tuckertooling.com/sundayfile/guides/combine-hubspot-trello-csv/",
+      "https://tuckertooling.com/sundayfile/guides/hubspot-scheduled-csv-export/"
+    ],
     "has_app": true,
     "image": true,
     "price": "$49/month",
