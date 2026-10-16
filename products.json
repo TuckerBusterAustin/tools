@@ -37,9 +37,12 @@
   },
   "rowdrop": {
     "has_app": true,
+    "image": true,
+    "price": "",
+    "stage": "soon",
     "tagline": "Turn the HubSpot CSV you export every week into a repeatable, scheduled job.",
     "title": "Rowdrop: scheduled CSV/Excel file jobs for HubSpot exports",
-    "updated": "2026-10-15"
+    "updated": "2026-10-16"
   },
   "sundayfile": {
     "has_app": true,
