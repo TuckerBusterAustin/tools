@@ -1,0 +1,53 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>How to check when an SSL certificate expires</title>
+<meta name="description" content="Three ways to find an SSL certificate&#x27;s expiry date: in the browser, with one openssl command, and with a short script that checks a whole list of…">
+<link rel="canonical" href="https://tuckertooling.com/lapsewatch/guides/check-ssl-certificate-expiry-date/">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23635bff'/%3E%3Ctext x='32' y='44' font-size='36' text-anchor='middle' fill='white' font-family='system-ui,sans-serif' font-weight='bold'%3EH%3C/text%3E%3C/svg%3E">
+<meta property="og:type" content="website">
+<meta property="og:title" content="How to check when an SSL certificate expires">
+<meta property="og:description" content="Three ways to find an SSL certificate&#x27;s expiry date: in the browser, with one openssl command, and with a short script that checks a whole list of…">
+<meta property="og:url" content="https://tuckertooling.com/lapsewatch/guides/check-ssl-certificate-expiry-date/">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="How to check when an SSL certificate expires">
+<meta name="twitter:description" content="Three ways to find an SSL certificate&#x27;s expiry date: in the browser, with one openssl command, and with a short script that checks a whole list of…"><style>:root{--accent:#4f46e5;--ink:#111827;--muted:#5b6170;--line:#e5e7eb}*{box-sizing:border-box} body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;color:var(--ink);line-height:1.7;font-size:18px}nav{border-bottom:1px solid var(--line)} nav div{max-width:760px;margin:0 auto;padding:18px 24px;display:flex;justify-content:space-between;font-size:15px}nav a{color:var(--muted);text-decoration:none} nav a.home{color:var(--ink);font-weight:700}main,article{max-width:760px;margin:0 auto;padding:40px 24px 64px}h1{font-size:clamp(30px,5vw,44px);line-height:1.15;letter-spacing:-.02em}h2{margin-top:2em;letter-spacing:-.01em} a{color:var(--accent)}code{background:#f3f4f6;padding:1px 5px;border-radius:4px}a.cta{display:inline-block;margin:28px 0;padding:13px 22px;background:var(--accent);color:#fff;border-radius:10px;text-decoration:none;font-weight:600}</style></head><body><nav><div><a class="home" href="https://tuckertooling.com/">Tucker Tooling</a><a href="https://tuckertooling.com/lapsewatch/">The tool</a></div></nav><article><h1>How to check when an SSL certificate expires</h1><h2>The short answer</h2>
+<p>Every SSL/TLS certificate has a <strong>&quot;Not After&quot;</strong> date (also called &quot;Valid to&quot; or &quot;Expires on&quot;). When that date passes, browsers show a full-page warning and the site gets marked &quot;Not Secure&quot;. You can read the date in your browser, with <code>openssl</code> on the command line, or with a short script when you have many domains to check.</p>
+<p>This matters more each year. Under the CA/Browser Forum&#x27;s ballot SC-081, the longest a public certificate can be valid dropped from 398 days to 200 days on 15 March 2026. It drops to 100 days in March 2027 and to 47 days in March 2029 (<a href="https://www.appviewx.com/blogs/certificate-validity-period-47-days/">summary of the timeline</a>). That means more renewals, and more chances for one of them to fail.</p>
+<h2>Method 1: In the browser (one site, no tools)</h2>
+<p>1. Open the site using <code>https://</code>.</p>
+<p>2. Click the site-information icon to the left of the address bar.</p>
+<p>3. Choose the connection or security entry, then the option to view the certificate. The wording differs between browsers and versions.</p>
+<p>4. Find <strong>Validity</strong> and read the <strong>Expires on</strong> / <strong>Not After</strong> date.</p>
+<p>This is fine for one site. It gets slow past three or four, and it only shows the certificate *your* browser received.</p>
+<h2>Method 2: One openssl command</h2>
+<p>On macOS, Linux or WSL:</p>
+<p><code>`</code>bash</p>
+<p>echo | openssl s_client -connect example.com:443 -servername example.com 2&gt;/dev/null \</p>
+<p>  | openssl x509 -noout -enddate</p>
+<p><code>`</code></p>
+<p>The output looks like this:</p>
+<p><code>`</code></p>
+<p>notAfter=Dec  1 12:00:00 2026 GMT</p>
+<p><code>`</code></p>
+<p>Notes:</p>
+<ul><li><code>-servername</code> sends SNI. Leave it out on shared hosting and you may get the server&#x27;s default certificate instead of your client&#x27;s.</li><li><code>echo |</code> closes the connection so the command doesn&#x27;t hang.</li><li>For a pass/fail check, use <code>-checkend</code> with a number of seconds. This exits with status 1 if the certificate expires within 30 days:</li></ul>
+<p><code>`</code>bash</p>
+<p>echo | openssl s_client -connect example.com:443 -servername example.com 2&gt;/dev/null \</p>
+<p>  | openssl x509 -noout -checkend 2592000 &amp;&amp; echo OK || echo &quot;Expires within 30 days&quot;</p>
+<p><code>`</code></p>
+<h2>Method 3: Check a whole list of domains</h2>
+<p>Put one domain per line in <code>domains.txt</code>, then run:</p>
+<p><code>`</code>bash</p>
+<p>while read -r d; do</p>
+<p>  end=$(echo | timeout 10 openssl s_client -connect &quot;$d:443&quot; -servername &quot;$d&quot; 2&gt;/dev/null \</p>
+<p>        | openssl x509 -noout -enddate 2&gt;/dev/null | cut -d= -f2)</p>
+<p>  if [ -z &quot;$end&quot; ]; then echo &quot;$d, ERROR&quot;; continue; fi</p>
+<p>  days=$(( ( $(date -d &quot;$end&quot; +%s) - $(date +%s) ) / 86400 ))</p>
+<p>  echo &quot;$d, $(date -d &quot;$end&quot; +%F), $days days&quot;</p>
+<p>done &lt; domains.txt | sort -t, -k3 -n</p>
+<p><code>`</code></p>
+<p>This prints <code>domain, YYYY-MM-DD, N days</code>, with the soonest expiry first. The <code>date -d</code> syntax is GNU (Linux/WSL). On macOS, install GNU coreutils and use <code>gdate</code>, or rewrite the date step with <code>date -j -f</code>.</p>
+<p><strong>Pitfall:</strong> don&#x27;t remove the empty-result check. If a domain doesn&#x27;t answer, <code>$end</code> is empty, and GNU <code>date -d &quot;&quot;</code> quietly returns today&#x27;s date. Without the check, a dead site would look like it expires today, not like an error.</p>
+<h2>Common mistakes</h2>
+<ul><li><strong>Checking only the apex domain.</strong> <code>example.com</code> and <code>www.example.com</code> can serve different certificates. So can subdomains like <code>shop.</code> or <code>mail.</code>. Check each hostname people actually visit.</li><li><strong>Trusting the hosting panel alone.</strong> A panel can show a renewed certificate while the web server still serves the old one because it was never reloaded. The command-line check shows what visitors really get.</li><li><strong>Behind a CDN or proxy.</strong> Visitors see the proxy&#x27;s certificate, not your origin&#x27;s. Check both if the origin&#x27;s certificate matters to you.</li><li><strong>Confusing &quot;days left&quot; with &quot;safe&quot;.</strong> Auto-renewal usually starts about 30 days before expiry. If a certificate is under 30 days and hasn&#x27;t renewed yet, renewal may be failing. Investigate then, not on the last day.</li><li><strong>Time zones.</strong> The date is in GMT/UTC. If the deadline is close, count it in UTC.</li></ul>
+<h2>Turning the dates into a routine</h2>
+<p>Checking once tells you today&#x27;s status. To keep sites from lapsing, you need the list somewhere you&#x27;ll look at, sorted by days left, with reminders before each date. Let&#x27;s Encrypt <a href="https://letsencrypt.org/2025/06/26/expiration-notification-service-has-ended.html">stopped sending expiry reminder emails on 4 June 2025</a>, so for many sites that reminder now has to come from you.</p>
+<p>We make Lapsewatch, one option for that step. Paste lines like <code>example.com, 2026-12-01</code> (the script above gives you this format) into its free checker. You get a table sorted by days left, with each row marked Expired, Urgent (7 days or less), Soon (30 days or less) or OK. It doesn&#x27;t connect to your sites. It works from the dates you give it. Saved lists are free for up to 5 domains. The paid plans add a calendar file with reminders 30, 14 and 7 days before each expiry.</p></article><a class="cta" href="https://tuckertooling.com/lapsewatch/?ref=guide">Try it</a></body></html>
