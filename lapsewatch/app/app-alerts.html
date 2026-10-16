@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Alerts (preview) | Lapsewatch</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to main content</a>
+<header class="site-header">
+  <div class="wrap">
+    <a class="wordmark" href="index.html">Lapsewatch</a>
+    <span class="tag header-tag">Preview</span>
+    <nav class="site-nav" id="site-nav" aria-label="Main">
+      <a href="index.html#checker">Checker</a>
+      <a href="index.html#pricing">Pricing</a>
+      <a href="index.html#faq">FAQ</a>
+      <span class="tag nav-menu-tag">Preview</span>
+    </nav>
+    <div class="header-actions">
+      <a class="btn btn-secondary" href="index.html#waitlist" aria-label="Join the waitlist"><span class="btn-label-short">Waitlist</span><span class="btn-label-long">Join the waitlist</span></a>
+      <button class="menu-btn" id="menu-btn" type="button" aria-expanded="false" aria-controls="site-nav">Menu</button>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+  <div class="wrap">
+    <nav class="app-tabs" aria-label="App">
+      <a href="app-domains.html">Domains</a>
+      <a href="app-alerts.html" aria-current="page">Alerts</a>
+    </nav>
+    <div class="app-bar">
+      <div>
+        <h1>Alerts</h1>
+        <p class="small">Preview of the future product. Lapsewatch only reminds you. Renew the certificate yourself or ask your host. This version sends no emails or Slack messages. Your list is on the <a href="app-domains.html">Domains</a> screen; the <a href="ssl-expiry-checker.html">free checker</a> needs no list.</p>
+      </div>
+    </div>
+
+    <p class="banner" style="margin-top:16px">Email and Slack delivery are not in this version; use the reminder text or .ics file below.</p>
+
+    <section class="card" aria-labelledby="thr-title" style="margin-top:24px">
+      <h2 id="thr-title" style="font-size:20px">Close to lapsing</h2>
+      <p class="small">Your saved domains grouped by the 30, 14 and 7 day marks, with days left in brackets. Server-side checks, real email and Slack delivery, team sharing and the weekly summary email are not in this version.</p>
+      <div id="threshold-view" aria-live="polite"></div>
+    </section>
+
+    <section class="card" aria-labelledby="pro-title" style="margin-top:24px">
+      <h2 id="pro-title" style="font-size:20px">Reminder text and calendar file <span class="tag">Pro</span></h2>
+      <p class="small">Make ready-to-paste Slack or email text for every domain with 30 days or fewer left, soonest first. Or download a calendar file (.ics) with an all-day alert at 30, 14 and 7 days before each expiry. You paste or import it yourself; Lapsewatch sends nothing.</p>
+      <p class="small pro-note"><strong>Unlock with Pro</strong> to use reminder text and the calendar file. Pro is not on sale yet.</p>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:16px">
+        <button class="btn btn-secondary" type="button" id="make-slack" data-pro disabled aria-disabled="true">Make Slack text</button>
+        <button class="btn btn-secondary" type="button" id="make-email" data-pro disabled aria-disabled="true">Make email text</button>
+        <button class="btn btn-secondary" type="button" id="download-ics" data-pro disabled aria-disabled="true">Download .ics file</button>
+      </div>
+      <div class="field" id="reminder-wrap" hidden style="margin-top:16px">
+        <label for="reminder-text">Reminder text, ready to copy</label>
+        <textarea id="reminder-text" rows="8" readonly></textarea>
+      </div>
+      <p class="banner" id="ics-msg" role="status" hidden style="margin-top:16px"></p>
+    </section>
+  </div>
+</main>
+<div style="height:48px"></div>
+<footer class="site-footer">
+  <div class="wrap">
+    <p class="small" style="margin:0">Lapsewatch is coming soon. It only reminds you; it does not renew certificates.</p>
+    <div id="unlock-box"></div>
+  </div>
+</footer>
+<div id="toast-region"></div>
+<script src="lib/domains.js"></script>
+<script src="lib/store.js"></script>
+<script src="lib/exports.js"></script>
+<script src="lib/license.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
