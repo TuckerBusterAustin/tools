@@ -1,0 +1,57 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>How to combine HubSpot and Trello data into one CSV</title>
+<meta name="description" content="Agencies often keep deals in HubSpot and client work in Trello, with no shared field. This guide shows how to link the two and produce one weekly CSV…">
+<link rel="canonical" href="https://tuckertooling.com/sundayfile/guides/combine-hubspot-trello-csv/">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23635bff'/%3E%3Ctext x='32' y='44' font-size='36' text-anchor='middle' fill='white' font-family='system-ui,sans-serif' font-weight='bold'%3EH%3C/text%3E%3C/svg%3E">
+<meta property="og:type" content="website">
+<meta property="og:title" content="How to combine HubSpot and Trello data into one CSV">
+<meta property="og:description" content="Agencies often keep deals in HubSpot and client work in Trello, with no shared field. This guide shows how to link the two and produce one weekly CSV…">
+<meta property="og:url" content="https://tuckertooling.com/sundayfile/guides/combine-hubspot-trello-csv/">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="How to combine HubSpot and Trello data into one CSV">
+<meta name="twitter:description" content="Agencies often keep deals in HubSpot and client work in Trello, with no shared field. This guide shows how to link the two and produce one weekly CSV…"><style>:root{--accent:#4f46e5;--ink:#111827;--muted:#5b6170;--line:#e5e7eb}*{box-sizing:border-box} body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;color:var(--ink);line-height:1.7;font-size:18px}nav{border-bottom:1px solid var(--line)} nav div{max-width:760px;margin:0 auto;padding:18px 24px;display:flex;justify-content:space-between;font-size:15px}nav a{color:var(--muted);text-decoration:none} nav a.home{color:var(--ink);font-weight:700}main,article{max-width:760px;margin:0 auto;padding:40px 24px 64px}h1{font-size:clamp(30px,5vw,44px);line-height:1.15;letter-spacing:-.02em}h2{margin-top:2em;letter-spacing:-.01em} a{color:var(--accent)}code{background:#f3f4f6;padding:1px 5px;border-radius:4px}a.cta{display:inline-block;margin:28px 0;padding:13px 22px;background:var(--accent);color:#fff;border-radius:10px;text-decoration:none;font-weight:600}</style></head><body><nav><div><a class="home" href="https://tuckertooling.com/">Tucker Tooling</a><a href="https://tuckertooling.com/sundayfile/">The tool</a></div></nav><article><h1>How to combine HubSpot and Trello data into one CSV</h1><h2>Why this is harder than it looks</h2>
+<p>HubSpot knows a client as a <strong>company</strong> with <strong>deals</strong>. Trello knows the same client as a <strong>board</strong>, a <strong>list</strong> or a <strong>label</strong>. Neither tool knows the other exists, so exporting both and pasting them into one sheet won&#x27;t line them up. You need a <strong>join key</strong>: a value that appears in both systems and means &quot;this client&quot;.</p>
+<p>If you get the join key right, the rest is plumbing. If you get it wrong, the combined CSV will look fine and still be wrong.</p>
+<h2>Step 1: Pick a join key</h2>
+<p>Here are some common choices, from most to least reliable:</p>
+<p>1. <strong>Client code in both places.</strong> Add a custom company property in HubSpot (for example <code>client_code = ACME</code>), and start each Trello board name with the same code (<code>ACME – Website retainer</code>).</p>
+<p>2. <strong>Company domain.</strong> HubSpot stores a <code>domain</code> on companies. Put the same domain in the Trello board description or in a custom field.</p>
+<p>3. <strong>Exact client name.</strong> This is the easiest to set up and the easiest to break: &quot;Acme Inc&quot; and &quot;Acme, Inc.&quot; won&#x27;t match.</p>
+<p>Whichever you choose, write it down in your onboarding checklist so new clients are set up the same way.</p>
+<h2>Step 2: Export each side to a clean table</h2>
+<p>You need two tables with one row per record and the join key in its own column.</p>
+<p><strong>HubSpot deals.</strong> Use a deals view export or the API (<code>/crm/v3/objects/deals</code>). Deals don&#x27;t carry the company name themselves, so you have to pull the associated company and its <code>client_code</code>. You can do that with HubSpot&#x27;s associations, or by including the associated company in a report. Keep <code>dealname</code>, <code>amount</code>, <code>dealstage</code>, <code>closedate</code> and <code>client_code</code>.</p>
+<p><strong>Trello cards.</strong> Use a board&#x27;s CSV export (Premium Workspaces only, according to <a href="https://support.atlassian.com/trello/docs/exporting-data-from-trello">Trello&#x27;s docs</a>) or the API (<code>/1/boards/{id}/cards</code>). Take the client code from the board name, for example the text before the first <code> – </code>. Keep the card name, list, due date, last activity and <code>client_code</code>.</p>
+<p>The guides [How to schedule an automatic HubSpot export to CSV](/hubspot-scheduled-csv-export) and [How to automate a Trello board export to CSV](/automate-trello-csv-export) include the scripts for both.</p>
+<h2>Step 3: Decide the shape of the combined file</h2>
+<p>This decision matters most. You have two reasonable choices.</p>
+<p><strong>A. One row per client (summary).</strong> This works best for account reviews.</p>
+<p><code>`</code></p>
+<p>client_code,open_deals,open_deal_value,open_cards,overdue_cards,last_trello_activity</p>
+<p>ACME,2,14000,17,3,2026-10-12</p>
+<p><code>`</code></p>
+<p><strong>B. One long table (stacked).</strong> This works best for filtering and pivot tables.</p>
+<p><code>`</code></p>
+<p>client_code,source,item,status,amount,due_or_close</p>
+<p>ACME,hubspot,Q4 retainer,contractsent,9000,2026-10-31</p>
+<p>ACME,trello,Homepage hero copy,In review,,2026-10-18</p>
+<p><code>`</code></p>
+<p>Avoid joining every deal to every card. If a client has 2 deals and 17 cards, a straight join produces 34 rows, the deal values get counted 17 times, and the totals become meaningless.</p>
+<h2>Step 4: Do the merge</h2>
+<p><strong>In Google Sheets.</strong> Load both exports into tabs named <code>hubspot</code> and <code>trello</code>. For the summary layout, list the unique client codes in a third tab and use <code>COUNTIFS</code> and <code>SUMIFS</code>:</p>
+<p><code>`</code></p>
+<p>=COUNTIFS(hubspot!E:E, A2, hubspot!C:C, &quot;&lt;&gt;closedwon&quot;)</p>
+<p>=SUMIFS(hubspot!B:B, hubspot!E:E, A2)</p>
+<p>=COUNTIFS(trello!E:E, A2)</p>
+<p><code>`</code></p>
+<p>Adjust the column letters to match your tabs.</p>
+<p><strong>In a script.</strong> If you&#x27;re already exporting with Apps Script, build the stacked layout in code. Give both arrays the same columns (<code>client_code, source, item, status, amount, date</code>), put them together, and write one CSV. Add the summary as a second file if you need it.</p>
+<h2>Step 5: Check it every time</h2>
+<ul><li><strong>Unmatched rows.</strong> List every HubSpot <code>client_code</code> that has no Trello board, and every board that has no HubSpot company. Usually that list is short and points to a typo or a missing setup step.</li><li><strong>Row counts.</strong> The deal rows in the combined file should equal the rows in the HubSpot export, and the same goes for Trello cards.</li><li><strong>Stage names.</strong> HubSpot exports deal stages by their internal IDs through the API. Map them to readable names once, in a small lookup table.</li><li><strong>Dates.</strong> HubSpot and Trello both use ISO-style timestamps, but time zones can move a due date by a day. Use one time zone for everything.</li></ul>
+<h2>Doing it without code</h2>
+<p>Automation tools such as <a href="https://zapier.com">Zapier</a> and <a href="https://www.make.com">Make</a> can write records from both apps into the same Google Sheet. That handles collecting the data. You still need the join key from Step 1 and the layout from Step 3, because no tool can guess which Trello board belongs to which HubSpot company.</p>
+<h2>Summary</h2>
+<p>1. Agree on one client code and put it in both systems.</p>
+<p>2. Export each tool to a clean table with that code as a column.</p>
+<p>3. Choose summary or stacked format, and never a straight deal-by-card join.</p>
+<p>4. Check for unmatched clients and matching row counts every week.</p>
+<p>We&#x27;re building <strong>Sundayfile</strong>, which will start with a scheduled weekly HubSpot CSV saved to Google Drive. Combining HubSpot with Trello isn&#x27;t something it does yet, so for now the steps above are the way to do it.</p></article><a class="cta" href="https://tuckertooling.com/sundayfile/?ref=guide">Try it</a></body></html>
