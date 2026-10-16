@@ -1,0 +1,78 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>How to check the meta tags on a web page</title>
+<meta name="description" content="Three quick ways to see a page&#x27;s title, meta description, canonical, viewport and Open Graph tags (View Source, browser DevTools and the command line)…">
+<link rel="canonical" href="https://tuckertooling.com/auditfold/guides/check-meta-tags-on-a-page/">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23635bff'/%3E%3Ctext x='32' y='44' font-size='36' text-anchor='middle' fill='white' font-family='system-ui,sans-serif' font-weight='bold'%3EH%3C/text%3E%3C/svg%3E">
+<meta property="og:type" content="website">
+<meta property="og:title" content="How to check the meta tags on a web page">
+<meta property="og:description" content="Three quick ways to see a page&#x27;s title, meta description, canonical, viewport and Open Graph tags (View Source, browser DevTools and the command line)…">
+<meta property="og:url" content="https://tuckertooling.com/auditfold/guides/check-meta-tags-on-a-page/">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="How to check the meta tags on a web page">
+<meta name="twitter:description" content="Three quick ways to see a page&#x27;s title, meta description, canonical, viewport and Open Graph tags (View Source, browser DevTools and the command line)…"><style>:root{--accent:#4f46e5;--ink:#111827;--muted:#5b6170;--line:#e5e7eb}*{box-sizing:border-box} body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;color:var(--ink);line-height:1.7;font-size:18px}nav{border-bottom:1px solid var(--line)} nav div{max-width:760px;margin:0 auto;padding:18px 24px;display:flex;justify-content:space-between;font-size:15px}nav a{color:var(--muted);text-decoration:none} nav a.home{color:var(--ink);font-weight:700}main,article{max-width:760px;margin:0 auto;padding:40px 24px 64px}h1{font-size:clamp(30px,5vw,44px);line-height:1.15;letter-spacing:-.02em}h2{margin-top:2em;letter-spacing:-.01em} a{color:var(--accent)}code{background:#f3f4f6;padding:1px 5px;border-radius:4px}a.cta{display:inline-block;margin:28px 0;padding:13px 22px;background:var(--accent);color:#fff;border-radius:10px;text-decoration:none;font-weight:600}</style></head><body><nav><div><a class="home" href="https://tuckertooling.com/">Tucker Tooling</a><a href="https://tuckertooling.com/auditfold/">The tool</a></div></nav><article><h1>How to check the meta tags on a web page</h1><p>Meta tags live in a page&#x27;s <code>&lt;head&gt;</code> and don&#x27;t show up on screen. You need to look at the HTML to check them. Here are three ways to do that, followed by what to look for once you can see them.</p>
+<h2>Method 1: View Source</h2>
+<p>This is the fastest way, and it works in any desktop browser.</p>
+<p>1. Open the page.</p>
+<p>2. Press <code>Ctrl+U</code> (Windows/Linux) or <code>Cmd+Option+U</code> (Mac), or type <code>view-source:</code> in front of the URL.</p>
+<p>3. Press <code>Ctrl+F</code> and search for <code>&lt;title</code>, <code>name=&quot;description&quot;</code>, <code>rel=&quot;canonical&quot;</code>, <code>name=&quot;viewport&quot;</code> and <code>og:</code>.</p>
+<p><strong>Limitation:</strong> View Source shows the HTML the server sent. If the site adds or changes tags with JavaScript, common on single-page apps, you won&#x27;t see those changes here.</p>
+<h2>Method 2: Browser DevTools</h2>
+<p>This shows the page as it is now, after JavaScript has run.</p>
+<p>1. Right-click the page and choose <strong>Inspect</strong> (or press <code>F12</code>).</p>
+<p>2. In the <strong>Elements</strong> panel, expand <code>&lt;head&gt;</code>.</p>
+<p>3. Press <code>Ctrl+F</code> inside the panel and search for the same strings as above.</p>
+<p>You can also run this in the <strong>Console</strong> to list every meta tag at once:</p>
+<p><code>`</code>js</p>
+<p>document.title;</p>
+<p>[...document.querySelectorAll(&#x27;meta&#x27;)].map(m =&gt;</p>
+<p>  <code>${m.name || m.getAttribute(&#x27;property&#x27;) || m.httpEquiv}: ${m.content}</code>);</p>
+<p>document.querySelector(&#x27;link[rel=&quot;canonical&quot;]&#x27;)?.href;</p>
+<p><code>`</code></p>
+<p>If Method 1 and Method 2 show different values, the tags are being set by JavaScript. Search engines may or may not see the JavaScript version straight away, so flag it.</p>
+<h2>Method 3: The command line</h2>
+<p>This is useful for checking many URLs, or for seeing exactly what a non-browser client gets:</p>
+<p><code>`</code>bash</p>
+<p>curl -sL https://example.com/page | grep -iE &#x27;&lt;title|&lt;meta|rel=&quot;canonical&quot;&#x27;</p>
+<p><code>`</code></p>
+<p><code>-L</code> follows redirects. Add <code>-A &quot;Mozilla/5.0&quot;</code> if the site serves different HTML to unknown user agents. On Windows PowerShell:</p>
+<p><code>`</code>powershell</p>
+<p>(Invoke-WebRequest https://example.com/page).Content -split &quot;`n&quot; |</p>
+<p>  Select-String -Pattern &#x27;&lt;title|&lt;meta|rel=&quot;canonical&quot;&#x27;</p>
+<p><code>`</code></p>
+<h2>What to look for</h2>
+<h3>Title</h3>
+<p><code>`</code>html</p>
+<p>&lt;title&gt;Emergency Plumber in Leeds | Smith &amp; Co&lt;/title&gt;</p>
+<p><code>`</code></p>
+<p>There should be exactly one. It should be specific to this page, with the subject first. Google may rewrite titles in results, but a clear title makes that less likely.</p>
+<h3>Meta description</h3>
+<p><code>`</code>html</p>
+<p>&lt;meta name=&quot;description&quot; content=&quot;24-hour plumbers covering Leeds...&quot;&gt;</p>
+<p><code>`</code></p>
+<p>It should be present, unique and written as a plain summary. Google can use it as the snippet under the result, though it sometimes picks other page text instead.</p>
+<h3>Canonical</h3>
+<p><code>`</code>html</p>
+<p>&lt;link rel=&quot;canonical&quot; href=&quot;https://example.com/services/plumbing&quot;&gt;</p>
+<p><code>`</code></p>
+<p>It should be a full absolute URL pointing to the preferred version of this page, usually itself. Watch for canonicals that point to the homepage, to <code>http://</code>, or to a staging domain, and for pages with two canonical tags.</p>
+<h3>Viewport</h3>
+<p><code>`</code>html</p>
+<p>&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1&quot;&gt;</p>
+<p><code>`</code></p>
+<p>Without it, phones show the desktop layout shrunk down. Treat a missing viewport tag as a serious finding.</p>
+<h3>Robots</h3>
+<p><code>`</code>html</p>
+<p>&lt;meta name=&quot;robots&quot; content=&quot;noindex&quot;&gt;</p>
+<p><code>`</code></p>
+<p>This isn&#x27;t always present, and that&#x27;s fine. But if you find <code>noindex</code> on a page that&#x27;s meant to rank, that&#x27;s the most urgent thing on the list. It&#x27;s a common leftover after a site launch.</p>
+<h3>Open Graph</h3>
+<p><code>`</code>html</p>
+<p>&lt;meta property=&quot;og:title&quot; content=&quot;...&quot;&gt;</p>
+<p>&lt;meta property=&quot;og:type&quot; content=&quot;website&quot;&gt;</p>
+<p>&lt;meta property=&quot;og:image&quot; content=&quot;https://example.com/share.jpg&quot;&gt;</p>
+<p>&lt;meta property=&quot;og:url&quot; content=&quot;https://example.com/page&quot;&gt;</p>
+<p><code>`</code></p>
+<p>These control the preview card when the link is shared. The <a href="https://ogp.me/">Open Graph protocol</a> defines title, type, image and url as the basic properties. Note that they use <code>property=</code>, not <code>name=</code>, which catches people out when searching. <code>og:image</code> should be an absolute URL.</p>
+<h2>Common pitfalls</h2>
+<ul><li><strong>Checking a cached or logged-in version.</strong> Use a private window, or <code>curl</code>, to see what the public gets.</li><li><strong>Searching for <code>name=&quot;og:title&quot;</code>.</strong> Open Graph uses <code>property</code>, so search for <code>og:</code> instead.</li><li><strong>Treating <code>keywords</code> meta as important.</strong> <code>&lt;meta name=&quot;keywords&quot;&gt;</code> is ignored by Google. Its presence or absence isn&#x27;t worth reporting.</li><li><strong>Assuming the CMS plugin got it right.</strong> SEO plugins and themes sometimes both write a title or canonical, leaving two. Always count them.</li></ul>
+<h2>Checking tags and getting a fix list</h2>
+<p>The methods above show you the tags, but deciding what&#x27;s wrong and how much it matters is still up to you. We make Auditfold, which takes a page&#x27;s pasted HTML, checks the title, meta description, headings, alt text, links, canonical, viewport and Open Graph tags, and returns a fix list ranked by importance in plain words. It&#x27;s one way to skip the manual pass. The browser methods above are free and always available.</p></article><a class="cta" href="https://tuckertooling.com/auditfold/?ref=guide">Try it</a></body></html>
