@@ -1,0 +1,50 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>SSL certificate expired, website says &quot;Not Secure&quot;: how to fix it</title>
+<meta name="description" content="Step-by-step fixes for a site showing a certificate warning after its SSL certificate expired, on cPanel shared hosting or a server running Certbot, plus…">
+<link rel="canonical" href="https://tuckertooling.com/lapsewatch/guides/ssl-expired-not-secure-fix/">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23635bff'/%3E%3Ctext x='32' y='44' font-size='36' text-anchor='middle' fill='white' font-family='system-ui,sans-serif' font-weight='bold'%3ES%3C/text%3E%3C/svg%3E">
+<meta property="og:type" content="website">
+<meta property="og:title" content="SSL certificate expired, website says &quot;Not Secure&quot;: how to fix it">
+<meta property="og:description" content="Step-by-step fixes for a site showing a certificate warning after its SSL certificate expired, on cPanel shared hosting or a server running Certbot, plus…">
+<meta property="og:url" content="https://tuckertooling.com/lapsewatch/guides/ssl-expired-not-secure-fix/">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="SSL certificate expired, website says &quot;Not Secure&quot;: how to fix it">
+<meta name="twitter:description" content="Step-by-step fixes for a site showing a certificate warning after its SSL certificate expired, on cPanel shared hosting or a server running Certbot, plus…"><style>:root{--accent:#4f46e5;--ink:#111827;--muted:#5b6170;--line:#e5e7eb}*{box-sizing:border-box} body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;color:var(--ink);line-height:1.7;font-size:18px}nav{border-bottom:1px solid var(--line)} nav div{max-width:760px;margin:0 auto;padding:18px 24px;display:flex;justify-content:space-between;font-size:15px}nav a{color:var(--muted);text-decoration:none} nav a.home{color:var(--ink);font-weight:700}main,article{max-width:760px;margin:0 auto;padding:40px 24px 64px}h1{font-size:clamp(30px,5vw,44px);line-height:1.15;letter-spacing:-.02em}h2{margin-top:2em;letter-spacing:-.01em} a{color:var(--accent)}code{background:#f3f4f6;padding:1px 5px;border-radius:4px}a.cta{display:inline-block;margin:28px 0;padding:13px 22px;background:var(--accent);color:#fff;border-radius:10px;text-decoration:none;font-weight:600}</style></head><body><nav><div><a class="home" href="https://tuckertooling.com/">Tucker Tooling</a><a href="https://tuckertooling.com/lapsewatch/">The tool</a></div></nav><article><h1>SSL certificate expired, website says &quot;Not Secure&quot;: how to fix it</h1><h2>First, confirm it&#x27;s really expiry</h2>
+<p>A &quot;Not Secure&quot; label or a full-page warning has a few possible causes. Check what you&#x27;re dealing with before changing anything:</p>
+<p><code>`</code>bash</p>
+<p>echo | openssl s_client -connect example.com:443 -servername example.com 2&gt;/dev/null \</p>
+<p>  | openssl x509 -noout -subject -enddate</p>
+<p><code>`</code></p>
+<ul><li><strong><code>notAfter</code> is in the past:</strong> the certificate expired. Follow the steps below.</li><li><strong><code>notAfter</code> is in the future, but the subject/name doesn&#x27;t match the domain:</strong> wrong certificate is being served (often a hosting default). This is a configuration problem, not expiry.</li><li><strong>The certificate is valid, and the page shows &quot;Not Secure&quot; only in the address bar, without a full-page warning:</strong> probably mixed content. The page loads images or scripts over <code>http://</code>. Fix those URLs.</li><li><strong>Only one visitor sees the error:</strong> check that their computer&#x27;s clock is right. A wrong system date makes valid certificates look expired.</li></ul>
+<h2>Fix on cPanel / shared hosting (AutoSSL)</h2>
+<p>1. Log in to cPanel and open <strong>SSL/TLS Status</strong>.</p>
+<p>2. Find the domain. If it shows an error, the message usually says why validation failed.</p>
+<p>3. Fix the cause. Common ones:</p>
+<p>   - DNS for the domain no longer points at this server (for example, the site moved, or a proxy/CDN was added).</p>
+<p>   - A redirect or security rule blocks requests to <code>/.well-known/</code> on port 80.</p>
+<p>   - The domain or subdomain was removed from the account.</p>
+<p>4. Click <strong>Run AutoSSL</strong> and wait for it to finish.</p>
+<p>5. Check again with the command above. If the panel shows a new certificate but <code>openssl</code> still shows the old one, contact the host. The server may not have picked it up yet.</p>
+<p>If AutoSSL can&#x27;t issue a certificate and you can&#x27;t fix the cause quickly, ask the host to install one by hand. Many hosts will do this on a support ticket.</p>
+<h2>Fix on a VPS with Certbot</h2>
+<p><code>`</code>bash</p>
+<p>sudo certbot certificates          # list certs and their expiry dates</p>
+<p>sudo certbot renew --dry-run       # test renewal without changing anything</p>
+<p>sudo certbot renew                 # renew anything that&#x27;s due</p>
+<p><code>`</code></p>
+<p>If the dry run fails, read the error. It usually points to one of these:</p>
+<ul><li><strong>HTTP-01 challenge can&#x27;t be reached:</strong> port 80 is closed, or a redirect sends <code>/.well-known/acme-challenge/</code> somewhere else.</li><li><strong>DNS has changed:</strong> the domain no longer resolves to this server.</li><li><strong>Renewal timer not running:</strong> check <code>systemctl list-timers | grep certbot</code> or your cron jobs.</li></ul>
+<p>After a successful renewal, reload the web server so it serves the new certificate:</p>
+<p><code>`</code>bash</p>
+<p>sudo nginx -t &amp;&amp; sudo systemctl reload nginx</p>
+<p>sudo apachectl configtest &amp;&amp; sudo systemctl reload apache2</p>
+<p><code>`</code></p>
+<p>Forgetting this reload is a classic: the certificate on disk is new, but the server keeps serving the old one from memory.</p>
+<h2>Behind a CDN or proxy</h2>
+<p>There are two certificates: the one visitors get from the proxy, and the one between the proxy and your server. Find out which one expired (the <code>openssl</code> check shows the visitor-facing one). Renew that one in the proxy&#x27;s dashboard, or on the origin server, depending on which it is.</p>
+<h2>After the fix</h2>
+<ul><li>Load the site in a private window and check the certificate&#x27;s new expiry date.</li><li>Check <code>www.</code> and any other hostnames on the same site. They often expire together.</li><li>If the site sends HSTS headers, visitors couldn&#x27;t click past the warning while it was expired. Tell the client the outage is over.</li></ul>
+<h2>Why it happened, and how to stop it happening again</h2>
+<p>Auto-renewal usually fails without anyone noticing, and the only sign is the expiry date getting closer. Two changes make this more likely now:</p>
+<ul><li>Public certificates issued from 15 March 2026 can be valid for at most 200 days. The limit drops to 100 days in March 2027 and to 47 days in March 2029 (<a href="https://www.appviewx.com/blogs/certificate-validity-period-47-days/">timeline</a>). Each renewal is another chance to fail.</li><li>Let&#x27;s Encrypt <a href="https://letsencrypt.org/2025/06/26/expiration-notification-service-has-ended.html">stopped sending expiry reminder emails on 4 June 2025</a>, so many owners no longer get any warning at all.</li></ul>
+<p>The fix is a habit, not a tool. Keep a list of every hostname and its expiry date, sorted by days left. Treat anything under 30 days that hasn&#x27;t renewed as a warning, since that&#x27;s around when ACME clients normally renew. Get a reminder at 30, 14 and 7 days.</p>
+<p>We make Lapsewatch, one simple way to keep that list. Paste <code>example.com, 2026-12-01</code> lines into its free checker and it sorts them by days left, marking each Expired, Urgent (7 days or less), Soon (30 days or less) or OK. It works from the dates you enter; it doesn&#x27;t scan your sites. Paid plans add calendar reminders at 30, 14 and 7 days before each expiry.</p></article><a class="cta" href="https://tuckertooling.com/lapsewatch/?ref=guide">Try it</a></body></html>
