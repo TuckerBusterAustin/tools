@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Client · Sundayfile prototype</title>
+<link rel="stylesheet" href="styles.css">
+<script src="lib/csv.js" defer></script>
+<script src="lib/schema.js" defer></script>
+<script src="lib/importer.js" defer></script>
+<script src="lib/store.js" defer></script>
+<script src="lib/license.js" defer></script>
+<script src="app.js" defer></script>
+</head>
+<body data-page="client">
+<a class="skip-link" href="#main">Skip to content</a>
+<div class="banner banner-sticky"><div class="banner-inner"><p>Prototype. Your data stays in this browser. Nothing here connects to real accounts.</p></div></div>
+<header class="topbar"><div class="topbar-inner">
+  <a class="wordmark" href="app.html">Sundayfile</a>
+  <a class="toplink" href="settings.html">Settings</a>
+</div></header>
+
+<main id="main" class="wrap">
+  <nav class="crumbs" aria-label="Breadcrumb"><a href="app.html">Clients</a> / <span aria-current="page" id="crumb-name">Client</span></nav>
+
+  <p id="not-found" class="error" role="alert" hidden>We could not find that client. Go back to Clients and open it again.</p>
+
+  <div id="client-body" hidden>
+    <div class="page-head">
+      <div class="client-name"><h1 style="margin:0" id="client-title">Client</h1></div>
+    </div>
+
+    <section class="card" aria-labelledby="import-h">
+      <div class="card-head"><h3 id="import-h">Import a CSV</h3></div>
+      <form id="import-form" novalidate>
+        <div class="field">
+          <label for="file-input">Choose a CSV file</label>
+          <input class="input" type="file" id="file-input" accept=".csv,text/csv" data-help="file-help" aria-describedby="file-help">
+          <p class="help" id="file-help">A HubSpot deals or contacts export, or a Trello cards export. The file is read in your browser and not uploaded.</p>
+        </div>
+        <div class="field">
+          <label for="paste-input">Or paste CSV text</label>
+          <textarea id="paste-input" rows="4" spellcheck="false"></textarea>
+        </div>
+        <div class="field" id="type-field" hidden>
+          <label for="type-select">File type</label>
+          <select id="type-select">
+            <option value="">Choose a type…</option>
+            <option value="hubspot_contacts">HubSpot contacts</option>
+            <option value="hubspot_deals">HubSpot deals</option>
+            <option value="trello_cards">Trello cards</option>
+          </select>
+        </div>
+        <p class="error" id="import-error" role="alert" hidden></p>
+        <div class="actions">
+          <button type="submit" class="btn btn-secondary" id="preview-btn">Preview rows</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="card" id="preview-card" aria-labelledby="preview-h" hidden>
+      <div class="card-head"><h3 id="preview-h">Preview</h3></div>
+      <p class="small" id="preview-summary" style="margin-top:0"></p>
+      <div class="csv-scroll" role="region" aria-label="Preview of the first 20 rows" tabindex="0">
+        <table class="csv-table" id="preview-table"><thead></thead><tbody></tbody></table>
+      </div>
+      <p class="csv-hint">Scroll for more columns →</p>
+      <div class="actions" style="margin-top:1rem">
+        <button type="button" class="btn btn-primary" id="save-file">Save file</button>
+      </div>
+    </section>
+
+    <section class="card" aria-labelledby="files-h">
+      <div class="card-head"><h3 id="files-h">Saved files</h3></div>
+      <p id="files-empty">No files saved yet. Import a CSV above.</p>
+      <table class="files-table" id="files-table" hidden>
+        <thead><tr><th scope="col">Type</th><th scope="col" class="num">Rows</th><th scope="col">Imported</th><th scope="col">Download</th></tr></thead>
+        <tbody id="files-body"></tbody>
+      </table>
+      <p class="small muted" style="margin:.5rem 0 0">A new import of the same type replaces the saved file.</p>
+    </section>
+
+    <section class="card" aria-labelledby="due-h">
+      <div class="card-head"><h3 id="due-h">Export due this week</h3></div>
+      <p class="small muted" style="margin-top:0">A checklist with one row per file type and the date you last downloaded it. A row turns due after 7 days.</p>
+      <p class="small" id="due-locked" hidden>Pro feature. <strong>Unlock with Pro</strong> to see which files are due and to download all of this client’s files in one click.</p>
+      <div id="due-pro" hidden>
+        <ul class="account-list" id="due-list"></ul>
+        <div class="actions" style="margin-top:1rem">
+          <button type="button" class="btn btn-secondary" id="download-all">Download all files for this client</button>
+        </div>
+        <p class="small muted" id="download-all-why" hidden>Save at least one file first.</p>
+      </div>
+    </section>
+
+    <section class="card" aria-labelledby="soon-h">
+      <div class="card-head"><h3 id="soon-h">Schedule and Drive delivery</h3><span class="pill pill-tag">Coming soon</span></div>
+      <p class="small muted" style="margin:0">Weekly exports to a Drive folder are coming soon. For now, import and download here.</p>
+    </section>
+
+    <div class="danger-zone">
+      <button type="button" class="btn-text btn-danger-text" id="remove-client">Remove client</button>
+    </div>
+  </div>
+</main>
+</body>
+</html>
