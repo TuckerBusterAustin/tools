@@ -5,6 +5,12 @@
     "title": "Auditfold: page SEO audit to client-ready fix list (early version)",
     "updated": "2026-10-15"
   },
+  "lapsewatch": {
+    "has_app": false,
+    "tagline": "Know which client certificates run out next",
+    "title": "Lapsewatch",
+    "updated": "2026-10-15"
+  },
   "presign-pad": {
     "has_app": true,
     "tagline": "Paste a failed S3 signature error and see exactly what differs. Runs locally.",
