@@ -34,7 +34,9 @@
     "bucket": "website_care",
     "guides": [
       "https://tuckertooling.com/lapsewatch/guides/check-ssl-certificate-expiry/",
-      "https://tuckertooling.com/lapsewatch/guides/monitor-ssl-expiry-many-sites/"
+      "https://tuckertooling.com/lapsewatch/guides/fix-expired-ssl-not-secure/",
+      "https://tuckertooling.com/lapsewatch/guides/monitor-ssl-expiry-many-sites/",
+      "https://tuckertooling.com/lapsewatch/guides/monitor-ssl-expiry-multiple-domains/"
     ],
     "has_app": true,
     "image": true,
