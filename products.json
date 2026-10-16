@@ -34,5 +34,11 @@
     "tagline": "Turn the HubSpot CSV you export every week into a repeatable, scheduled job.",
     "title": "Rowdrop: scheduled CSV/Excel file jobs for HubSpot exports",
     "updated": "2026-10-15"
+  },
+  "sundayfile": {
+    "has_app": false,
+    "tagline": "Coming soon: a clean CSV of your HubSpot and Trello data, in your Drive every week",
+    "title": "Sundayfile",
+    "updated": "2026-10-15"
   }
 }
