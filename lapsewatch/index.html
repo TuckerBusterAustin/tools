@@ -1,35 +1,77 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Lapsewatch</title>
-<meta name="description" content="Know which client certificates run out next. Lapsewatch is a web app that is coming soon. You will paste in your client domains, see the days left for…">
-<link rel="canonical" href="https://tuckerbusteraustin.github.io/tools/lapsewatch/">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23635bff'/%3E%3Ctext x='32' y='44' font-size='36' text-anchor='middle' fill='white' font-family='system-ui,sans-serif' font-weight='bold'%3EL%3C/text%3E%3C/svg%3E">
+<title>Lapsewatch: SSL Expiry List for Client Domains</title>
+<meta name="description" content="See days left on every client SSL certificate in one sorted list. Lapsewatch is a new, small browser tool for freelancers and agency ops leads who look…">
+<link rel="canonical" href="https://tuckertooling.com/lapsewatch/">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%231F5FBF'/%3E%3Ctext x='32' y='44' font-size='36' text-anchor='middle' fill='white' font-family='system-ui,sans-serif' font-weight='bold'%3EL%3C/text%3E%3C/svg%3E">
 <meta property="og:type" content="website">
-<meta property="og:title" content="Lapsewatch">
-<meta property="og:description" content="Know which client certificates run out next. Lapsewatch is a web app that is coming soon. You will paste in your client domains, see the days left for…">
-<meta property="og:url" content="https://tuckerbusteraustin.github.io/tools/lapsewatch/">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Lapsewatch">
-<meta name="twitter:description" content="Know which client certificates run out next. Lapsewatch is a web app that is coming soon. You will paste in your client domains, see the days left for…">
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareApplication", "name": "Lapsewatch", "description": "Know which client certificates run out next. Lapsewatch is a web app that is coming soon. You will paste in your client domains, see the days left for each one in a single list, and get an email or Slack alert before a certificate runs out.", "url": "https://tuckerbusteraustin.github.io/tools/lapsewatch/", "applicationCategory": "DeveloperApplication", "operatingSystem": "Web"}</script>
+<meta property="og:title" content="Lapsewatch: SSL Expiry List for Client Domains">
+<meta property="og:description" content="See days left on every client SSL certificate in one sorted list. Lapsewatch is a new, small browser tool for freelancers and agency ops leads who look…">
+<meta property="og:url" content="https://tuckertooling.com/lapsewatch/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Lapsewatch: SSL Expiry List for Client Domains">
+<meta name="twitter:description" content="See days left on every client SSL certificate in one sorted list. Lapsewatch is a new, small browser tool for freelancers and agency ops leads who look…">
+<meta property="og:image" content="https://tuckertooling.com/lapsewatch/og.png">
+<meta name="twitter:image" content="https://tuckertooling.com/lapsewatch/og.png">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareApplication", "name": "Lapsewatch: SSL Expiry List for Client Domains", "description": "See days left on every client SSL certificate in one sorted list. Lapsewatch is a new, small browser tool for freelancers and agency ops leads who look after SSL certificates on many client domains. You paste in each domain with its expiry date and get one list sorted by days left, with Expired…", "url": "https://tuckertooling.com/lapsewatch/", "applicationCategory": "DeveloperApplication", "operatingSystem": "Web", "offers": [{"@type": "Offer", "name": "Freelancer", "price": "9", "priceCurrency": "USD"}, {"@type": "Offer", "name": "Agency", "price": "19", "priceCurrency": "USD"}, {"@type": "Offer", "name": "Agency Annual", "price": "182", "priceCurrency": "USD"}]}</script>
 <style>
-a.cta{display:inline-block;padding:10px 18px;background:#635bff;color:#fff;border-radius:6px;
-  text-decoration:none;font-weight:bold}
-body{font-family:system-ui,sans-serif;max-width:760px;margin:0 auto;padding:24px;
-  color:#222;line-height:1.5}
-h1{font-size:2.1em;margin-bottom:.2em} .sub{font-size:1.2em;color:#555}
-.tiers{display:flex;gap:12px;flex-wrap:wrap}
-.tier{border:1px solid #ddd;border-radius:8px;padding:12px;flex:1;min-width:180px}
-.price{font-size:1.4em;font-weight:bold}
-form{margin:24px 0;padding:16px;background:#f6f3ee;border-radius:8px}
-input{padding:8px;width:60%} button{padding:8px 16px} dt{font-weight:bold;margin-top:8px}
-.note{color:#666;font-size:.9em}
+:root{--accent:#1F5FBF;--ink:#14171f;--muted:#5b6170;--line:#e6e8ee;--soft:#f6f7fb}
+*{box-sizing:border-box} html{-webkit-text-size-adjust:100%}
+body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  color:var(--ink);background:#fff;line-height:1.6;font-size:17px}
+.wrap{max-width:1040px;margin:0 auto;padding:0 24px}
+nav{border-bottom:1px solid var(--line)} nav .wrap{display:flex;align-items:center;
+  justify-content:space-between;height:64px} .brand{font-weight:700;letter-spacing:-.01em}
+.brand::before{content:"";display:inline-block;width:12px;height:12px;border-radius:4px;
+  background:var(--accent);margin-right:8px;vertical-align:baseline}
+.badge{display:inline-block;font-size:13px;color:var(--muted);border:1px solid var(--line);
+  border-radius:999px;padding:3px 10px}
+.hero{padding:88px 0 56px;text-align:center}
+.hero h1{font-size:clamp(34px,6vw,58px);line-height:1.08;letter-spacing:-.03em;
+  margin:18px auto 16px;max-width:820px}
+.hero p.sub{font-size:clamp(18px,2.4vw,21px);color:var(--muted);max-width:640px;margin:0 auto}
+.actions{margin-top:30px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+a.cta,button{display:inline-block;background:var(--accent);color:#fff;border:0;border-radius:10px;
+  padding:13px 22px;font:600 16px/1 inherit;font-family:inherit;text-decoration:none;cursor:pointer;
+  box-shadow:0 1px 2px rgba(16,24,40,.08)}
+a.ghost{display:inline-block;padding:13px 22px;border-radius:10px;border:1px solid var(--line);
+  color:var(--ink);text-decoration:none;font-weight:600}
+button[disabled]{opacity:.55;cursor:not-allowed}
+section{padding:56px 0;border-top:1px solid var(--line)}
+section h2{font-size:clamp(24px,3.2vw,32px);letter-spacing:-.02em;margin:0 0 8px;text-align:center}
+section p.lead{color:var(--muted);text-align:center;margin:0 auto 32px;max-width:600px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+.card{border:1px solid var(--line);border-radius:14px;padding:20px 22px;background:#fff}
+.card h3{margin:0 0 6px;font-size:17px} .card p{margin:0;color:var(--muted)}
+.card p.pt{color:var(--ink)} .card p.pt::before{content:"";display:block;width:22px;height:3px;
+  border-radius:2px;background:var(--accent);margin-bottom:12px}
+.soft{background:var(--soft)}
+.tier{border:1px solid var(--line);border-radius:16px;padding:26px;background:#fff}
+.tier.top{border-color:var(--accent);box-shadow:0 8px 28px rgba(16,24,40,.08)}
+.price{font-size:34px;font-weight:700;letter-spacing:-.02em;margin:6px 0 12px}
+.tier ul{padding-left:18px;margin:0;color:var(--muted)}
+form.join{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:28px auto 0;
+  max-width:520px} form.join label{flex:1 1 260px}
+input[type=email]{width:100%;padding:13px 14px;border:1px solid var(--line);border-radius:10px;
+  font:inherit} input:focus,a:focus,button:focus{outline:3px solid var(--accent);outline-offset:2px}
+.note{color:var(--muted);font-size:14px;text-align:center;margin-top:12px;width:100%}
+details{border:1px solid var(--line);border-radius:12px;padding:14px 18px;margin:10px auto;
+  max-width:760px;background:#fff} summary{font-weight:600;cursor:pointer}
+details p{color:var(--muted);margin:10px 0 0}
+figure.shot{margin:44px auto 0;max-width:960px}
+figure.shot img{width:100%;height:auto;border:1px solid var(--line);border-radius:14px;
+  box-shadow:0 24px 60px rgba(16,24,40,.12)}
+footer{border-top:1px solid var(--line);padding:28px 0;color:var(--muted);font-size:14px}
+@media (max-width:640px){.hero{padding:56px 0 40px} section{padding:40px 0}}
 </style></head><body>
-<p class="note">Lapsewatch is in development.</p>
+<nav><div class="wrap"><span class="brand">Lapsewatch</span><a class="ghost" href="app/">Open the app</a></div></nav>
+<header class="hero"><div class="wrap"><span class="badge">Early access</span>
 <h1>Know which client certificates run out next</h1><p class="sub">Lapsewatch is a web app that is coming soon. You will paste in your client domains, see the days left for each one in a single list, and get an email or Slack alert before a certificate runs out.</p>
-<h2>The problem</h2><ul><li>A client&#x27;s site shows &#x27;Not Secure&#x27; because the certificate expired. Nobody noticed until the client called.</li><li>Auto-renewal on small-business shared hosting can fail without a sound.</li><li>Checking the padlock on every client site by hand takes time. It is easy to forget.</li><li>Calendar reminders go stale as you add and drop client sites.</li></ul>
-<h2>What it will do</h2><ul><li>Paste in your client domains. Lapsewatch will check each one.</li><li>One list of every domain with the days left, soonest expiry first.</li><li>An email alert before a certificate runs out.</li><li>A Slack alert before a certificate runs out.</li><li>Lapsewatch will only remind you. It will not renew certificates for you.</li></ul>
-<h2>Planned pricing</h2><div class="tiers"><div class='tier'><h3>Freelancer</h3><p class='price'>$9/month</p><ul><li>Up to 25 domains</li><li>One list sorted by days left</li><li>Email alerts at 30, 14 and 7 days</li></ul></div><div class='tier'><h3>Agency</h3><p class='price'>$19/month</p><ul><li>Up to 100 domains</li><li>Email and Slack alerts</li><li>Weekly summary email</li><li>Shared list for the team</li></ul></div><div class='tier'><h3>Agency Annual</h3><p class='price'>$182/year</p><ul><li>Everything in Agency</li><li>Up to 100 domains</li><li>About 20% off (roughly two months free)</li></ul></div></div>
-<form method="post" action="https://venture-studio-api.austinbillimek.workers.dev/subscribe"><label>Email <input type="email" name="email" required placeholder="you@example.com"></label><input type="hidden" name="slug" value="lapsewatch"><button type="submit">Join the waitlist</button><p class="note">Joining the waitlist means we will email you once when Lapsewatch launches. No spam. You will not be charged. The form asks how many client domains you manage, whether your current tools already alert you about SSL expiry, and whether you would pay the price of the plan you pick. This helps us decide what to build.</p></form>
-<h2>FAQ</h2><dl><dt>Can I use Lapsewatch today?</dt><dd>No. It is not built yet. This page is to see if enough people want it. If you join the waitlist, we will tell you when it is ready.</dd><dt>Who is it for?</dt><dd>Freelance site admins and small agency ops leads who look after certificates on roughly 10 to 100 client domains.</dd><dt>Will it renew my certificates?</dt><dd>No. It will warn you in time so that you can renew them yourself or ask your host.</dd><dt>How will it find the expiry dates?</dt><dd>It will connect to each site you add and read the certificate it presents, the same way a browser does.</dd><dt>Does it work when my browser is closed?</dt><dd>It will run on our servers, so checks will not depend on your browser being open. We will publish how often it checks before launch.</dd><dt>How will alerts reach me?</dt><dd>By email or Slack. Other channels are not planned for the first version.</dd><dt>What will it cost?</dt><dd>The plans shown on this page are the plans we plan to offer. Nothing is charged now. Joining the waitlist for a plan does not commit you to buy it.</dd><dt>There are free tools already. Why wait for this one?</dt><dd>Lapsewatch is aimed at people who look after many client domains and want one list, sorted by expiry, with alerts by email or Slack. If a free tool already covers you, you may not need this.</dd></dl><script data-goatcounter="https://tuckertools.goatcounter.com/count" async src="gc.js"></script>
+<div class="actions"><a class="cta" href="https://buy.stripe.com/4gMcN5b8ZfSv0fJ6PN9ws04" rel="noopener">Join the waitlist</a></div><p class="note">Joining the waitlist means we will email you once when Lapsewatch launches. No spam. You will not be charged. The form asks how many client domains you manage, whether your current tools already alert you about SSL expiry, and whether you would pay the price of the plan you pick. This helps us decide what to build.</p><figure class="shot"><img src="product.png" alt="Lapsewatch screenshot" width="1280" height="800" loading="lazy"></figure></div></header>
+<section class="soft"><div class="wrap"><h2>The problem</h2><div class="grid" style="margin-top:28px"><div class="card"><h3>A client&#x27;s site shows &#x27;Not Secure&#x27; because the certificate expired</h3><p>Nobody noticed until the client called.</p></div><div class="card"><p class="pt">Auto-renewal on small-business shared hosting can fail without a sound.</p></div><div class="card"><h3>Checking the padlock on every client site by hand takes time</h3><p>It is easy to forget.</p></div><div class="card"><p class="pt">Calendar reminders go stale as you add and drop client sites.</p></div></div></div></section>
+<section><div class="wrap"><h2>What it does</h2><div class="grid" style="margin-top:28px"><div class="card"><h3>Paste in your client domains</h3><p>Lapsewatch will check each one.</p></div><div class="card"><p class="pt">One list of every domain with the days left, soonest expiry first.</p></div><div class="card"><p class="pt">An email alert before a certificate runs out.</p></div><div class="card"><p class="pt">A Slack alert before a certificate runs out.</p></div><div class="card"><h3>Lapsewatch will only remind you</h3><p>It will not renew certificates for you.</p></div></div></div></section>
+<section><div class="wrap"><h2>Pricing</h2><p class="lead">Simple, no surprises.</p><div class="grid"><div class="tier top"><h3>Freelancer</h3><p class="price">$9/month</p><ul><li>Up to 25 domains</li><li>One list sorted by days left</li><li>Email alerts at 30, 14 and 7 days</li></ul></div><div class="tier"><h3>Agency</h3><p class="price">$19/month</p><ul><li>Up to 100 domains</li><li>Email and Slack alerts</li><li>Weekly summary email</li><li>Shared list for the team</li></ul></div><div class="tier"><h3>Agency Annual</h3><p class="price">$182/year</p><ul><li>Everything in Agency</li><li>Up to 100 domains</li><li>About 20% off (roughly two months free)</li></ul></div></div></div></section>
+<section class="soft"><div class="wrap"><h2>Questions</h2><details><summary>Can I use Lapsewatch today?</summary><p>No. It is not built yet. This page is to see if enough people want it. If you join the waitlist, we will tell you when it is ready.</p></details><details><summary>Who is it for?</summary><p>Freelance site admins and small agency ops leads who look after certificates on roughly 10 to 100 client domains.</p></details><details><summary>Will it renew my certificates?</summary><p>No. It will warn you in time so that you can renew them yourself or ask your host.</p></details><details><summary>How will it find the expiry dates?</summary><p>It will connect to each site you add and read the certificate it presents, the same way a browser does.</p></details><details><summary>Does it work when my browser is closed?</summary><p>It will run on our servers, so checks will not depend on your browser being open. We will publish how often it checks before launch.</p></details><details><summary>How will alerts reach me?</summary><p>By email or Slack. Other channels are not planned for the first version.</p></details><details><summary>What will it cost?</summary><p>The plans shown on this page are the plans we plan to offer. Nothing is charged now. Joining the waitlist for a plan does not commit you to buy it.</p></details><details><summary>There are free tools already. Why wait for this one?</summary><p>Lapsewatch is aimed at people who look after many client domains and want one list, sorted by expiry, with alerts by email or Slack. If a free tool already covers you, you may not need this.</p></details></div></section>
+<footer><div class="wrap">© Lapsewatch · a small, focused tool</div></footer>
+<script data-goatcounter="https://tuckertools.goatcounter.com/count" async src="gc.js"></script>
 </body></html>
