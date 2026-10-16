@@ -1,0 +1,63 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>How to schedule an automatic HubSpot export to CSV</title>
+<meta name="description" content="HubSpot can export your CRM to CSV, but it can&#x27;t do it on a schedule by itself. Here are three ways to get a weekly CSV of contacts and deals without…">
+<link rel="canonical" href="https://tuckertooling.com/sundayfile/guides/hubspot-scheduled-csv-export/">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23635bff'/%3E%3Ctext x='32' y='44' font-size='36' text-anchor='middle' fill='white' font-family='system-ui,sans-serif' font-weight='bold'%3EH%3C/text%3E%3C/svg%3E">
+<meta property="og:type" content="website">
+<meta property="og:title" content="How to schedule an automatic HubSpot export to CSV">
+<meta property="og:description" content="HubSpot can export your CRM to CSV, but it can&#x27;t do it on a schedule by itself. Here are three ways to get a weekly CSV of contacts and deals without…">
+<meta property="og:url" content="https://tuckertooling.com/sundayfile/guides/hubspot-scheduled-csv-export/">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="How to schedule an automatic HubSpot export to CSV">
+<meta name="twitter:description" content="HubSpot can export your CRM to CSV, but it can&#x27;t do it on a schedule by itself. Here are three ways to get a weekly CSV of contacts and deals without…"><style>:root{--accent:#4f46e5;--ink:#111827;--muted:#5b6170;--line:#e5e7eb}*{box-sizing:border-box} body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;color:var(--ink);line-height:1.7;font-size:18px}nav{border-bottom:1px solid var(--line)} nav div{max-width:760px;margin:0 auto;padding:18px 24px;display:flex;justify-content:space-between;font-size:15px}nav a{color:var(--muted);text-decoration:none} nav a.home{color:var(--ink);font-weight:700}main,article{max-width:760px;margin:0 auto;padding:40px 24px 64px}h1{font-size:clamp(30px,5vw,44px);line-height:1.15;letter-spacing:-.02em}h2{margin-top:2em;letter-spacing:-.01em} a{color:var(--accent)}code{background:#f3f4f6;padding:1px 5px;border-radius:4px}a.cta{display:inline-block;margin:28px 0;padding:13px 22px;background:var(--accent);color:#fff;border-radius:10px;text-decoration:none;font-weight:600}</style></head><body><nav><div><a class="home" href="https://tuckertooling.com/">Tucker Tooling</a><a href="https://tuckertooling.com/sundayfile/">The tool</a></div></nav><article><h1>How to schedule an automatic HubSpot export to CSV</h1><h2>The short answer</h2>
+<p>HubSpot&#x27;s <strong>Export</strong> button in a contacts or deals view gives you a CSV once, when someone clicks it. HubSpot doesn&#x27;t offer a setting that runs that export every week. Your options are:</p>
+<p>1. <strong>Recurring report emails.</strong> These are built in, but only work for report data.</p>
+<p>2. <strong>A small script that calls the HubSpot API</strong> and runs on a timer. It&#x27;s free and works well, but someone has to own it.</p>
+<p>3. <strong>A dedicated backup or export app</strong> from the HubSpot App Marketplace.</p>
+<p>Each one is covered below, along with the problems you&#x27;ll hit.</p>
+<h2>Option 1: Recurring report emails (built in)</h2>
+<p>HubSpot can email a report on a Daily, Weekly or Monthly schedule with a data file attached. According to <a href="https://knowledge.hubspot.com/dashboard/email-or-export-reports-and-dashboards">HubSpot&#x27;s knowledge base</a>:</p>
+<p>1. Go to <strong>Reporting &gt; Reports</strong> and open the report.</p>
+<p>2. Click <strong>Actions &gt; Share via</strong> and choose email.</p>
+<p>3. Change the frequency from send-once to recurring and pick a schedule.</p>
+<p>4. In <strong>Attach downloadable file</strong>, choose a file type. If you skip this, the email shows a picture of the report and has no data file.</p>
+<p><strong>Pitfalls</strong></p>
+<ul><li>Recurring sends can only go to <strong>HubSpot users</strong>. You can&#x27;t send them to a shared mailbox or straight to Google Drive.</li><li>You get the report, not the full records. Any property that isn&#x27;t in the report won&#x27;t be in the file.</li><li>The file arrives as an email attachment, so someone still has to save it somewhere.</li></ul>
+<p>This works if you want a weekly pipeline summary. It doesn&#x27;t work as a backup.</p>
+<h2>Option 2: A scheduled script (Google Apps Script)</h2>
+<p>If your team uses Google Workspace, Apps Script can call HubSpot&#x27;s API every week and save a CSV in a Drive folder. You don&#x27;t need a server.</p>
+<p><strong>Step 1: Create a token.</strong> In HubSpot, create a private app under <strong>Settings &gt; Integrations &gt; Private Apps</strong> (HubSpot has moved and renamed this screen over time). Give it read-only scopes for the objects you need, such as <code>crm.objects.contacts.read</code> and <code>crm.objects.deals.read</code>, then copy the access token.</p>
+<p><strong>Step 2: Create the script.</strong> Go to <a href="https://script.google.com">script.google.com</a> and create a project. Under <strong>Project Settings &gt; Script properties</strong>, add <code>HUBSPOT_TOKEN</code>. Then paste in:</p>
+<p><code>`</code>js</p>
+<p>function exportHubSpotDeals() {</p>
+<p>  const token = PropertiesService.getScriptProperties().getProperty(&#x27;HUBSPOT_TOKEN&#x27;);</p>
+<p>  const props = [&#x27;dealname&#x27;, &#x27;amount&#x27;, &#x27;dealstage&#x27;, &#x27;closedate&#x27;];</p>
+<p>  const rows = [[&#x27;id&#x27;].concat(props)];</p>
+<p>  let after = null;</p>
+<p>  do {</p>
+<p>    let url = &#x27;https://api.hubapi.com/crm/v3/objects/deals?limit=100&amp;properties=&#x27; + props.join(&#x27;,&#x27;);</p>
+<p>    if (after) url += &#x27;&amp;after=&#x27; + after;</p>
+<p>    const res = JSON.parse(UrlFetchApp.fetch(url, {</p>
+<p>      headers: { Authorization: &#x27;Bearer &#x27; + token }</p>
+<p>    }).getContentText());</p>
+<p>    res.results.forEach(r =&gt; rows.push([r.id].concat(props.map(p =&gt; r.properties[p] || &#x27;&#x27;))));</p>
+<p>    after = res.paging &amp;&amp; res.paging.next ? res.paging.next.after : null;</p>
+<p>  } while (after);</p>
+<p>  const csv = rows.map(r =&gt; r.map(v =&gt; &#x27;&quot;&#x27; + String(v).replace(/&quot;/g, &#x27;&quot;&quot;&#x27;) + &#x27;&quot;&#x27;).join(&#x27;,&#x27;)).join(&#x27;\n&#x27;);</p>
+<p>  const name = &#x27;hubspot-deals-&#x27; + Utilities.formatDate(new Date(), &#x27;UTC&#x27;, &#x27;yyyy-MM-dd&#x27;) + &#x27;.csv&#x27;;</p>
+<p>  DriveApp.getFolderById(&#x27;YOUR_FOLDER_ID&#x27;).createFile(name, csv, MimeType.CSV);</p>
+<p>}</p>
+<p><code>`</code></p>
+<p><strong>Step 3: Schedule it.</strong> In the editor, open <strong>Triggers</strong>, add a time-driven trigger and choose a weekly timer, for example Sunday night.</p>
+<p>To export contacts, copy the function and change <code>deals</code> to <code>contacts</code> and the properties to fields like <code>email</code>, <code>firstname</code>, <code>lastname</code> and <code>company</code>.</p>
+<p><strong>Pitfalls</strong></p>
+<ul><li><strong>Pagination.</strong> The API returns results in pages. Without the <code>after</code> loop above, you&#x27;d only save the first page and wouldn&#x27;t notice anything was missing.</li><li><strong>Internal property names.</strong> The API uses names like <code>dealstage</code>, not the labels you see in HubSpot. Deal stages come back as IDs, not stage names, so you&#x27;ll need to map them yourself if you want readable labels.</li><li><strong>Large portals.</strong> Apps Script has execution time limits. If you have a lot of records, use HubSpot&#x27;s <a href="https://developers.hubspot.com/docs/api-reference/crm-exports-v3/guide">exports API</a> instead. You start an export with <code>POST /crm/v3/exports/export/async</code>, then check <code>GET /crm/v3/exports/export/async/tasks/{exportId}/status</code> until it reports <code>COMPLETE</code>. That endpoint needs the <code>crm.export</code> scope, and the guide says a Super Admin has to grant it.</li><li><strong>Ownership.</strong> Scripts break quietly when the person who wrote them leaves or their token is revoked. Write down who owns it, and check the folder once a month.</li></ul>
+<h2>Option 3: A Marketplace app or automation tool</h2>
+<p>General automation tools such as <a href="https://zapier.com">Zapier</a> and <a href="https://www.make.com">Make</a> can connect HubSpot to Google Sheets or Drive. They&#x27;re usually built to react to events, like &quot;new deal created&quot;, rather than take a full weekly snapshot, so look carefully at how a scheduled full export would work before you rely on one. The <a href="https://ecosystem.hubspot.com/marketplace/apps">HubSpot App Marketplace</a> also lists backup and export apps that install directly into your portal.</p>
+<h2>Which one to pick</h2>
+<p>| You need | Use |</p>
+<p>|---|---|</p>
+<p>| A weekly pipeline summary for managers | Recurring report email |</p>
+<p>| A full weekly copy, with someone technical in-house | Apps Script plus the API |</p>
+<p>| A full weekly copy that nobody has to maintain | A Marketplace export app |</p>
+<p>Whichever option you choose, <strong>test a restore</strong>. Open the CSV, check that the row count matches HubSpot, and confirm the columns you&#x27;d need to rebuild a deal are actually there.</p>
+<p>We&#x27;re building <strong>Sundayfile</strong>, a HubSpot Marketplace app that will put a weekly CSV of your contacts and deals in Google Drive automatically. It&#x27;s coming soon. It&#x27;s one option among those above.</p></article><a class="cta" href="https://tuckertooling.com/sundayfile/?ref=guide">Try it</a></body></html>
