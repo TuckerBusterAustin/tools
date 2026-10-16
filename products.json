@@ -1,6 +1,10 @@
 {
   "auditfold": {
     "bucket": "website_care",
+    "guides": [
+      "https://tuckertooling.com/auditfold/guides/seo-content-audit/",
+      "https://tuckertooling.com/auditfold/guides/web-page-seo-analysis/"
+    ],
     "has_app": true,
     "image": true,
     "price": "$19/month",
