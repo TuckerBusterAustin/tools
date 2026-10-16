@@ -10,6 +10,9 @@
   },
   "ferrywise": {
     "has_app": true,
+    "image": true,
+    "price": "",
+    "stage": "soon",
     "tagline": "Coming: copy client details between sites and fill repeat forms, flat price",
     "title": "Ferrywise: browser extension for repeat forms and cross-site copy (waitlist)",
     "updated": "2026-10-16"
