@@ -15,23 +15,60 @@
 <meta name="twitter:image" content="https://tuckertooling.com/ferrywise/og.png">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareApplication", "name": "Ferrywise: browser extension for repeat forms and cross-site copy (waitlist)", "description": "Coming: copy client details between sites and fill repeat forms, flat price. Ferrywise is a browser extension that is coming, and it is not built yet. This listing is a waitlist page to find out whether the idea is useful. It is meant for freelance virtual assistants and small-agency ops or…", "url": "https://tuckertooling.com/ferrywise/", "applicationCategory": "DeveloperApplication", "operatingSystem": "Web", "offers": [{"@type": "Offer", "name": "Solo", "price": "9", "priceCurrency": "USD"}, {"@type": "Offer", "name": "Solo Annual", "price": "90", "priceCurrency": "USD"}, {"@type": "Offer", "name": "Team", "price": "29", "priceCurrency": "USD"}]}</script>
 <style>
-a.cta{display:inline-block;padding:10px 18px;background:#635bff;color:#fff;border-radius:6px;
-  text-decoration:none;font-weight:bold}
-body{font-family:system-ui,sans-serif;max-width:760px;margin:0 auto;padding:24px;
-  color:#222;line-height:1.5}
-h1{font-size:2.1em;margin-bottom:.2em} .sub{font-size:1.2em;color:#555}
-.tiers{display:flex;gap:12px;flex-wrap:wrap}
-.tier{border:1px solid #ddd;border-radius:8px;padding:12px;flex:1;min-width:180px}
-.price{font-size:1.4em;font-weight:bold}
-form{margin:24px 0;padding:16px;background:#f6f3ee;border-radius:8px}
-input{padding:8px;width:60%} button{padding:8px 16px} dt{font-weight:bold;margin-top:8px}
-.note{color:#666;font-size:.9em}
+:root{--accent:#0B6E7A;--ink:#14171f;--muted:#5b6170;--line:#e6e8ee;--soft:#f6f7fb}
+*{box-sizing:border-box} html{-webkit-text-size-adjust:100%}
+body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  color:var(--ink);background:#fff;line-height:1.6;font-size:17px}
+.wrap{max-width:1040px;margin:0 auto;padding:0 24px}
+nav{border-bottom:1px solid var(--line)} nav .wrap{display:flex;align-items:center;
+  justify-content:space-between;height:64px} .brand{font-weight:700;letter-spacing:-.01em}
+.brand::before{content:"";display:inline-block;width:12px;height:12px;border-radius:4px;
+  background:var(--accent);margin-right:8px;vertical-align:baseline}
+.badge{display:inline-block;font-size:13px;color:var(--muted);border:1px solid var(--line);
+  border-radius:999px;padding:3px 10px}
+.hero{padding:88px 0 56px;text-align:center}
+.hero h1{font-size:clamp(34px,6vw,58px);line-height:1.08;letter-spacing:-.03em;
+  margin:18px auto 16px;max-width:820px}
+.hero p.sub{font-size:clamp(18px,2.4vw,21px);color:var(--muted);max-width:640px;margin:0 auto}
+.actions{margin-top:30px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+a.cta,button{display:inline-block;background:var(--accent);color:#fff;border:0;border-radius:10px;
+  padding:13px 22px;font:600 16px/1 inherit;font-family:inherit;text-decoration:none;cursor:pointer;
+  box-shadow:0 1px 2px rgba(16,24,40,.08)}
+a.ghost{display:inline-block;padding:13px 22px;border-radius:10px;border:1px solid var(--line);
+  color:var(--ink);text-decoration:none;font-weight:600}
+button[disabled]{opacity:.55;cursor:not-allowed}
+section{padding:56px 0;border-top:1px solid var(--line)}
+section h2{font-size:clamp(24px,3.2vw,32px);letter-spacing:-.02em;margin:0 0 8px;text-align:center}
+section p.lead{color:var(--muted);text-align:center;margin:0 auto 32px;max-width:600px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+.card{border:1px solid var(--line);border-radius:14px;padding:20px 22px;background:#fff}
+.card h3{margin:0 0 6px;font-size:17px} .card p{margin:0;color:var(--muted)}
+.card p.pt{color:var(--ink)} .card p.pt::before{content:"";display:block;width:22px;height:3px;
+  border-radius:2px;background:var(--accent);margin-bottom:12px}
+.soft{background:var(--soft)}
+.tier{border:1px solid var(--line);border-radius:16px;padding:26px;background:#fff}
+.tier.top{border-color:var(--accent);box-shadow:0 8px 28px rgba(16,24,40,.08)}
+.price{font-size:34px;font-weight:700;letter-spacing:-.02em;margin:6px 0 12px}
+.tier ul{padding-left:18px;margin:0;color:var(--muted)}
+form.join{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:28px auto 0;
+  max-width:520px} form.join label{flex:1 1 260px}
+input[type=email]{width:100%;padding:13px 14px;border:1px solid var(--line);border-radius:10px;
+  font:inherit} input:focus,a:focus,button:focus{outline:3px solid var(--accent);outline-offset:2px}
+.note{color:var(--muted);font-size:14px;text-align:center;margin-top:12px;width:100%}
+details{border:1px solid var(--line);border-radius:12px;padding:14px 18px;margin:10px auto;
+  max-width:760px;background:#fff} summary{font-weight:600;cursor:pointer}
+details p{color:var(--muted);margin:10px 0 0}
+footer{border-top:1px solid var(--line);padding:28px 0;color:var(--muted);font-size:14px}
+@media (max-width:640px){.hero{padding:56px 0 40px} section{padding:40px 0}}
 </style></head><body>
-<p class="note">Ferrywise is in development.</p>
+<nav><div class="wrap"><span class="brand">Ferrywise</span><a class="ghost" href="app/">Open the app</a></div></nav>
+<header class="hero"><div class="wrap"><span class="badge">Early access</span>
 <h1>One flat price. No credits, no runtime meter.</h1><p class="sub">Ferrywise is a browser extension that is coming. It will copy client details from one website into a form on another, and fill your repeat forms, without you building a flow. It is not built yet. Join the waitlist to tell us what you need.</p>
-<h2>The problem</h2><ul><li>You type the same client details into the same web forms every day.</li><li>You copy data from one website and paste it into another, again and again.</li><li>Free macro tools can work, but setting them up takes effort.</li><li>Recorded macros may break when a site changes its layout.</li><li>Some cloud automation tools charge by credits or usage, which can make the bill hard to plan for.</li><li>You are not a developer. You just want the repeat task done.</li></ul>
-<h2>What it will do</h2><ul><li>Ferrywise will be a browser extension you add to your browser.</li><li>It will copy client details from one site into a form on another.</li><li>It will fill in forms you use again and again, so you stop retyping.</li><li>It will be set up without building flows or writing code.</li><li>Paid plans are planned at a flat monthly price, with no credit or runtime meter. Pricing is shown below.</li><li>The first version is planned to cover cross-site copy and form filling only. Anything more is not promised.</li></ul>
-<h2>Planned pricing</h2><div class="tiers"><div class='tier'><h3>Solo</h3><p class='price'>$9/month</p><ul><li>Flat price, no credit or runtime meter (planned)</li><li>Unlimited saved tasks for one user (planned)</li><li>Cross-site copy of data between pages and form filling (planned)</li><li>Link extraction (planned)</li><li>Button: &#x27;Reserve Solo at $9/month&#x27;, leading to email capture and a one-question form</li><li>No free tier</li></ul></div><div class='tier'><h3>Solo Annual</h3><p class='price'>$90/year</p><ul><li>Everything in Solo (planned)</li><li>About 17% off versus monthly, roughly two months free</li><li>Founding-member price locked in</li><li>Button: &#x27;Reserve Solo Annual at $90/year&#x27;</li></ul></div><div class='tier'><h3>Team</h3><p class='price'>$29/month</p><ul><li>Up to 5 users (planned)</li><li>Shared task library (planned)</li><li>Everything in Solo (planned)</li><li>Priority email support (planned)</li><li>Button: &#x27;Reserve Team at $29/month&#x27;</li></ul></div></div>
-<form><a class="cta" href="https://buy.stripe.com/test_aFacMY8Krdtz2LVgDx1Fe05" rel="noopener">Join the waitlist</a><p class="note">We will email you when Ferrywise launches, and may send one short question about which repeat task you want to automate. No other emails. Joining does not commit you to buy anything.</p></form>
-<h2>FAQ</h2><dl><dt>Can I use Ferrywise today?</dt><dd>No. Ferrywise is not built yet. This page is to find out if the idea is useful. Joining the waitlist is how you tell us it is.</dd><dt>Who is it for?</dt><dd>Freelance virtual assistants and small-agency ops or account-management staff. It is for people who enter the same client details into the same few web tools every day, and who are not developers.</dd><dt>What will the first version do?</dt><dd>It will copy client details from one website into a form on another, and fill forms you repeat. That is the plan. Plans can change based on what people tell us.</dd><dt>How is this different from free tools like Automa or UI.Vision?</dt><dd>Those tools are free and can do a lot. We are testing whether people want something with less setup and a flat price. We do not know yet. Your answer helps us find out.</dd><dt>How will pricing work?</dt><dd>The plan is a flat monthly price with no credit or runtime meter. The planned tiers are shown on this page. Nothing is for sale yet, and prices could change before launch.</dd><dt>Do I need a credit card to join the waitlist?</dt><dd>No. Joining the waitlist only needs your email address.</dd></dl><script data-goatcounter="https://tuckertools.goatcounter.com/count" async src="gc.js"></script>
+<div class="actions"><a class="cta" href="https://buy.stripe.com/test_aFacMY8Krdtz2LVgDx1Fe05" rel="noopener">Join the waitlist</a></div><p class="note">We will email you when Ferrywise launches, and may send one short question about which repeat task you want to automate. No other emails. Joining does not commit you to buy anything.</p></div></header>
+<section class="soft"><div class="wrap"><h2>The problem</h2><div class="grid" style="margin-top:28px"><div class="card"><p class="pt">You type the same client details into the same web forms every day.</p></div><div class="card"><p class="pt">You copy data from one website and paste it into another, again and again.</p></div><div class="card"><p class="pt">Free macro tools can work, but setting them up takes effort.</p></div><div class="card"><p class="pt">Recorded macros may break when a site changes its layout.</p></div><div class="card"><p class="pt">Some cloud automation tools charge by credits or usage, which can make the bill hard to plan for.</p></div><div class="card"><h3>You are not a developer</h3><p>You just want the repeat task done.</p></div></div></div></section>
+<section><div class="wrap"><h2>What it does</h2><div class="grid" style="margin-top:28px"><div class="card"><p class="pt">Ferrywise will be a browser extension you add to your browser.</p></div><div class="card"><p class="pt">It will copy client details from one site into a form on another.</p></div><div class="card"><p class="pt">It will fill in forms you use again and again, so you stop retyping.</p></div><div class="card"><p class="pt">It will be set up without building flows or writing code.</p></div><div class="card"><p class="pt">Paid plans are planned at a flat monthly price, with no credit or runtime meter. Pricing is shown below.</p></div><div class="card"><p class="pt">The first version is planned to cover cross-site copy and form filling only. Anything more is not promised.</p></div></div></div></section>
+<section><div class="wrap"><h2>Pricing</h2><p class="lead">Simple, no surprises.</p><div class="grid"><div class="tier top"><h3>Solo</h3><p class="price">$9/month</p><ul><li>Flat price, no credit or runtime meter (planned)</li><li>Unlimited saved tasks for one user (planned)</li><li>Cross-site copy of data between pages and form filling (planned)</li><li>Link extraction (planned)</li><li>Button: &#x27;Reserve Solo at $9/month&#x27;, leading to email capture and a one-question form</li><li>No free tier</li></ul></div><div class="tier"><h3>Solo Annual</h3><p class="price">$90/year</p><ul><li>Everything in Solo (planned)</li><li>About 17% off versus monthly, roughly two months free</li><li>Founding-member price locked in</li><li>Button: &#x27;Reserve Solo Annual at $90/year&#x27;</li></ul></div><div class="tier"><h3>Team</h3><p class="price">$29/month</p><ul><li>Up to 5 users (planned)</li><li>Shared task library (planned)</li><li>Everything in Solo (planned)</li><li>Priority email support (planned)</li><li>Button: &#x27;Reserve Team at $29/month&#x27;</li></ul></div></div></div></section>
+<section class="soft"><div class="wrap"><h2>Questions</h2><details><summary>Can I use Ferrywise today?</summary><p>No. Ferrywise is not built yet. This page is to find out if the idea is useful. Joining the waitlist is how you tell us it is.</p></details><details><summary>Who is it for?</summary><p>Freelance virtual assistants and small-agency ops or account-management staff. It is for people who enter the same client details into the same few web tools every day, and who are not developers.</p></details><details><summary>What will the first version do?</summary><p>It will copy client details from one website into a form on another, and fill forms you repeat. That is the plan. Plans can change based on what people tell us.</p></details><details><summary>How is this different from free tools like Automa or UI.Vision?</summary><p>Those tools are free and can do a lot. We are testing whether people want something with less setup and a flat price. We do not know yet. Your answer helps us find out.</p></details><details><summary>How will pricing work?</summary><p>The plan is a flat monthly price with no credit or runtime meter. The planned tiers are shown on this page. Nothing is for sale yet, and prices could change before launch.</p></details><details><summary>Do I need a credit card to join the waitlist?</summary><p>No. Joining the waitlist only needs your email address.</p></details></div></section>
+<footer><div class="wrap">© Ferrywise · a small, focused tool</div></footer>
+<script data-goatcounter="https://tuckertools.goatcounter.com/count" async src="gc.js"></script>
 </body></html>
