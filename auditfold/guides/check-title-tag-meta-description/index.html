@@ -1,0 +1,48 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>How to check a page&#x27;s title tag and meta description</title>
+<meta name="description" content="How to find a page&#x27;s title tag and meta description, judge whether they&#x27;re any good, and fix the most common problems, with examples.">
+<link rel="canonical" href="https://tuckertooling.com/auditfold/guides/check-title-tag-meta-description/">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23635bff'/%3E%3Ctext x='32' y='44' font-size='36' text-anchor='middle' fill='white' font-family='system-ui,sans-serif' font-weight='bold'%3EH%3C/text%3E%3C/svg%3E">
+<meta property="og:type" content="website">
+<meta property="og:title" content="How to check a page&#x27;s title tag and meta description">
+<meta property="og:description" content="How to find a page&#x27;s title tag and meta description, judge whether they&#x27;re any good, and fix the most common problems, with examples.">
+<meta property="og:url" content="https://tuckertooling.com/auditfold/guides/check-title-tag-meta-description/">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="How to check a page&#x27;s title tag and meta description">
+<meta name="twitter:description" content="How to find a page&#x27;s title tag and meta description, judge whether they&#x27;re any good, and fix the most common problems, with examples."><style>:root{--accent:#4f46e5;--ink:#111827;--muted:#5b6170;--line:#e5e7eb}*{box-sizing:border-box} body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;color:var(--ink);line-height:1.7;font-size:18px}nav{border-bottom:1px solid var(--line)} nav div{max-width:760px;margin:0 auto;padding:18px 24px;display:flex;justify-content:space-between;font-size:15px}nav a{color:var(--muted);text-decoration:none} nav a.home{color:var(--ink);font-weight:700}main,article{max-width:760px;margin:0 auto;padding:40px 24px 64px}h1{font-size:clamp(30px,5vw,44px);line-height:1.15;letter-spacing:-.02em}h2{margin-top:2em;letter-spacing:-.01em} a{color:var(--accent)}code{background:#f3f4f6;padding:1px 5px;border-radius:4px}a.cta{display:inline-block;margin:28px 0;padding:13px 22px;background:var(--accent);color:#fff;border-radius:10px;text-decoration:none;font-weight:600}</style></head><body><nav><div><a class="home" href="https://tuckertooling.com/">Tucker Tooling</a><a href="https://tuckertooling.com/auditfold/">The tool</a></div></nav><article><h1>How to check a page&#x27;s title tag and meta description</h1><h2>Why these two tags matter</h2>
+<p>The <code>&lt;title&gt;</code> tag and the meta description are the main inputs for how a page looks in search results: the clickable headline and, often, the short text below it. They&#x27;re also among the quickest fixes on any site. Here&#x27;s how to check both in a few minutes.</p>
+<h2>Step 1: Find them in the HTML</h2>
+<p>Open the page and view its source (<code>Ctrl+U</code> on Windows/Linux, <code>Cmd+Option+U</code> on Mac). Search (<code>Ctrl+F</code>) for:</p>
+<ul><li><code>&lt;title</code> to find the title tag</li><li><code>name=&quot;description&quot;</code> to find the meta description</li></ul>
+<p>They should both sit inside <code>&lt;head&gt;</code>:</p>
+<p><code>`</code>html</p>
+<p>&lt;head&gt;</p>
+<p>  &lt;title&gt;Emergency Plumber in Leeds | Smith &amp; Co&lt;/title&gt;</p>
+<p>  &lt;meta name=&quot;description&quot; content=&quot;24/7 emergency plumbing across Leeds. Fixed call-out price, no hidden fees. Call now or book online.&quot;&gt;</p>
+<p>&lt;/head&gt;</p>
+<p><code>`</code></p>
+<p><strong>Pitfall:</strong> on JavaScript-heavy sites, the tags in the raw source can differ from what ends up in the page after scripts run. If they look odd or are missing, compare them with the live DOM in DevTools (<code>F12</code>, Elements panel). Tags that only appear after JavaScript runs may not be picked up reliably by every crawler or social preview tool.</p>
+<h2>Step 2: Check the title tag</h2>
+<p>Work through these points:</p>
+<p>1. <strong>Exactly one title.</strong> Zero is a problem. Two (often one from the theme and one from a plugin) is also a problem, because you don&#x27;t control which one is used.</p>
+<p>2. <strong>Unique to the page.</strong> If every page says <code>Smith &amp; Co</code>, search engines and users can&#x27;t tell them apart.</p>
+<p>3. <strong>The topic comes first.</strong> Put what the page is about first and the brand last.</p>
+<p>4. <strong>Not too long.</strong> Google truncates titles by pixel width, not a fixed character count. Around 50-60 characters is a widely used rule of thumb for keeping the main words visible.</p>
+<p>5. <strong>Not stuffed.</strong> <code>Plumber Leeds, Leeds Plumber, Plumbing Leeds, Cheap Plumber</code> reads as spam to people and doesn&#x27;t help.</p>
+<p>Before and after:</p>
+<ul><li>Before: <code>Home</code></li><li>After: <code>Emergency Plumber in Leeds, 24/7 | Smith &amp; Co</code></li></ul>
+<p>Google sometimes shows a different headline than your title tag, especially when the title is missing, very long, generic or doesn&#x27;t match the page. A clear, accurate title makes that less likely.</p>
+<h2>Step 3: Check the meta description</h2>
+<p>1. <strong>It exists.</strong> If it doesn&#x27;t, the search engine builds a snippet from page text. Sometimes that&#x27;s fine, but often it&#x27;s a random fragment.</p>
+<p>2. <strong>It&#x27;s unique.</strong> A single site-wide description copied onto every page is a common template default.</p>
+<p>3. <strong>It sells the click.</strong> One or two sentences: what&#x27;s on the page, plus a reason to pick it. Mention concrete details such as price, area, turnaround or what&#x27;s included.</p>
+<p>4. <strong>Reasonable length.</strong> Snippets are also truncated by width. Many practitioners aim for roughly 120-160 characters. Treat that as a guideline, not a rule.</p>
+<p>5. <strong>It matches the page.</strong> A description that promises something the page doesn&#x27;t deliver hurts trust and is more likely to be replaced.</p>
+<p>Before and after:</p>
+<ul><li>Before: <code>Welcome to our website. We are a family business with many years of experience.</code></li><li>After: <code>24/7 emergency plumbing across Leeds. Fixed call-out price, no hidden fees. Call now or book online.</code></li></ul>
+<p><strong>Pitfall:</strong> don&#x27;t expect rankings to move from a new description. Google has said it doesn&#x27;t use the meta description as a ranking signal, and it often rewrites the snippet based on the search. A better description affects how the result reads and whether people click, which is still worth doing.</p>
+<h2>Step 4: Check the rest of the site for duplicates</h2>
+<p>One page is easy. Across a site, the usual problems are template-wide: the same title or description on every page, or titles built from a pattern that produces <code>Page 2 | Category | | Brand</code>. If you find a duplicate on one page, check two or three similar pages built from the same template. You&#x27;ll often find the bug is in the template, and one fix solves all of them.</p>
+<h2>Quick checklist</h2>
+<ul><li>[ ] One <code>&lt;title&gt;</code>, inside <code>&lt;head&gt;</code></li><li>[ ] Title is specific, topic first, roughly 50-60 characters</li><li>[ ] One meta description, unique to the page</li><li>[ ] Description is a clear one- or two-sentence pitch that matches the page</li><li>[ ] No duplicates across pages that use the same template</li><li>[ ] Tags present in the HTML, not only added by late JavaScript</li></ul>
+<h2>Checking more than the title</h2>
+<p>The title and description are a good start, but a full on-page check also covers headings, alt text, links, the canonical tag, the viewport tag and Open Graph tags. We make Auditfold, which checks all of these from a page&#x27;s pasted HTML and gives back a ranked fix list in plain words. You can try a sample page without any setup. The steps above work just as well by hand.</p></article><a class="cta" href="https://tuckertooling.com/auditfold/?ref=guide">Try it</a></body></html>
