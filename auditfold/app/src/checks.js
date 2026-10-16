@@ -1,4 +1,4 @@
-/* The 12 on-page checks. Each takes the object from parse() and returns
+/* The 13 on-page checks. Each takes the object from parse() and returns
  *   {id, name, passed, severity, weight, message, fix}
  * message = what we found (plain text, may include page text; escape on output).
  * fix     = what to do and why; always non-empty when passed is false, '' when passed.
@@ -109,6 +109,24 @@
           n === 0 ? (p.images.length ? 'All ' + plural(p.images.length, 'image has', 'images have') + ' an alt attribute.' : 'No images found.')
             : plural(n, 'image has', 'images have') + ' no alt text.',
           'Add alt text to ' + (n === 1 ? 'the image' : 'each image') + ' that has none. Alt text is a short written description of a picture; it helps people using screen readers and tells search engines what the image shows. Use alt="" for purely decorative images.');
+      }
+    },
+    {
+      id: 'links', name: 'Links',
+      run: function (p) {
+        var empty = 0, nameless = 0;
+        p.links.forEach(function (l) {
+          var href = (l.href || '').trim();
+          if (!href || href === '#' || /^javascript:/i.test(href)) empty++;
+          else if (!l.text && !l.label) nameless++;
+        });
+        var bad = empty + nameless;
+        var found = [];
+        if (empty) found.push(plural(empty, 'link goes', 'links go') + ' nowhere (empty, "#" or javascript: address)');
+        if (nameless) found.push(plural(nameless, 'link has', 'links have') + ' no text');
+        return res(this.id, this.name, empty ? 'medium' : 'low', bad === 0,
+          bad === 0 ? (p.links.length ? 'All ' + plural(p.links.length, 'link looks', 'links look') + ' fine.' : 'No links found.') : found.join('; ') + '.',
+          'Give every link a real destination and some readable text. Links that go nowhere frustrate visitors and stop search engines following your site, and links with no text leave screen reader users guessing where they lead.');
       }
     },
     {
