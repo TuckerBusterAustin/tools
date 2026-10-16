@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head><script src="license-config.js"></script><script src="license.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sundayfile: coming soon. Weekly CSV of HubSpot and Trello data in Drive</title>
+<link rel="stylesheet" href="styles.css">
+<script src="lib/csv.js" defer></script>
+<script src="lib/license.js" defer></script>
+<script src="app.js" defer></script>
+</head>
+<body data-page="landing">
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="topbar"><div class="topbar-inner">
+  <a class="wordmark" href="index.html">Sundayfile</a>
+  <a class="toplink" href="app.html">See the prototype</a>
+</div></header>
+
+<main id="main" class="wrap">
+  <!-- 1. Hero -->
+  <section class="hero" aria-labelledby="h1">
+    <div>
+      <p><span class="pill pill-tag">Coming soon</span></p>
+      <h1 id="h1">Coming soon: a clean CSV of your HubSpot and Trello data, in your Drive every week</h1>
+      <p class="lead">Sundayfile will send a weekly CSV of your HubSpot deals and contacts and your Trello boards to Google Drive. Same columns every time. One folder per client. Nobody has to remember.</p>
+      <a class="btn btn-primary" href="#waitlist">Join the waitlist</a>
+    </div>
+    <aside class="card example-card" aria-label="Example of what will arrive">
+      <p class="small muted">Example of what will arrive</p>
+      <p class="folder">Acme Co /<span>2026-10-18 hubspot-deals.csv</span><span>2026-10-18 hubspot-contacts.csv</span><span>2026-10-18 trello-boards.csv</span></p>
+    </aside>
+  </section>
+
+  <!-- 2. Problem -->
+  <section aria-labelledby="problem-h">
+    <h2 id="problem-h">Exporting by hand every week</h2>
+    <ul class="problems">
+      <li>You export the same HubSpot and Trello files by hand for each client.</li>
+      <li>Someone forgets, and a client report is built on last month’s numbers.</li>
+      <li>Column names and order change between exports, so sheets break.</li>
+      <li>Files end up on laptops instead of in the client’s folder.</li>
+      <li>Another automation tool means another thing to maintain.</li>
+    </ul>
+  </section>
+
+  <!-- 3. How it will work -->
+  <section aria-labelledby="how-h">
+    <h2 id="how-h">How it will work</h2>
+    <ol class="steps">
+      <li><div class="step-num" aria-hidden="true">1</div><h3>Connect HubSpot and Trello</h3><p class="muted">You will give read-only access to deals, contacts and boards.</p></li>
+      <li><div class="step-num" aria-hidden="true">2</div><h3>Pick a Drive folder per client</h3><p class="muted">We will make one subfolder for each client.</p></li>
+      <li><div class="step-num" aria-hidden="true">3</div><h3>A fresh CSV arrives every week</h3><p class="muted">Sunday morning, with no one clicking anything.</p></li>
+    </ol>
+  </section>
+
+  <!-- 4. Columns -->
+  <section aria-labelledby="cols-h">
+    <h2 id="cols-h">The columns will not change</h2>
+    <p>Every file will use a fixed column layout, so your sheets and reports do not break.</p>
+    <div class="csv-scroll" role="region" aria-label="Sample CSV columns" tabindex="0">
+      <table class="csv-table">
+        <thead><tr><th scope="col">client</th><th scope="col">source</th><th scope="col">record_type</th><th scope="col">name</th><th scope="col">stage</th><th scope="col">owner</th><th scope="col">updated_at</th><th scope="col">board</th><th scope="col">list</th></tr></thead>
+        <tbody>
+          <tr><td>Acme Co</td><td>hubspot</td><td>deal</td><td>Spring retainer</td><td>Contract sent</td><td>Priya N.</td><td>2026-10-14</td><td></td><td></td></tr>
+          <tr><td>Acme Co</td><td>hubspot</td><td>contact</td><td>Dana Whitfield</td><td>Customer</td><td>Priya N.</td><td>2026-10-12</td><td></td><td></td></tr>
+          <tr><td>Acme Co</td><td>trello</td><td>card</td><td>Autumn email series</td><td></td><td>Tom R.</td><td>2026-10-13</td><td>Campaigns</td><td>In review</td></tr>
+          <tr><td>Acme Co</td><td>trello</td><td>card</td><td>Landing page copy</td><td></td><td>Tom R.</td><td>2026-10-09</td><td>Campaigns</td><td>Done</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="csv-hint">Scroll for more columns →</p>
+    <p class="small muted">Same columns every time. Sample data.</p>
+  </section>
+
+  <!-- 5. Plans -->
+  <section aria-labelledby="plans-h">
+    <h2 id="plans-h">Planned pricing</h2>
+    <p>Pricing will be flat per client workspace. No task counting. A workspace means one client: one HubSpot account and one Trello workspace.</p>
+    <div class="plans">
+      <article class="card"><h3>Starter</h3><p class="price">$19<span>/month</span></p>
+        <ul class="includes"><li>Client workspaces: 1</li><li>HubSpot and Trello CSVs</li><li>Weekly schedule</li></ul>
+        <a class="btn btn-secondary" href="#waitlist">Join the waitlist</a></article>
+      <article class="card card-top-teal"><h3>Agency</h3><p class="price">$49<span>/month</span></p>
+        <ul class="includes"><li>Client workspaces: 5</li><li>HubSpot and Trello CSVs</li><li>Weekly schedule</li><li>Failed-export email alerts</li></ul>
+        <a class="btn btn-secondary" href="#waitlist">Join the waitlist</a></article>
+      <article class="card"><h3>Agency Annual</h3><p class="price">$470<span>/year</span></p>
+        <ul class="includes"><li>Client workspaces: 5</li><li>Everything in Agency</li><li>Billed once a year</li></ul>
+        <a class="btn btn-secondary" href="#waitlist">Join the waitlist</a></article>
+    </div>
+    <p class="small muted" style="margin-top:1rem">Prices may change before launch.</p>
+  </section>
+
+  <!-- 6. FAQ -->
+  <section aria-labelledby="faq-h">
+    <h2 id="faq-h">Questions</h2>
+    <div class="faq">
+      <details><summary>Does Sundayfile exist yet?</summary><p>No. It is not built yet. This page tests interest.</p></details>
+      <details><summary>What will it export?</summary><p>HubSpot deals and contacts, and Trello boards. Nothing else at launch.</p></details>
+      <details><summary>How often will files arrive?</summary><p>Weekly only in the first version, on the day and time you choose.</p></details>
+      <details><summary>Will it change my data?</summary><p>No. Access will be read-only.</p></details>
+      <details><summary>What happens if an export fails?</summary><p>You will get an email that names the client and the cause, and earlier files stay in Drive.</p></details>
+    </div>
+  </section>
+
+  <!-- 7. Waitlist -->
+  <section id="waitlist" aria-labelledby="wl-h">
+    <div class="card narrow" id="waitlist-card">
+      <h2 id="wl-h">Join the waitlist</h2>
+      <form id="waitlist-form" novalidate>
+        <p class="error-summary" role="alert" hidden></p>
+        <div class="field">
+          <label for="wl-email">Email</label>
+          <input class="input" id="wl-email" name="email" type="email" autocomplete="email" required data-check="email" data-empty="Enter an email address like name@agency.com.">
+        </div>
+        <div class="field">
+          <label for="wl-note">What do you use today, and what is annoying about it? (optional)</label>
+          <textarea id="wl-note" name="note" rows="3"></textarea>
+        </div>
+        <button class="btn btn-primary" type="submit">Join the waitlist</button>
+        <p class="small muted" style="margin-top:1rem">This prototype does not store or send your email yet.</p>
+      </form>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer"><div class="wrap"><p>Sundayfile is not built yet. This page tests interest.</p></div></footer>
+<script data-goatcounter="https://tuckertools.goatcounter.com/count" async src="../gc.js"></script>
+</body>
+</html>
