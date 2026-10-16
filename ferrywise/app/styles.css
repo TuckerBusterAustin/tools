@@ -1,0 +1,84 @@
+/* Shared styles for all Ferrywise pages. Spacing scale: 4/8/12/16/24/32/48/64px. */
+:root {
+  --paper: #FFFFFF; --mist: #F2F4F7; --ink: #1A2230; --slate: #4F5B6B;
+  --harbor: #0B6E7A; --harbor-hover: #095A64; --harbor-active: #074A53;
+  --bg: var(--paper); --surface: var(--paper); --text: var(--ink); --muted: var(--slate);
+  --accent: var(--harbor); --accent-hover: var(--harbor-hover); --accent-active: var(--harbor-active);
+  --border: rgba(79, 91, 107, .3);
+}
+*, *::before, *::after { box-sizing: border-box; }
+html, body { max-width: 100%; }
+html { background: var(--paper); }
+body { font-family: system-ui, sans-serif; line-height: 1.5; color: var(--ink); background: var(--paper);
+  margin: 0; overflow-x: hidden; }
+/* Other pages (guide, admin, evidence) have no .container: pad the body instead. */
+body:not(:has(.container)) { max-width: 56rem; margin: 0 auto; padding: 16px; }
+.notice { color: var(--slate); font-size: .875rem; }
+/* Safe-width container: 16px side padding, 24px from 768px up. */
+.container { width: min(100%, 1080px); max-width: 100%; margin: 0 auto; padding: 0 16px; }
+@media (min-width: 768px) { .container { padding: 0 24px; } }
+h1 { font-size: 2rem; line-height: 1.2; margin: 0 0 16px; }
+h2 { margin: 0 0 16px; }
+h1, h2, h3, p, li, button, a, span, summary { overflow-wrap: anywhere; }
+img, button, input, textarea { max-width: 100%; }
+a { color: var(--harbor); }
+.note { color: var(--slate); font-size: .875rem; margin: 8px 0 0; }
+.skip-link { position: absolute; left: 8px; top: -100px; background: var(--paper); padding: 8px 16px; z-index: 10; }
+.skip-link:focus { top: 8px; }
+/* Header: pill wraps below the wordmark on phones. */
+.topbar { padding: 16px 0; }
+.topbar-inner { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; }
+.wordmark { font-weight: 700; font-size: 1.25rem; margin-right: auto; }
+.nav-link { display: none; }
+@media (min-width: 768px) { .nav-link { display: inline; text-decoration: underline; } }
+.badge { display: inline-block; max-width: 100%; color: var(--slate); border: 1px solid var(--slate);
+  padding: 4px 12px; border-radius: 999px; font-size: .875rem; }
+@media (max-width: 767px) { .badge { flex-basis: 100%; text-align: center; } }
+/* Sections: Paper page with alternating Mist bands. */
+.hero { padding: 48px 0; }
+.hero h1 { min-height: 2.4em; }
+.lead { font-size: 1.125rem; margin: 0 0 24px; }
+.section { padding: 48px 0; }
+.band { background: var(--mist); padding: 48px 0; }
+@media (min-width: 768px) { .hero, .section, .band { padding: 64px 0; } }
+.plain { list-style: none; padding: 0; margin: 0; display: grid; gap: 12px; }
+@media (min-width: 768px) { .two-col { grid-template-columns: 1fr 1fr; gap: 12px 32px; } }
+.scope-note { color: var(--slate); font-size: .875rem; }
+.tiers { display: grid; grid-template-columns: 1fr; gap: 16px; }
+@media (min-width: 900px) { .tiers { grid-template-columns: repeat(3, 1fr); } }
+.tier, .form-box { background: var(--paper); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
+.tier { display: flex; flex-direction: column; }
+.form-box { padding: 24px 16px; }
+.tier h3 { margin: 0 0 8px; }
+.tier .price { font-size: 1.75rem; font-weight: 700; font-variant-numeric: tabular-nums; margin: 0; }
+.tier .muted { color: var(--slate); font-size: .875rem; margin: 8px 0 0; }
+.tier ul { flex: 1; padding-left: 24px; margin: 12px 0 16px; }
+button { background: var(--harbor); color: #fff; border: 0; border-radius: 8px; padding: 12px 16px; min-height: 44px; cursor: pointer; font: inherit; }
+button:hover { background: var(--harbor-hover); }
+button:active { background: var(--harbor-active); }
+.tier button { width: 100%; }
+button.secondary { background: var(--paper); color: var(--harbor); border: 2px solid var(--harbor); }
+button.secondary:hover { background: var(--mist); }
+/* Hero button spans the width on phones. */
+.cta { display: block; width: 100%; text-align: center; background: var(--harbor); color: #fff; padding: 12px 24px;
+  border-radius: 8px; font-weight: 700; text-decoration: none; min-height: 44px; }
+@media (min-width: 600px) { .cta { display: inline-block; width: auto; } }
+.cta:hover { background: var(--harbor-hover); }
+.cta:active { background: var(--harbor-active); }
+:focus-visible { outline: 3px solid var(--harbor); outline-offset: 2px; }
+label { display: block; margin-top: 12px; font-weight: 600; }
+input, textarea { width: 100%; padding: 8px; font: inherit; min-height: 44px; border: 1px solid #8a94a3; border-radius: 8px; }
+input[aria-invalid="true"] { border-color: #b00020; border-width: 2px; }
+.error { color: #b00020; min-height: 1.2em; }
+#chosen { font-weight: 700; }
+#thanks { color: var(--ink); padding: 12px; border: 1px solid var(--harbor); border-radius: 8px; }
+[hidden] { display: none !important; }
+details { border-bottom: 1px solid var(--border); padding: 12px 0; }
+summary { cursor: pointer; font-weight: 600; }
+dialog { width: min(92vw, 28rem); border: 1px solid var(--border); border-radius: 8px; padding: 24px; }
+dialog button { margin-top: 12px; }
+footer { padding: 32px 0; color: var(--slate); }
+/* Only the table wrapper may scroll sideways. */
+.table-wrap { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; }
+th, td { border: 1px solid var(--border); padding: 4px 8px; text-align: left; }
