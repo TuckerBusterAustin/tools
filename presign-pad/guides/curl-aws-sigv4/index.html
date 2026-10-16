@@ -1,0 +1,61 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>How to sign an AWS API request with SigV4 using curl</title>
+<meta name="description" content="Use curl&#x27;s built-in --aws-sigv4 option to call S3, API Gateway and other AWS APIs without an SDK, plus the mistakes that cause signature errors.">
+<link rel="canonical" href="https://tuckertooling.com/presign-pad/guides/curl-aws-sigv4/">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23635bff'/%3E%3Ctext x='32' y='44' font-size='36' text-anchor='middle' fill='white' font-family='system-ui,sans-serif' font-weight='bold'%3EH%3C/text%3E%3C/svg%3E">
+<meta property="og:type" content="website">
+<meta property="og:title" content="How to sign an AWS API request with SigV4 using curl">
+<meta property="og:description" content="Use curl&#x27;s built-in --aws-sigv4 option to call S3, API Gateway and other AWS APIs without an SDK, plus the mistakes that cause signature errors.">
+<meta property="og:url" content="https://tuckertooling.com/presign-pad/guides/curl-aws-sigv4/">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="How to sign an AWS API request with SigV4 using curl">
+<meta name="twitter:description" content="Use curl&#x27;s built-in --aws-sigv4 option to call S3, API Gateway and other AWS APIs without an SDK, plus the mistakes that cause signature errors."><style>:root{--accent:#4f46e5;--ink:#111827;--muted:#5b6170;--line:#e5e7eb}*{box-sizing:border-box} body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;color:var(--ink);line-height:1.7;font-size:18px}nav{border-bottom:1px solid var(--line)} nav div{max-width:760px;margin:0 auto;padding:18px 24px;display:flex;justify-content:space-between;font-size:15px}nav a{color:var(--muted);text-decoration:none} nav a.home{color:var(--ink);font-weight:700}main,article{max-width:760px;margin:0 auto;padding:40px 24px 64px}h1{font-size:clamp(30px,5vw,44px);line-height:1.15;letter-spacing:-.02em}h2{margin-top:2em;letter-spacing:-.01em} a{color:var(--accent)}code{background:#f3f4f6;padding:1px 5px;border-radius:4px}a.cta{display:inline-block;margin:28px 0;padding:13px 22px;background:var(--accent);color:#fff;border-radius:10px;text-decoration:none;font-weight:600}</style></head><body><nav><div><a class="home" href="https://tuckertooling.com/">Tucker Tooling</a><a href="https://tuckertooling.com/presign-pad/">The tool</a></div></nav><article><h1>How to sign an AWS API request with SigV4 using curl</h1><h2>You don&#x27;t need an SDK to sign a request</h2>
+<p>Since version 7.75.0, curl has an <code>--aws-sigv4</code> option that computes the AWS Signature Version 4 for you. It&#x27;s the fastest way to check whether an IAM-protected endpoint works before you write any code.</p>
+<p>Check your version first:</p>
+<p><code>`</code>bash</p>
+<p>curl --version   # needs 7.75.0 or later</p>
+<p><code>`</code></p>
+<h2>The basic command</h2>
+<p><code>`</code>bash</p>
+<p>curl --aws-sigv4 &quot;aws:amz:us-east-1:execute-api&quot; \</p>
+<p>  --user &quot;$AWS_ACCESS_KEY_ID:$AWS_SECRET_ACCESS_KEY&quot; \</p>
+<p>  https://abc123.execute-api.us-east-1.amazonaws.com/prod/orders</p>
+<p><code>`</code></p>
+<p>The argument has the form <code>provider1:provider2:region:service</code>:</p>
+<ul><li><code>aws:amz</code> is the provider pair for AWS. It produces the <code>AWS4-HMAC-SHA256</code> algorithm and <code>x-amz-*</code> headers.</li><li><code>us-east-1</code> is the region the endpoint lives in.</li><li><code>execute-api</code> is the signing service name, not the hostname. Common values are <code>s3</code>, <code>execute-api</code> (API Gateway), <code>lambda</code>, <code>dynamodb</code> and <code>es</code> (OpenSearch).</li></ul>
+<p><code>--user</code> supplies the access key and secret key. curl uses them to sign the request. It doesn&#x27;t send them as Basic auth.</p>
+<h2>Examples</h2>
+<p><strong>Read an S3 object:</strong></p>
+<p><code>`</code>bash</p>
+<p>curl --aws-sigv4 &quot;aws:amz:eu-west-1:s3&quot; \</p>
+<p>  --user &quot;$AWS_ACCESS_KEY_ID:$AWS_SECRET_ACCESS_KEY&quot; \</p>
+<p>  https://my-bucket.s3.eu-west-1.amazonaws.com/data.json</p>
+<p><code>`</code></p>
+<p><strong>POST JSON to an IAM-authorized API Gateway route:</strong></p>
+<p><code>`</code>bash</p>
+<p>curl --aws-sigv4 &quot;aws:amz:us-east-1:execute-api&quot; \</p>
+<p>  --user &quot;$AWS_ACCESS_KEY_ID:$AWS_SECRET_ACCESS_KEY&quot; \</p>
+<p>  -H &quot;Content-Type: application/json&quot; \</p>
+<p>  -d &#x27;{&quot;sku&quot;:&quot;A-100&quot;,&quot;qty&quot;:2}&#x27; \</p>
+<p>  https://abc123.execute-api.us-east-1.amazonaws.com/prod/orders</p>
+<p><code>`</code></p>
+<p><strong>Use temporary credentials (SSO, an assumed role, or STS):</strong> add the session token as a header.</p>
+<p><code>`</code>bash</p>
+<p>curl --aws-sigv4 &quot;aws:amz:us-east-1:execute-api&quot; \</p>
+<p>  --user &quot;$AWS_ACCESS_KEY_ID:$AWS_SECRET_ACCESS_KEY&quot; \</p>
+<p>  -H &quot;x-amz-security-token: $AWS_SESSION_TOKEN&quot; \</p>
+<p>  https://abc123.execute-api.us-east-1.amazonaws.com/prod/orders</p>
+<p><code>`</code></p>
+<p>If you use AWS CLI profiles, you can export short-lived credentials into your shell first. The AWS CLI v2 command <code>aws configure export-credentials --format env</code> prints them as environment variables.</p>
+<h2>Read the response properly</h2>
+<p>Add <code>-v</code> to see what curl actually sent: the <code>Authorization</code> header, <code>x-amz-date</code> and the signed header list. AWS error bodies tell you what went wrong:</p>
+<ul><li><strong><code>The request signature we calculated does not match the signature you provided</code></strong>: wrong secret key, wrong region or service name, or the request changed after signing.</li><li><strong><code>The security token included in the request is invalid</code></strong> or <strong><code>... expired</code></strong>: the session token is missing, mismatched or expired.</li><li><strong><code>Credential should be scoped to a valid region</code></strong>: the region in <code>--aws-sigv4</code> doesn&#x27;t match the endpoint.</li><li><strong><code>User: arn:aws:... is not authorized to perform ...</code></strong>: the signature is fine. This is an IAM permissions issue, not a signing issue.</li></ul>
+<p>The last distinction saves a lot of time. A 403 whose message names your ARN means authentication worked.</p>
+<h2>Common pitfalls</h2>
+<p>1. <strong>Hostname used as the service name.</strong> The service is <code>execute-api</code>, not <code>abc123.execute-api</code>.</p>
+<p>2. <strong>Region left at a default.</strong> The region must match the endpoint. Custom domains don&#x27;t show it, so look it up.</p>
+<p>3. <strong><code>--user</code> mixed with other auth.</strong> <code>--aws-sigv4</code> overrides the other auth types, so drop <code>--basic</code>, <code>--digest</code> or an <code>Authorization</code> header you added by hand.</p>
+<p>4. <strong>Secrets in shell history.</strong> Use environment variables rather than pasting keys inline.</p>
+<p>5. <strong>Clock skew.</strong> SigV4 includes a timestamp. If your machine&#x27;s clock is badly off, valid credentials still get rejected.</p>
+<p>6. <strong>Old curl.</strong> Some distributions or containers ship versions older than 7.75.0, and the option simply won&#x27;t exist.</p>
+<h2>When curl isn&#x27;t enough</h2>
+<p>curl is great for one-off checks, but reading signed headers in <code>-v</code> output gets tedious when you&#x27;re comparing many requests. <a href="https://www.postman.com/">Postman</a> has an AWS Signature auth type with region, service and session-token fields (<a href="https://learning.postman.com/docs/sending-requests/authorization/aws-signature">Postman docs</a>). We&#x27;re building Presign Pad, a browser extension that will sign requests and show the canonical request next to the response, with errors highlighted. It&#x27;s coming soon, and the curl commands above work today.</p></article><a class="cta" href="https://tuckertooling.com/presign-pad/?ref=guide">Try it</a></body></html>
