@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Clients · Sundayfile prototype</title>
+<link rel="stylesheet" href="styles.css">
+<script src="lib/csv.js" defer></script>
+<script src="lib/schema.js" defer></script>
+<script src="lib/importer.js" defer></script>
+<script src="lib/store.js" defer></script>
+<script src="lib/license.js" defer></script>
+<script src="app.js" defer></script>
+</head>
+<body data-page="clients">
+<a class="skip-link" href="#main">Skip to content</a>
+<div class="banner banner-sticky"><div class="banner-inner"><p>Prototype. Your data stays in this browser. Nothing here connects to real accounts.</p></div></div>
+<header class="topbar"><div class="topbar-inner">
+  <a class="wordmark" href="app.html">Sundayfile</a>
+  <a class="toplink" href="settings.html">Settings</a>
+</div></header>
+
+<main id="main" class="wrap">
+  <div class="page-head" id="page-head-add">
+    <div>
+      <h1>Clients</h1>
+      <p class="muted" style="margin:0">Import your HubSpot and Trello CSV exports here. Weekly delivery to Drive is coming soon.</p>
+    </div>
+    <div>
+      <a class="btn btn-primary btn-block-mobile" id="add-client" href="add-client.html" aria-describedby="limit-reason">Add client</a>
+      <p class="small muted" id="limit-reason" hidden style="margin:.5rem 0 0"></p>
+    </div>
+  </div>
+
+  <p id="loading" class="muted">Loading clients…</p>
+
+  <!-- Empty state: shown by app.js when nothing is stored -->
+  <section id="empty-state" hidden>
+    <div class="card empty">
+      <h2>No clients yet</h2>
+      <p>Add your first client, then import a HubSpot or Trello CSV export to get a clean file with fixed columns.</p>
+      <a class="btn btn-primary" href="add-client.html">Add client</a>
+    </div>
+  </section>
+
+  <ul class="client-list" id="client-list" aria-label="Clients" hidden></ul>
+
+  <p class="usage" id="usage-line" hidden><span class="usage-text"></span><br>
+    <span class="usage-bar" aria-hidden="true"></span></p>
+
+  <!-- Free plan note: shown when the free limit is reached -->
+  <div class="card" id="pro-note" hidden>
+    <h3>Unlock with Pro</h3>
+    <p class="small" style="margin:0 0 .5rem">The free plan covers 1 client workspace. Pro covers up to 5.</p>
+    <div id="unlock-box"></div>
+  </div>
+</main>
+</body>
+</html>
