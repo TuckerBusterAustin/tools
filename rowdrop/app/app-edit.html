@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>New export · Rowdrop preview</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body data-app>
+<a class="skip" href="#main">Skip to main content</a>
+<div class="preview-banner"><div class="wrap"><span><span class="preview-label">Preview: not live yet.</span> Rowdrop is not live yet. Nothing here sends real files.</span></div></div>
+<header class="topbar"><div class="wrap">
+  <a class="wordmark" href="index.html">Rowdrop</a>
+  <button type="button" class="btn btn-secondary menu-btn" aria-expanded="false" aria-controls="app-nav">Menu</button>
+  <nav class="nav app-nav" id="app-nav" aria-label="App">
+    <a href="app-exports.html" aria-current="page">Exports</a><a href="app-detail.html">History</a><a href="app-settings.html">Settings</a>
+  </nav>
+</div></header>
+
+<main id="main"><div class="wrap">
+  <h1 id="page-title">New export</h1>
+  <p class="muted">Three choices: what, when, who.</p>
+  <div id="edit-note"></div>
+
+  <form id="edit-form" data-form novalidate>
+    <div class="error-summary" tabindex="-1" role="alert" hidden>
+      <h2>Fix these before saving</h2>
+      <ul></ul>
+    </div>
+
+    <div class="edit-grid">
+      <div class="edit-fields">
+        <fieldset>
+          <legend>1. What</legend>
+          <div class="field">
+            <label for="source-search">Search your imported lists and reports</label>
+            <input id="source-search" type="search" aria-describedby="source-help" placeholder="e.g. Deals">
+            <p class="help" id="source-help">These are the CSV files you imported from HubSpot.</p>
+            <select id="source-list" size="4" aria-label="Matching imports" aria-describedby="src-err" style="margin-top:8px"></select>
+            <p class="notice" id="source-empty" role="status" hidden style="margin-top:8px"><span id="source-empty-text"></span></p>
+            <p class="error" id="src-err" hidden></p>
+          </div>
+          <div class="field">
+            <span class="label" id="cols-l">Columns to include</span>
+            <div id="cols" class="check-list" role="group" aria-labelledby="cols-l" aria-describedby="cols-err"></div>
+            <p class="error" id="cols-err" hidden></p>
+          </div>
+          <div class="radio-group">
+            <span class="label" id="fmt-l">File format</span>
+            <div class="radio-cards" role="radiogroup" aria-labelledby="fmt-l">
+              <label><input type="radio" name="fmt" value="csv" checked> <span class="mono">.csv</span></label>
+              <label><input type="radio" name="fmt" value="xlsx" id="fmt-xlsx"> <span class="mono">.xlsx</span></label>
+            </div>
+            <p class="help" id="fmt-lock" hidden>Excel (.xlsx) output builds the file as a real Excel workbook. <a href="#license-footer">Unlock with Pro</a></p>
+          </div>
+          <div class="field">
+            <label for="name">Export name</label>
+            <input id="name" type="text" data-msg="Add a name." aria-describedby="name-help name-err">
+            <p class="help" id="name-help">File name preview: <span class="mono" id="name-preview"></span>. The file name ends with the date it was built.</p>
+            <p class="error" id="name-err" hidden></p>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>2. When</legend>
+          <div class="radio-group">
+            <span class="label" id="freq-l">Frequency</span>
+            <div class="radio-cards" role="radiogroup" aria-labelledby="freq-l">
+              <label><input type="radio" name="freq" value="daily"> Daily</label>
+              <label><input type="radio" name="freq" value="weekly" checked> Weekly</label>
+              <label><input type="radio" name="freq" value="monthly"> Monthly</label>
+            </div>
+          </div>
+          <div class="row two">
+            <div class="field" id="day-field"><label for="day">Day</label>
+              <select id="day"><option value="1" selected>Monday</option><option value="2">Tuesday</option><option value="3">Wednesday</option><option value="4">Thursday</option><option value="5">Friday</option><option value="6">Saturday</option><option value="0">Sunday</option></select></div>
+            <div class="field" id="dom-field" hidden><label for="dom">Day of month</label>
+              <input id="dom" type="number" min="1" max="31" value="1" aria-describedby="dom-err"><p class="error" id="dom-err" hidden></p></div>
+            <div class="field"><label for="time">Time</label><input id="time" type="time" value="08:00" aria-describedby="time-err"><p class="error" id="time-err" hidden></p></div>
+          </div>
+          <div class="field"><label for="tz">Time zone</label>
+            <input id="tz" type="text" readonly aria-describedby="tz-help">
+            <p class="help" id="tz-help">Times use this browser’s time zone. Rowdrop will remind you here when a file is due.</p></div>
+        </fieldset>
+
+        <fieldset>
+          <legend>3. Who</legend>
+          <div class="field">
+            <label for="rcpt">Recipients</label>
+            <div class="chip-box"><input id="rcpt" type="text" autocomplete="off" aria-describedby="rcpt-help rcpt-err"></div>
+            <p class="help" id="rcpt-help">Any email address works; recipients don’t need a HubSpot login. Press Enter or comma after each address. Rowdrop does not send email yet: you get a draft to send yourself.</p>
+            <p class="error" id="rcpt-err" hidden></p>
+          </div>
+          <div class="field">
+            <label for="subject">Email subject</label>
+            <input id="subject" type="text">
+          </div>
+        </fieldset>
+      </div>
+
+      <aside class="card summary" aria-labelledby="sum-h">
+        <h2 id="sum-h" class="h3" style="font-size:18px">Summary</h2>
+        <p style="margin:0" id="summary"></p>
+        <p class="help" style="margin-top:8px" id="summary-next"></p>
+      </aside>
+
+      <div class="edit-actions">
+        <button type="submit" class="btn btn-primary" id="save-btn">Save schedule</button>
+        <button type="button" class="btn btn-secondary" id="test-btn">Download a test file</button>
+      </div>
+    </div>
+  </form>
+  <p class="small" style="margin-top:24px"><a href="app-exports.html">Back to exports</a></p>
+</div></main>
+<script src="lib/browser-shim.js"></script><script src="lib/csv.js"></script><script src="lib/schedule.js"></script><script src="lib/jobs.js"></script><script src="lib/xlsx.js"></script><script src="lib/runner.js"></script><script src="lib/storage.js"></script><script src="lib/license.js"></script><script src="lib/shim-end.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
