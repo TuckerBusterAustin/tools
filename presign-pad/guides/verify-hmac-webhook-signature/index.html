@@ -1,0 +1,62 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>How to verify an HMAC webhook signature</title>
+<meta name="description" content="How to check that a webhook really came from the sender: compute the HMAC over the raw body, compare in constant time, and avoid the parsing mistakes…">
+<link rel="canonical" href="https://tuckertooling.com/presign-pad/guides/verify-hmac-webhook-signature/">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23635bff'/%3E%3Ctext x='32' y='44' font-size='36' text-anchor='middle' fill='white' font-family='system-ui,sans-serif' font-weight='bold'%3EH%3C/text%3E%3C/svg%3E">
+<meta property="og:type" content="website">
+<meta property="og:title" content="How to verify an HMAC webhook signature">
+<meta property="og:description" content="How to check that a webhook really came from the sender: compute the HMAC over the raw body, compare in constant time, and avoid the parsing mistakes…">
+<meta property="og:url" content="https://tuckertooling.com/presign-pad/guides/verify-hmac-webhook-signature/">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="How to verify an HMAC webhook signature">
+<meta name="twitter:description" content="How to check that a webhook really came from the sender: compute the HMAC over the raw body, compare in constant time, and avoid the parsing mistakes…"><style>:root{--accent:#4f46e5;--ink:#111827;--muted:#5b6170;--line:#e5e7eb}*{box-sizing:border-box} body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;color:var(--ink);line-height:1.7;font-size:18px}nav{border-bottom:1px solid var(--line)} nav div{max-width:760px;margin:0 auto;padding:18px 24px;display:flex;justify-content:space-between;font-size:15px}nav a{color:var(--muted);text-decoration:none} nav a.home{color:var(--ink);font-weight:700}main,article{max-width:760px;margin:0 auto;padding:40px 24px 64px}h1{font-size:clamp(30px,5vw,44px);line-height:1.15;letter-spacing:-.02em}h2{margin-top:2em;letter-spacing:-.01em} a{color:var(--accent)}code{background:#f3f4f6;padding:1px 5px;border-radius:4px}a.cta{display:inline-block;margin:28px 0;padding:13px 22px;background:var(--accent);color:#fff;border-radius:10px;text-decoration:none;font-weight:600}</style></head><body><nav><div><a class="home" href="https://tuckertooling.com/">Tucker Tooling</a><a href="https://tuckertooling.com/presign-pad/">The tool</a></div></nav><article><h1>How to verify an HMAC webhook signature</h1><h2>How webhook signing works</h2>
+<p>Most webhook providers sign each delivery with a shared secret. The provider computes an HMAC (usually HMAC-SHA256) over the request body and puts the result in a header. Your server computes the same HMAC with the same secret. If the two values match, the payload is authentic and unmodified.</p>
+<p>GitHub is a typical example. It sends <code>X-Hub-Signature-256: sha256=&lt;hex digest&gt;</code>, computed from your webhook secret and the payload. That header is only present if you configured a secret (<a href="https://docs.github.com/en/webhooks/using-webhooks/validating-webhook-deliveries">GitHub docs</a>). Other providers use different header names, encodings (hex or base64) and sometimes a timestamp, so always read your provider&#x27;s docs for the exact format.</p>
+<h2>Step 1: Capture the raw body</h2>
+<p>This is where most implementations fail. The HMAC is computed over the <strong>exact bytes</strong> the sender sent. If your framework parses the JSON and you re-serialize it, whitespace and key order can change, and the signature won&#x27;t match.</p>
+<ul><li><strong>Express:</strong> use <code>express.raw({ type: &#x27;application/json&#x27; })</code> on the webhook route, not <code>express.json()</code>.</li><li><strong>Flask:</strong> use <code>request.get_data()</code>, not <code>request.json</code>.</li><li><strong>Serverless platforms:</strong> check whether the body arrives base64-encoded, and decode it before hashing.</li></ul>
+<h2>Step 2: Compute the expected signature</h2>
+<p>Python:</p>
+<p><code>`</code>python</p>
+<p>import hmac, hashlib</p>
+<p>def verify(secret: str, raw_body: bytes, header: str) -&gt; bool:</p>
+<p>    expected = &quot;sha256=&quot; + hmac.new(</p>
+<p>        secret.encode(&quot;utf-8&quot;), raw_body, hashlib.sha256</p>
+<p>    ).hexdigest()</p>
+<p>    return hmac.compare_digest(expected, header)</p>
+<p><code>`</code></p>
+<p>Node.js:</p>
+<p><code>`</code>javascript</p>
+<p>const crypto = require(&#x27;crypto&#x27;);</p>
+<p>function verify(secret, rawBody, header) {</p>
+<p>  const expected = &#x27;sha256=&#x27; +</p>
+<p>    crypto.createHmac(&#x27;sha256&#x27;, secret).update(rawBody).digest(&#x27;hex&#x27;);</p>
+<p>  const a = Buffer.from(expected);</p>
+<p>  const b = Buffer.from(header || &#x27;&#x27;);</p>
+<p>  return a.length === b.length &amp;&amp; crypto.timingSafeEqual(a, b);</p>
+<p>}</p>
+<p><code>`</code></p>
+<h2>Step 3: Compare in constant time</h2>
+<p>Don&#x27;t use <code>==</code> or <code>===</code>. A plain string comparison can return early at the first differing character, which leaks timing information. GitHub&#x27;s docs specifically advise against plain equality. Use <code>hmac.compare_digest</code> (Python), <code>crypto.timingSafeEqual</code> (Node; it throws if the lengths differ, hence the length check above), <code>hash_equals</code> (PHP) or <code>Rack::Utils.secure_compare</code> (Ruby).</p>
+<h2>Step 4: Test it from the command line</h2>
+<p>You can reproduce a signature with OpenSSL to see whether your secret and body are right:</p>
+<p><code>`</code>bash</p>
+<p>printf &#x27;%s&#x27; &#x27;{&quot;action&quot;:&quot;opened&quot;}&#x27; | openssl dgst -sha256 -hmac &#x27;my-secret&#x27;</p>
+<p><code>`</code></p>
+<p>Then send a signed test request to your local endpoint:</p>
+<p><code>`</code>bash</p>
+<p>BODY=&#x27;{&quot;action&quot;:&quot;opened&quot;}&#x27;</p>
+<p>SIG=$(printf &#x27;%s&#x27; &quot;$BODY&quot; | openssl dgst -sha256 -hmac &#x27;my-secret&#x27; | sed &#x27;s/^.* //&#x27;)</p>
+<p>curl -X POST http://localhost:3000/webhook \</p>
+<p>  -H &#x27;Content-Type: application/json&#x27; \</p>
+<p>  -H &quot;X-Hub-Signature-256: sha256=$SIG&quot; \</p>
+<p>  --data &quot;$BODY&quot;</p>
+<p><code>`</code></p>
+<p>Use <code>printf &#x27;%s&#x27;</code>, not <code>echo</code>. <code>echo</code> adds a trailing newline, which changes the bytes and the HMAC.</p>
+<h2>Common pitfalls</h2>
+<ul><li><strong>Hashing parsed JSON instead of raw bytes.</strong> This is the number-one cause of failures (see step 1).</li><li><strong>Forgetting the prefix.</strong> GitHub&#x27;s value starts with <code>sha256=</code>. Either include it in your expected string or strip it from the header.</li><li><strong>Hex vs base64.</strong> Some providers send base64. If your digest looks completely different in length, check the encoding.</li><li><strong>Wrong secret.</strong> Separate test and live secrets, or a secret with trailing whitespace from a <code>.env</code> file, produce mismatches that look identical to tampering.</li><li><strong>Encoding.</strong> GitHub notes that payloads can contain Unicode, so handle the body and secret as UTF-8 where your language asks for an encoding.</li><li><strong>Replay.</strong> A valid signature doesn&#x27;t make a request fresh. If the provider signs a timestamp, reject old deliveries. Either way, store delivery IDs and ignore duplicates.</li><li><strong>Logging the secret.</strong> Log the computed and received signatures while debugging, never the secret itself.</li></ul>
+<h2>Debugging a mismatch</h2>
+<p>1. Log the length and first bytes of the raw body your handler received, and compare them with what the provider shows in its delivery log.</p>
+<p>2. Recompute the HMAC from that exact body with <code>openssl</code> (step 4).</p>
+<p>3. If OpenSSL matches the header but your code doesn&#x27;t, your code is hashing different bytes or using a different secret.</p>
+<h2>Tools</h2>
+<p>Many providers have a delivery log with a redeliver button. GitHub does, for example, and it&#x27;s the easiest way to replay a real payload. We&#x27;re building Presign Pad, a browser extension that will compute HMAC signatures for a request body and flag where your header differs. It&#x27;s coming soon. For now, the OpenSSL commands above do the same check by hand.</p></article><a class="cta" href="https://tuckertooling.com/presign-pad/?ref=guide">Try it</a></body></html>
