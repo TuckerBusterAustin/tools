@@ -1,0 +1,15 @@
+<!doctype html><html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex"><title>Thank you: Ferrywise</title>
+<script src="app/license-config.js"></script><script src="app/license.js"></script>
+<style>body{font-family:system-ui,sans-serif;max-width:560px;margin:12vh auto;padding:16px;
+line-height:1.5} code{word-break:break-all;background:#f3f3f3;padding:2px 4px}</style>
+</head><body><h1>Thank you!</h1><p id="msg">Getting your license...</p>
+<p><a href="app/">Open Ferrywise</a></p><script>
+VSLicense.claimFromUrl().then(function (token) {
+  var msg = document.getElementById("msg");
+  if (token) { msg.innerHTML = "Unlocked on this device. Your key (also emailed): <code></code>";
+    msg.querySelector("code").textContent = token; }
+  else { msg.textContent = "Payment received. Your key is on its way by email."; }
+});
+</script></body></html>
