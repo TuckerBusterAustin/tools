@@ -1,8 +1,11 @@
 {
   "auditfold": {
     "has_app": true,
-    "tagline": "Paste a page's HTML, get a ranked plain-language SEO fix list for clients",
-    "title": "Auditfold: SEO fix list and client report from a page's HTML",
+    "image": true,
+    "price": "$19/month",
+    "stage": "live",
+    "tagline": "Paste a page. Get a plain-language SEO fix list for your client.",
+    "title": "Auditfold: SEO page audit and client fix list",
     "updated": "2026-10-16"
   },
   "ferrywise": {
