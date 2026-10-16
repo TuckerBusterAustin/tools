@@ -1,0 +1,53 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>How to monitor SSL certificate expiry across many client sites</title>
+<meta name="description" content="Four honest ways for agencies and freelance site admins to track SSL expiry on dozens of client domains: calendar reminders, a spreadsheet, a script, and…">
+<link rel="canonical" href="https://tuckertooling.com/lapsewatch/guides/monitor-ssl-expiry-many-sites/">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23635bff'/%3E%3Ctext x='32' y='44' font-size='36' text-anchor='middle' fill='white' font-family='system-ui,sans-serif' font-weight='bold'%3EH%3C/text%3E%3C/svg%3E">
+<meta property="og:type" content="website">
+<meta property="og:title" content="How to monitor SSL certificate expiry across many client sites">
+<meta property="og:description" content="Four honest ways for agencies and freelance site admins to track SSL expiry on dozens of client domains: calendar reminders, a spreadsheet, a script, and…">
+<meta property="og:url" content="https://tuckertooling.com/lapsewatch/guides/monitor-ssl-expiry-many-sites/">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="How to monitor SSL certificate expiry across many client sites">
+<meta name="twitter:description" content="Four honest ways for agencies and freelance site admins to track SSL expiry on dozens of client domains: calendar reminders, a spreadsheet, a script, and…"><style>:root{--accent:#4f46e5;--ink:#111827;--muted:#5b6170;--line:#e5e7eb}*{box-sizing:border-box} body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;color:var(--ink);line-height:1.7;font-size:18px}nav{border-bottom:1px solid var(--line)} nav div{max-width:760px;margin:0 auto;padding:18px 24px;display:flex;justify-content:space-between;font-size:15px}nav a{color:var(--muted);text-decoration:none} nav a.home{color:var(--ink);font-weight:700}main,article{max-width:760px;margin:0 auto;padding:40px 24px 64px}h1{font-size:clamp(30px,5vw,44px);line-height:1.15;letter-spacing:-.02em}h2{margin-top:2em;letter-spacing:-.01em} a{color:var(--accent)}code{background:#f3f4f6;padding:1px 5px;border-radius:4px}a.cta{display:inline-block;margin:28px 0;padding:13px 22px;background:var(--accent);color:#fff;border-radius:10px;text-decoration:none;font-weight:600}</style></head><body><nav><div><a class="home" href="https://tuckertooling.com/">Tucker Tooling</a><a href="https://tuckertooling.com/lapsewatch/">The tool</a></div></nav><article><h1>How to monitor SSL certificate expiry across many client sites</h1><h2>The problem</h2>
+<p>If you look after many client websites, one expired certificate is enough to turn a site &quot;Not Secure&quot; and bring a client on the phone. Most of these certificates auto-renew, so nobody watches them. That&#x27;s exactly why a failed renewal goes unnoticed until a visitor sees the warning.</p>
+<p>It&#x27;s also getting more frequent. Under CA/Browser Forum ballot SC-081, publicly trusted certificates have been capped at 200 days since 15 March 2026. The cap falls to 100 days in March 2027 and 47 days in March 2029 (<a href="https://shop.sslinsights.com/blog/ca-browser-forum-47-day-certificate-roadmap/">timeline summary</a>). Shorter lifetimes mean more renewals per site per year, and more chances for one to fail.</p>
+<p>What you want is simple: <strong>one list of every domain with its days to expiry, and a warning early enough to fix a problem.</strong> Here are four ways to get it, from free and manual to fully automatic.</p>
+<h2>Option 1: Calendar reminders</h2>
+<p>Check each certificate once (see [how to check when an SSL certificate expires](/lapsewatch/guides/check-ssl-certificate-expiry)) and add a calendar event about 14-30 days before each expiry date.</p>
+<ul><li><strong>Good for:</strong> a few sites with paid, manually renewed certificates.</li><li><strong>Breaks when:</strong> certificates auto-renew. The date changes every renewal, so your reminder is wrong after the first cycle. With lifetimes of 200 days or less, you&#x27;d be updating events constantly.</li></ul>
+<h2>Option 2: A shared spreadsheet</h2>
+<p>Keep one row per hostname with these columns: <code>domain</code>, <code>client</code>, <code>host</code>, <code>issuer</code>, <code>auto-renew?</code>, <code>expires</code>, <code>days left</code>. In Google Sheets or Excel, <code>=C2-TODAY()</code> gives days left, and conditional formatting can turn rows red under 14 days.</p>
+<ul><li><strong>Good for:</strong> an inventory of what you look after and who owns each site, which you need whatever you choose.</li><li><strong>Breaks when:</strong> someone has to re-check and update the <code>expires</code> column. The spreadsheet only knows what it was last told, so a failed auto-renewal still looks fine.</li></ul>
+<p><strong>Tip:</strong> list every hostname a visitor might reach, not just the main domain. Include <code>www</code>, the bare domain, shop and booking subdomains, and staging sites that clients actually use.</p>
+<h2>Option 3: A script that checks every domain</h2>
+<p>Put your hostnames in <code>domains.txt</code>, one per line, and run this on Linux or WSL (it uses GNU <code>date</code>):</p>
+<p><code>`</code>bash</p>
+<p>#!/usr/bin/env bash</p>
+<p>while read -r d; do</p>
+<p>  [ -z &quot;$d&quot; ] &amp;&amp; continue</p>
+<p>  end=$(echo | timeout 10 openssl s_client -connect &quot;$d:443&quot; -servername &quot;$d&quot; 2&gt;/dev/null \</p>
+<p>        | openssl x509 -noout -enddate 2&gt;/dev/null | cut -d= -f2)</p>
+<p>  if [ -z &quot;$end&quot; ]; then echo &quot;ERROR $d&quot;; continue; fi</p>
+<p>  days=$(( ( $(date -d &quot;$end&quot; +%s) - $(date +%s) ) / 86400 ))</p>
+<p>  echo &quot;$days $d&quot;</p>
+<p>done &lt; domains.txt | sort -n</p>
+<p><code>`</code></p>
+<p>The output is sorted with the soonest expiry at the top. Run it from <code>cron</code> every morning and pipe lines under a threshold, such as 21 days, to email or a Slack incoming webhook.</p>
+<ul><li><strong>Good for:</strong> technical teams who already have a server running scheduled jobs.</li><li><strong>Pitfalls:</strong></li></ul>
+<p>  - The <code>-servername</code> flag is essential on shared hosting. Without it you may get the server&#x27;s default certificate and the wrong date.</p>
+<p>  - Treat <code>ERROR</code> lines as alerts. A site that doesn&#x27;t answer on 443 is its own problem.</p>
+<p>  - Somebody has to own the script. If the server it runs on goes away, monitoring stops silently. Have it send a short &quot;all OK&quot; summary every week, so you notice when the messages stop.</p>
+<p>  - On macOS, <code>date -d</code> doesn&#x27;t exist. Use <code>date -j -f &quot;%b %d %T %Y %Z&quot; &quot;$end&quot; +%s</code> instead.</p>
+<h2>Option 4: A monitoring tool</h2>
+<p>Many uptime monitors include SSL expiry checks. For example, <a href="https://uptimerobot.com/ssl-monitoring">UptimeRobot</a> runs SSL and expiry checks on HTTPS monitors. Its <a href="https://help.uptimerobot.com/en/articles/11358746-ssl-certificate-expiration-and-errors">help center</a> says the check runs once every 24 hours and that alert timing depends on the issuer. If you already pay for uptime monitoring on every client site, turning on its SSL checks may be all you need.</p>
+<p>When comparing tools, ask:</p>
+<ul><li><strong>Can I see all domains in one list sorted by days left?</strong> Alerts are useful, but a sorted view is what you check on a Monday morning.</li><li><strong>Can I choose the alert thresholds?</strong> With 200-day certificates, a 30-day warning is reasonable. If auto-renewal usually happens about 30 days out, a 14-day warning on a certificate that should have renewed is your real signal.</li><li><strong>Where do alerts go?</strong> Use a shared inbox or team Slack channel rather than one person&#x27;s email, so alerts don&#x27;t vanish when that person is on holiday or leaves.</li><li><strong>Can I add domains in bulk?</strong> Pasting 60 hostnames should take a minute, not an afternoon.</li><li><strong>Does it check what visitors see?</strong> Behind a CDN, the visitor-facing certificate and the origin certificate can differ. Decide which one you&#x27;re monitoring, or monitor both.</li></ul>
+<h2>A setup that works</h2>
+<p>Whichever option you choose, the same basics apply:</p>
+<p>1. <strong>Inventory:</strong> one source of truth for every client hostname. The spreadsheet in Option 2 works.</p>
+<p>2. <strong>Automatic checking:</strong> a script or tool that reads the real certificate daily. Don&#x27;t rely on remembered dates.</p>
+<p>3. <strong>Two alert levels:</strong> an early heads-up (around 21-30 days) and an urgent one (around 7 days).</p>
+<p>4. <strong>A shared destination:</strong> alerts go to a channel the whole team sees.</p>
+<p>5. <strong>A fix path:</strong> for each host, know where the certificate is managed (cPanel AutoSSL, Let&#x27;s Encrypt via Certbot, the CDN, or a paid certificate authority).</p>
+<h2>Where Lapsewatch fits</h2>
+<p>We&#x27;re building <strong>Lapsewatch</strong> for agencies and freelance admins with many client domains. You&#x27;ll paste in your domains once, and it will keep one list sorted by days to expiry and send an email or Slack ping before any certificate lapses. It won&#x27;t renew certificates for you. It&#x27;s the warning, not the fix. If you already run an uptime monitor with SSL checks, or are happy maintaining the script above, those are perfectly good choices too.</p></article><a class="cta" href="https://tuckertooling.com/lapsewatch/?ref=guide">Try it</a></body></html>
