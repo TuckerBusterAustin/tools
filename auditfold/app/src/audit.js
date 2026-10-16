@@ -42,7 +42,18 @@
     return { url: url, score: computeScore(results), fixes: fixes, passes: passes, summary: summary };
   }
 
-  var api = { audit: audit, computeScore: computeScore, compareFixes: compareFixes };
+  var EMPTY_MSG = "Error: Paste the page's HTML first. Open the page in your browser, press Ctrl+U (Cmd+Option+U on a Mac), select all, copy, and paste it here.";
+  var NOT_HTML_MSG = "Error: This doesn't look like HTML. Paste the page source, which starts with something like <!doctype html> or <html>, not the visible page text.";
+
+  /** Friendly wrapper for the UI: {ok:false, error} for empty or non-HTML input
+   *  (never throws), otherwise {ok:true, audit}. */
+  function auditChecked(html, opts) {
+    if (typeof html !== 'string' || !html.trim()) return { ok: false, code: 'empty', error: EMPTY_MSG };
+    if (!/<\s*[a-z!][^>]*>/i.test(html)) return { ok: false, code: 'not-html', error: NOT_HTML_MSG };
+    return { ok: true, audit: audit(html, opts) };
+  }
+
+  var api = { audit: audit, auditChecked: auditChecked, computeScore: computeScore, compareFixes: compareFixes };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.AuditfoldAudit = api;
 })(typeof self !== 'undefined' ? self : this);
