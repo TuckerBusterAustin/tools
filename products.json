@@ -38,6 +38,7 @@
     "updated": "2026-10-16"
   },
   "rollwell": {
+    "bucket": "website_care",
     "has_app": true,
     "image": true,
     "price": "",
