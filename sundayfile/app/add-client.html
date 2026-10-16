@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Add client · Sundayfile prototype</title>
+<link rel="stylesheet" href="styles.css">
+<script src="lib/csv.js" defer></script>
+<script src="lib/schema.js" defer></script>
+<script src="lib/importer.js" defer></script>
+<script src="lib/store.js" defer></script>
+<script src="lib/license.js" defer></script>
+<script src="app.js" defer></script>
+</head>
+<body data-page="add">
+<a class="skip-link" href="#main">Skip to content</a>
+<div class="banner banner-sticky"><div class="banner-inner"><p>Prototype. Your data stays in this browser. Nothing here connects to real accounts.</p></div></div>
+<header class="topbar"><div class="topbar-inner">
+  <a class="wordmark" href="app.html">Sundayfile</a>
+  <a class="toplink" href="app.html">Cancel</a>
+</div></header>
+
+<main id="main" class="wrap narrow">
+  <h1>Add client</h1>
+
+  <form id="add-form" novalidate>
+    <div class="field">
+      <label for="client-name">Client name</label>
+      <input class="input" id="client-name" name="client" autocomplete="off" data-check="required" data-empty="Enter a client name, for example Acme Co." data-help="client-name-help" aria-describedby="client-name-help">
+      <p class="help" id="client-name-help">This name is used in the downloaded file names.</p>
+    </div>
+    <div class="field">
+      <label for="client-note">Note (optional)</label>
+      <input class="input" id="client-note" name="note" autocomplete="off">
+    </div>
+
+    <div class="card">
+      <h3>Connections, Drive folder and schedule <span class="pill pill-tag">Coming soon</span></h3>
+      <p class="small muted" style="margin:0">Connecting HubSpot and Trello, choosing a Drive folder and a weekly schedule are coming soon. For now you import CSV exports yourself and download the clean files.</p>
+    </div>
+
+    <p class="small" id="limit-note" role="alert" hidden></p>
+    <div class="actions">
+      <button type="submit" class="btn btn-primary" id="next">Save client</button>
+      <a href="app.html" class="btn-text">Cancel</a>
+    </div>
+  </form>
+</main>
+</body>
+</html>
