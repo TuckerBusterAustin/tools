@@ -41,10 +41,12 @@
   "lapsewatch": {
     "bucket": "website_care",
     "guides": [
+      "https://tuckertooling.com/lapsewatch/guides/check-ssl-certificate-expiry-date/",
       "https://tuckertooling.com/lapsewatch/guides/check-ssl-certificate-expiry/",
       "https://tuckertooling.com/lapsewatch/guides/fix-expired-ssl-not-secure/",
       "https://tuckertooling.com/lapsewatch/guides/monitor-ssl-expiry-many-sites/",
-      "https://tuckertooling.com/lapsewatch/guides/monitor-ssl-expiry-multiple-domains/"
+      "https://tuckertooling.com/lapsewatch/guides/monitor-ssl-expiry-multiple-domains/",
+      "https://tuckertooling.com/lapsewatch/guides/ssl-expired-not-secure-fix/"
     ],
     "has_app": true,
     "image": true,
