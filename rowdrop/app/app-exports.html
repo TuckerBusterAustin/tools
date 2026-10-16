@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Scheduled exports · Rowdrop preview</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body data-app>
+<a class="skip" href="#main">Skip to main content</a>
+<div class="preview-banner"><div class="wrap"><span><span class="preview-label">Preview: not live yet.</span> Rowdrop is not live yet. Nothing here sends real files.</span></div></div>
+<header class="topbar"><div class="wrap">
+  <a class="wordmark" href="index.html">Rowdrop</a>
+  <button type="button" class="btn btn-secondary menu-btn" aria-expanded="false" aria-controls="app-nav">Menu</button>
+  <nav class="nav app-nav" id="app-nav" aria-label="App">
+    <a href="app-exports.html" aria-current="page">Exports</a><a href="app-detail.html">History</a><a href="app-settings.html">Settings</a>
+  </nav>
+</div></header>
+
+<main id="main"><div class="wrap">
+  <div class="page-head">
+    <h1>Scheduled exports</h1>
+    <a class="btn btn-primary" id="new-export" href="app-edit.html">New export</a>
+  </div>
+  <p class="usage muted" id="usage"></p>
+  <div id="alerts"></div>
+  <div id="exports-list">
+
+    <!-- Normal -->
+    <div data-state="normal" class="table-wrap" hidden>
+      <table>
+        <caption class="sr-only">Scheduled exports</caption>
+        <thead><tr><th scope="col">Name</th><th scope="col">Source</th><th scope="col">Schedule</th><th scope="col">Format</th><th scope="col">Recipients</th><th scope="col">Next run</th><th scope="col">Last result</th><th scope="col"><span class="sr-only">Actions</span></th></tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+
+    <!-- Nothing imported yet -->
+    <div data-state="nosource" hidden class="card card-center wide">
+      <h2>Import a HubSpot CSV first.</h2>
+      <p style="margin-inline:auto">Rowdrop does not connect to HubSpot yet, so exports start from a CSV you already export. Import one, then schedule it here.</p>
+      <a class="btn btn-primary" href="app-connect.html">Import a CSV</a>
+    </div>
+
+    <!-- Empty -->
+    <div data-state="empty" hidden class="card card-center wide">
+      <h2>No scheduled exports yet.</h2>
+      <p style="margin-inline:auto">Pick an imported list or report, a schedule and who gets the file. It takes about a minute.</p>
+      <a class="btn btn-primary" href="app-edit.html">New export</a>
+      <p class="help" style="margin:16px 0 0">For example: Deals, every Monday at 08:00, to your client.</p>
+    </div>
+  </div>
+</div></main>
+<script src="lib/browser-shim.js"></script><script src="lib/csv.js"></script><script src="lib/schedule.js"></script><script src="lib/jobs.js"></script><script src="lib/xlsx.js"></script><script src="lib/runner.js"></script><script src="lib/storage.js"></script><script src="lib/license.js"></script><script src="lib/shim-end.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
