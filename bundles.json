@@ -1,0 +1,16 @@
+[
+  {
+    "id": "agency-kit",
+    "name": "Agency Kit",
+    "tagline": "Website care and client data tools for small agencies, in one subscription.",
+    "price": "$59/month",
+    "apart": 77.0,
+    "save": 18.0,
+    "tools": [
+      "Auditfold",
+      "Lapsewatch",
+      "Sundayfile"
+    ],
+    "live": true
+  }
+]
