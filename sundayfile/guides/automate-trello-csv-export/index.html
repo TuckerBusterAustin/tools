@@ -1,61 +1,60 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>How to automate a Trello board export to CSV</title>
-<meta name="description" content="Trello&#x27;s CSV export is manual and only on paid plans, but its API is open to everyone. This guide shows how to get a weekly CSV of any board saved to…">
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>How to automate Trello board export to CSV</title>
+<meta name="description" content="What Trello&#x27;s built-in CSV export can and can&#x27;t do, and how to set up a scheduled board-to-CSV export with the Trello REST API and a small script.">
 <link rel="canonical" href="https://tuckertooling.com/sundayfile/guides/automate-trello-csv-export/">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23635bff'/%3E%3Ctext x='32' y='44' font-size='36' text-anchor='middle' fill='white' font-family='system-ui,sans-serif' font-weight='bold'%3EH%3C/text%3E%3C/svg%3E">
 <meta property="og:type" content="website">
-<meta property="og:title" content="How to automate a Trello board export to CSV">
-<meta property="og:description" content="Trello&#x27;s CSV export is manual and only on paid plans, but its API is open to everyone. This guide shows how to get a weekly CSV of any board saved to…">
+<meta property="og:title" content="How to automate Trello board export to CSV">
+<meta property="og:description" content="What Trello&#x27;s built-in CSV export can and can&#x27;t do, and how to set up a scheduled board-to-CSV export with the Trello REST API and a small script.">
 <meta property="og:url" content="https://tuckertooling.com/sundayfile/guides/automate-trello-csv-export/">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="How to automate a Trello board export to CSV">
-<meta name="twitter:description" content="Trello&#x27;s CSV export is manual and only on paid plans, but its API is open to everyone. This guide shows how to get a weekly CSV of any board saved to…"><style>:root{--accent:#4f46e5;--ink:#111827;--muted:#5b6170;--line:#e5e7eb}*{box-sizing:border-box} body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;color:var(--ink);line-height:1.7;font-size:18px}nav{border-bottom:1px solid var(--line)} nav div{max-width:760px;margin:0 auto;padding:18px 24px;display:flex;justify-content:space-between;font-size:15px}nav a{color:var(--muted);text-decoration:none} nav a.home{color:var(--ink);font-weight:700}main,article{max-width:760px;margin:0 auto;padding:40px 24px 64px}h1{font-size:clamp(30px,5vw,44px);line-height:1.15;letter-spacing:-.02em}h2{margin-top:2em;letter-spacing:-.01em} a{color:var(--accent)}code{background:#f3f4f6;padding:1px 5px;border-radius:4px}a.cta{display:inline-block;margin:28px 0;padding:13px 22px;background:var(--accent);color:#fff;border-radius:10px;text-decoration:none;font-weight:600}</style></head><body><nav><div><a class="home" href="https://tuckertooling.com/">Tucker Tooling</a><a href="https://tuckertooling.com/sundayfile/">The tool</a></div></nav><article><h1>How to automate a Trello board export to CSV</h1><h2>What Trello gives you out of the box</h2>
-<p>According to <a href="https://support.atlassian.com/trello/docs/exporting-data-from-trello">Trello&#x27;s export documentation</a>:</p>
-<ul><li>Any board member can export a board as <strong>JSON</strong>, on any plan.</li><li><strong>CSV export</strong> is for boards in <strong>Premium</strong> Workspaces. With Premium, a Workspace admin can also export every board in the Workspace.</li><li>The CSV export <strong>does not include comments</strong>. The JSON export includes the 1,000 most recent actions on the board, comments included.</li></ul>
-<p>All of these are manual: someone opens the board menu and clicks Export. To get a CSV every week without anyone clicking, you have to schedule it yourself.</p>
-<h2>The free route: Trello API + Google Apps Script</h2>
-<p>The Trello REST API works on every plan. You can read a board&#x27;s lists and cards, turn them into CSV rows and save the file to Drive on a timer.</p>
-<h3>Step 1: Get an API key and token</h3>
-<p>Create an API key through Trello&#x27;s developer / Power-Up admin page, then generate a token for your account from that same page. The token can see every board your account can see, so treat it like a password.</p>
-<h3>Step 2: Find the board ID</h3>
-<p>Add <code>.json</code> to the end of the board URL, for example <code>https://trello.com/b/AbC123/client-work.json</code>. The <code>id</code> field at the top is the board ID. The short code in the URL (<code>AbC123</code>) usually works too.</p>
-<h3>Step 3: Write the script</h3>
-<p>In <a href="https://script.google.com">Google Apps Script</a>, add <code>TRELLO_KEY</code> and <code>TRELLO_TOKEN</code> under <strong>Project Settings &gt; Script properties</strong>, then paste in:</p>
-<p><code>`</code>js</p>
-<p>function exportTrelloBoard() {</p>
-<p>  const p = PropertiesService.getScriptProperties();</p>
-<p>  const auth = &#x27;key=&#x27; + p.getProperty(&#x27;TRELLO_KEY&#x27;) + &#x27;&amp;token=&#x27; + p.getProperty(&#x27;TRELLO_TOKEN&#x27;);</p>
-<p>  const board = &#x27;YOUR_BOARD_ID&#x27;;</p>
-<p>  const get = path =&gt; JSON.parse(UrlFetchApp.fetch(</p>
-<p>    &#x27;https://api.trello.com/1/&#x27; + path + (path.indexOf(&#x27;?&#x27;) &gt; -1 ? &#x27;&amp;&#x27; : &#x27;?&#x27;) + auth</p>
-<p>  ).getContentText());</p>
-<p>  const lists = {};</p>
-<p>  get(&#x27;boards/&#x27; + board + &#x27;/lists&#x27;).forEach(l =&gt; lists[l.id] = l.name);</p>
-<p>  const cards = get(&#x27;boards/&#x27; + board + &#x27;/cards?fields=name,idList,due,dateLastActivity,labels,shortUrl&#x27;);</p>
-<p>  const rows = [[&#x27;card&#x27;, &#x27;list&#x27;, &#x27;labels&#x27;, &#x27;due&#x27;, &#x27;last_activity&#x27;, &#x27;url&#x27;]];</p>
-<p>  cards.forEach(c =&gt; rows.push([</p>
-<p>    c.name,</p>
-<p>    lists[c.idList] || &#x27;&#x27;,</p>
-<p>    (c.labels || []).map(l =&gt; l.name).join(&#x27;; &#x27;),</p>
-<p>    c.due || &#x27;&#x27;,</p>
-<p>    c.dateLastActivity,</p>
-<p>    c.shortUrl</p>
-<p>  ]));</p>
-<p>  const csv = rows.map(r =&gt; r.map(v =&gt; &#x27;&quot;&#x27; + String(v).replace(/&quot;/g, &#x27;&quot;&quot;&#x27;) + &#x27;&quot;&#x27;).join(&#x27;,&#x27;)).join(&#x27;\n&#x27;);</p>
-<p>  const name = &#x27;trello-&#x27; + board + &#x27;-&#x27; + Utilities.formatDate(new Date(), &#x27;UTC&#x27;, &#x27;yyyy-MM-dd&#x27;) + &#x27;.csv&#x27;;</p>
-<p>  DriveApp.getFolderById(&#x27;YOUR_FOLDER_ID&#x27;).createFile(name, csv, MimeType.CSV);</p>
-<p>}</p>
+<meta name="twitter:title" content="How to automate Trello board export to CSV">
+<meta name="twitter:description" content="What Trello&#x27;s built-in CSV export can and can&#x27;t do, and how to set up a scheduled board-to-CSV export with the Trello REST API and a small script."><style>:root{--accent:#4f46e5;--ink:#111827;--muted:#5b6170;--line:#e5e7eb}*{box-sizing:border-box} body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;color:var(--ink);line-height:1.7;font-size:18px}nav{border-bottom:1px solid var(--line)} nav div{max-width:760px;margin:0 auto;padding:18px 24px;display:flex;justify-content:space-between;font-size:15px}nav a{color:var(--muted);text-decoration:none} nav a.home{color:var(--ink);font-weight:700}main,article{max-width:760px;margin:0 auto;padding:40px 24px 64px}h1{font-size:clamp(30px,5vw,44px);line-height:1.15;letter-spacing:-.02em}h2{margin-top:2em;letter-spacing:-.01em} a{color:var(--accent)}code{background:#f3f4f6;padding:1px 5px;border-radius:4px}a.cta{display:inline-block;margin:28px 0;padding:13px 22px;background:var(--accent);color:#fff;border-radius:10px;text-decoration:none;font-weight:600}</style></head><body><nav><div><a class="home" href="https://tuckertooling.com/">Tucker Tooling</a><a href="https://tuckertooling.com/sundayfile/">The tool</a></div></nav><article><h1>How to automate Trello board export to CSV</h1><p>Trello has no setting that sends you a CSV of a board every week. You can still get there. This page covers what the built-in export does, then shows how to schedule your own export.</p>
+<h2>What Trello offers out of the box</h2>
+<p>From <a href="https://support.atlassian.com/trello/docs/exporting-data-from-trello">Atlassian&#x27;s documentation on exporting Trello data</a>:</p>
+<ul><li><strong>CSV export</strong> is available only for boards in <strong>Premium</strong> Workspaces. You find it in the board menu under <strong>More &gt; Print and Export</strong>.</li><li><strong>JSON export</strong> is available to all board members.</li><li>The CSV leaves out <strong>comments</strong>, and since January 2024 it includes <strong>only visible cards</strong> (no archived cards) unless you change the export URL as the article explains.</li></ul>
+<p>Both are manual. Someone has to click Export each time. Users on the <a href="https://community.atlassian.com/forums/Trello-questions/Is-it-possible-to-schedule-a-task-to-export-the-board-as-excel/qaq-p/2882266">Atlassian Community</a> have asked for scheduled exports, and the answers there point to workarounds, not a built-in feature.</p>
+<h2>Option 1: Schedule a script against the Trello API</h2>
+<p>This option works on any plan, because it reads the board data directly instead of using the Premium CSV button.</p>
+<h3>1. Get credentials</h3>
+<p>Create a Trello Power-Up/API key in Trello&#x27;s developer admin pages and generate a token for your account. Treat the token like a password. Anyone who has it can read your boards.</p>
+<h3>2. Find the board ID</h3>
+<p>Open the board and add <code>.json</code> to its URL. The <code>id</code> field at the top is the board ID. You can also use the short code in the board URL.</p>
+<h3>3. Write the export script</h3>
+<p><code>`</code>python</p>
+<p>import csv, os, datetime, requests</p>
+<p>KEY, TOKEN = os.environ[&quot;TRELLO_KEY&quot;], os.environ[&quot;TRELLO_TOKEN&quot;]</p>
+<p>BOARD = os.environ[&quot;TRELLO_BOARD&quot;]</p>
+<p>auth = {&quot;key&quot;: KEY, &quot;token&quot;: TOKEN}</p>
+<p>base = f&quot;https://api.trello.com/1/boards/{BOARD}&quot;</p>
+<p>lists = {l[&quot;id&quot;]: l[&quot;name&quot;] for l in requests.get(f&quot;{base}/lists&quot;, params=auth).json()}</p>
+<p>cards = requests.get(f&quot;{base}/cards&quot;, params=auth).json()</p>
+<p>fname = f&quot;trello-{datetime.date.today():%Y-%m-%d}.csv&quot;</p>
+<p>with open(fname, &quot;w&quot;, newline=&quot;&quot;, encoding=&quot;utf-8&quot;) as f:</p>
+<p>    w = csv.writer(f)</p>
+<p>    w.writerow([&quot;card_name&quot;,&quot;list&quot;,&quot;labels&quot;,&quot;due&quot;,&quot;last_activity&quot;,&quot;url&quot;])</p>
+<p>    for c in cards:</p>
+<p>        w.writerow([</p>
+<p>            c[&quot;name&quot;],</p>
+<p>            lists.get(c[&quot;idList&quot;], &quot;&quot;),</p>
+<p>            &quot;; &quot;.join(l.get(&quot;name&quot;,&quot;&quot;) for l in c.get(&quot;labels&quot;, [])),</p>
+<p>            c.get(&quot;due&quot;) or &quot;&quot;,</p>
+<p>            c.get(&quot;dateLastActivity&quot;,&quot;&quot;),</p>
+<p>            c.get(&quot;shortUrl&quot;,&quot;&quot;),</p>
+<p>        ])</p>
+<p>print(&quot;wrote&quot;, fname)</p>
 <p><code>`</code></p>
-<h3>Step 4: Schedule it</h3>
-<p>Open <strong>Triggers</strong> in the Apps Script editor and add a time-driven trigger set to a weekly timer. Run it by hand once first so Google can ask for Drive permissions.</p>
-<h2>Adding more boards</h2>
-<p>Put the board IDs in an array and loop over them. You can write one file per board, or add a <code>board</code> column and write everything to one file. Agencies with a board per client usually find the single file easier to filter.</p>
-<h2>Pitfalls to watch</h2>
-<ul><li><strong>Archived cards.</strong> By default the board&#x27;s cards endpoint returns only open cards. If you want a real backup that includes archived work, use the <code>filter</code> parameter on that endpoint (see Trello&#x27;s API reference).</li><li><strong>Custom fields and checklists</strong> aren&#x27;t included in the basic card fields. You&#x27;ll need extra calls for them. Decide whether you actually need them before you add more code.</li><li><strong>Comments</strong> live in the board&#x27;s actions, not on the card object. If comments matter for your records, store the raw JSON export as well as the CSV.</li><li><strong>Formula injection.</strong> A card title that starts with <code>=</code> can be read as a formula when the CSV is opened in a spreadsheet. If clients can create cards, add a <code>&#x27;</code> in front of those values.</li><li><strong>Rate limits.</strong> Trello limits API requests. A few boards a week won&#x27;t come close, but a script that loops over hundreds of boards might.</li><li><strong>Token owner.</strong> The script sees only the boards that the token&#x27;s owner can see. If that person is removed from a board or leaves the company, the export quietly stops covering it.</li></ul>
-<h2>Other routes</h2>
-<ul><li><strong>Upgrade to Premium</strong> if you only need an occasional manual CSV and your team can stay disciplined about doing it.</li><li><strong>Automation platforms</strong> like <a href="https://zapier.com">Zapier</a> or <a href="https://www.make.com">Make</a> can send Trello events to a spreadsheet. Check whether they can take a full weekly snapshot or only record changes, because those are different things.</li><li><strong>Power-Ups</strong> in Trello&#x27;s own directory offer exporting and reporting from inside the board.</li></ul>
-<h2>A simple checklist</h2>
-<p>1. Decide the columns you actually need, such as card, list, labels, due date and client.</p>
-<p>2. Get an API key and token, and store them in script properties, not in the code.</p>
-<p>3. Run the script once by hand, then add a weekly trigger.</p>
-<p>4. Every month, compare the CSV&#x27;s card count with the board&#x27;s card count.</p>
-<p>I built <a href="https://tuckertooling.com/sundayfile/?ref=guide">Sundayfile</a> for this: Fixed-column HubSpot and Trello CSVs, one profile per client. It runs in your browser and the free part works today.</p></article><a class="cta" href="https://tuckertooling.com/sundayfile/?ref=guide">Try it</a></body></html>
+<p>This endpoint returns the board&#x27;s open cards. If you also need archived cards, check Trello&#x27;s REST API reference for the card filter options.</p>
+<h3>4. Schedule it</h3>
+<ul><li><strong>Linux/macOS:</strong> add a cron line, for example every Monday at 07:00:</li></ul>
+<p>  <code>0 7 * * 1 cd /path/to/export &amp;&amp; /usr/bin/python3 trello_export.py</code></p>
+<ul><li><strong>Windows:</strong> create a weekly trigger in Task Scheduler that runs <code>python trello_export.py</code>.</li><li><strong>No server:</strong> use a scheduled CI job, such as a GitHub Actions workflow with a <code>schedule:</code> cron trigger, and store the key and token as repository secrets. Then upload the file somewhere or commit it to a private repo.</li></ul>
+<h3>5. Deliver the file</h3>
+<p>Write the file into a folder your Google Drive or Dropbox desktop client syncs, or add an upload step with that service&#x27;s API.</p>
+<h2>Option 2: Use the Premium CSV URL</h2>
+<p>On a Premium Workspace, the board&#x27;s CSV export has its own URL, which is the board URL with <code>.csv</code>. A scheduled job can download that URL. It needs an authenticated session, though, so for unattended runs the API route above is usually easier to keep working.</p>
+<h2>Option 3: An automation platform</h2>
+<p>General automation tools such as <a href="https://zapier.com">Zapier</a> or <a href="https://www.make.com">Make</a> can connect to Trello and spreadsheets. Check their current Trello triggers and actions, and their pricing, against your needs before you commit. They usually work best for syncing cards row by row, not for producing a dated full-board snapshot.</p>
+<h2>Pitfalls</h2>
+<ul><li><strong>Token rotation.</strong> If someone revokes the token or leaves the company, the job quietly stops. Add a check that alerts you when no new file appears.</li><li><strong>Rate limits.</strong> Trello&#x27;s API has rate limits. One request per board per week is far below them, but loops over many boards should pause between calls.</li><li><strong>Column drift.</strong> Write a fixed header row in the script (as above) so every week&#x27;s file has the same columns. Otherwise any comparison across weeks breaks.</li><li><strong>Custom fields.</strong> These come from a separate endpoint (<code>customFieldItems</code>) and need extra mapping.</li><li><strong>Archived cards.</strong> Decide up front whether they belong in the snapshot, and filter the same way every time.</li></ul>
+<h2>Where Sundayfile fits</h2>
+<p>We make Sundayfile. It does <strong>not</strong> schedule or pull exports. What it does is take a Trello board CSV (or a HubSpot contacts or deals CSV) that you already have, map it to one fixed column layout, keep it under a client workspace and give you a clean <code>client-type-date.csv</code>. If your problem is messy, inconsistent files rather than remembering to export, it saves the cleanup step.</p></article><a class="cta" href="https://tuckertooling.com/sundayfile/?ref=guide">Try it</a></body></html>
