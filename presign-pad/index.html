@@ -15,23 +15,60 @@
 <meta name="twitter:image" content="https://tuckertooling.com/presign-pad/og.png">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareApplication", "name": "Presign Pad: debug AWS SigV4 and S3 presigned URL errors locally", "description": "Paste a failed S3 signature error and see exactly what differs. Runs locally.. Presign Pad is a small, local-first web page for one job: signing AWS SigV4 requests and S3 presigned URLs, and working out why a signature fails. It is new and made by one person. Version 2 is built as a static page. A…", "url": "https://tuckertooling.com/presign-pad/", "applicationCategory": "DeveloperApplication", "operatingSystem": "Web", "offers": [{"@type": "Offer", "name": "Free", "price": "0", "priceCurrency": "USD"}, {"@type": "Offer", "name": "Pro", "price": "5", "priceCurrency": "USD"}, {"@type": "Offer", "name": "Pro Yearly", "price": "48", "priceCurrency": "USD"}]}</script>
 <style>
-a.cta{display:inline-block;padding:10px 18px;background:#635bff;color:#fff;border-radius:6px;
-  text-decoration:none;font-weight:bold}
-body{font-family:system-ui,sans-serif;max-width:760px;margin:0 auto;padding:24px;
-  color:#222;line-height:1.5}
-h1{font-size:2.1em;margin-bottom:.2em} .sub{font-size:1.2em;color:#555}
-.tiers{display:flex;gap:12px;flex-wrap:wrap}
-.tier{border:1px solid #ddd;border-radius:8px;padding:12px;flex:1;min-width:180px}
-.price{font-size:1.4em;font-weight:bold}
-form{margin:24px 0;padding:16px;background:#f6f3ee;border-radius:8px}
-input{padding:8px;width:60%} button{padding:8px 16px} dt{font-weight:bold;margin-top:8px}
-.note{color:#666;font-size:.9em}
+:root{--accent:#635bff;--ink:#14171f;--muted:#5b6170;--line:#e6e8ee;--soft:#f6f7fb}
+*{box-sizing:border-box} html{-webkit-text-size-adjust:100%}
+body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  color:var(--ink);background:#fff;line-height:1.6;font-size:17px}
+.wrap{max-width:1040px;margin:0 auto;padding:0 24px}
+nav{border-bottom:1px solid var(--line)} nav .wrap{display:flex;align-items:center;
+  justify-content:space-between;height:64px} .brand{font-weight:700;letter-spacing:-.01em}
+.brand::before{content:"";display:inline-block;width:12px;height:12px;border-radius:4px;
+  background:var(--accent);margin-right:8px;vertical-align:baseline}
+.badge{display:inline-block;font-size:13px;color:var(--muted);border:1px solid var(--line);
+  border-radius:999px;padding:3px 10px}
+.hero{padding:88px 0 56px;text-align:center}
+.hero h1{font-size:clamp(34px,6vw,58px);line-height:1.08;letter-spacing:-.03em;
+  margin:18px auto 16px;max-width:820px}
+.hero p.sub{font-size:clamp(18px,2.4vw,21px);color:var(--muted);max-width:640px;margin:0 auto}
+.actions{margin-top:30px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+a.cta,button{display:inline-block;background:var(--accent);color:#fff;border:0;border-radius:10px;
+  padding:13px 22px;font:600 16px/1 inherit;font-family:inherit;text-decoration:none;cursor:pointer;
+  box-shadow:0 1px 2px rgba(16,24,40,.08)}
+a.ghost{display:inline-block;padding:13px 22px;border-radius:10px;border:1px solid var(--line);
+  color:var(--ink);text-decoration:none;font-weight:600}
+button[disabled]{opacity:.55;cursor:not-allowed}
+section{padding:56px 0;border-top:1px solid var(--line)}
+section h2{font-size:clamp(24px,3.2vw,32px);letter-spacing:-.02em;margin:0 0 8px;text-align:center}
+section p.lead{color:var(--muted);text-align:center;margin:0 auto 32px;max-width:600px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+.card{border:1px solid var(--line);border-radius:14px;padding:20px 22px;background:#fff}
+.card h3{margin:0 0 6px;font-size:17px} .card p{margin:0;color:var(--muted)}
+.card p.pt{color:var(--ink)} .card p.pt::before{content:"";display:block;width:22px;height:3px;
+  border-radius:2px;background:var(--accent);margin-bottom:12px}
+.soft{background:var(--soft)}
+.tier{border:1px solid var(--line);border-radius:16px;padding:26px;background:#fff}
+.tier.top{border-color:var(--accent);box-shadow:0 8px 28px rgba(16,24,40,.08)}
+.price{font-size:34px;font-weight:700;letter-spacing:-.02em;margin:6px 0 12px}
+.tier ul{padding-left:18px;margin:0;color:var(--muted)}
+form.join{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:28px auto 0;
+  max-width:520px} form.join label{flex:1 1 260px}
+input[type=email]{width:100%;padding:13px 14px;border:1px solid var(--line);border-radius:10px;
+  font:inherit} input:focus,a:focus,button:focus{outline:3px solid var(--accent);outline-offset:2px}
+.note{color:var(--muted);font-size:14px;text-align:center;margin-top:12px;width:100%}
+details{border:1px solid var(--line);border-radius:12px;padding:14px 18px;margin:10px auto;
+  max-width:760px;background:#fff} summary{font-weight:600;cursor:pointer}
+details p{color:var(--muted);margin:10px 0 0}
+footer{border-top:1px solid var(--line);padding:28px 0;color:var(--muted);font-size:14px}
+@media (max-width:640px){.hero{padding:56px 0 40px} section{padding:40px 0}}
 </style></head><body>
-<p class="note">Presign Pad is in development.</p>
+<nav><div class="wrap"><span class="brand">Presign Pad</span><a class="ghost" href="app/">Open the app</a></div></nav>
+<header class="hero"><div class="wrap"><span class="badge">Early access</span>
 <h1>Sign one AWS request. See why it fails. Nothing else to set up.</h1><p class="sub">Presign Pad will be a small browser extension. It is not built yet. It will sign SigV4 requests and presigned URLs, send them, show the live response, and point to the likely cause when a request fails. Join the waitlist to hear when it launches.</p>
-<h2>The problem</h2><ul><li>You just need to fire off one signed request. Opening a full API client feels like too much.</li><li>A signing error often only shows up after you hit send. Then you get a vague 403 and have to guess.</li><li>Presigned S3 URLs are easy to get slightly wrong. A wrong header, region or timestamp breaks them.</li><li>Signing alone is not enough. You also want the request sent and the failure explained in plain words.</li><li>You don&#x27;t want to paste your AWS keys into a tool that syncs them to a cloud workspace.</li></ul>
-<h2>What it will do</h2><ul><li>Basic request signing for AWS-style requests (SigV4) and presigned URLs. This is what Presign Pad will do first.</li><li>Send the request from the extension and see the live response right next to it.</li><li>Real-time error highlighting. It will flag likely signing and syntax problems as you type, and explain the likely cause when a request fails.</li><li>No account is planned. It is being designed so your keys never leave your machine.</li><li>A free tier is planned. Its limits are not decided yet.</li><li>A single-purpose tool. It will not try to replace a full API platform.</li></ul>
-<h2>Planned pricing</h2><div class="tiers"><div class='tier'><h3>Free</h3><p class='price'>$0/month</p><ul><li>A free tier is planned. Its limits are not decided yet.</li><li>Live response preview for unsigned requests</li><li>Basic syntax error highlighting</li><li>Local-only storage, no account</li></ul></div><div class='tier'><h3>Pro</h3><p class='price'>$5/month</p><ul><li>SigV4 and presigned URL signing helpers</li><li>Explanations for signing mismatches</li><li>Saved signing profiles stored locally</li><li>Pre-order price of $5/month is kept for as long as you stay subscribed</li><li>Pre-orders are fully refundable on request at any time, and refunded automatically if Presign Pad is not built by the date shown on the page</li></ul></div><div class='tier'><h3>Pro Yearly</h3><p class='price'>$48/year</p><ul><li>Everything in Pro</li><li>Pre-order price of $48/year kept for as long as you stay subscribed</li><li>Early access to new features</li><li>Same refund terms as Pro</li></ul></div></div>
-<form><a class="cta" href="https://buy.stripe.com/test_dRm9AM3q74X3gCL72X1Fe01" rel="noopener">Join the waitlist</a><p class="note">Joining the waitlist means we will email you a launch note when Presign Pad is ready, and we may send you one short survey. No spam. No discounts are promised. Nothing is built yet, and joining does not commit you to buy anything.</p></form>
-<h2>FAQ</h2><dl><dt>Does Presign Pad exist yet?</dt><dd>No. It is not built yet. This page tests whether enough developers want it. If there is enough interest, we will build it and email the waitlist.</dd><dt>What will it do?</dt><dd>It will be a browser extension. You will build a request, sign it with SigV4 or create a presigned URL, send it, and see the live response. When a request fails, it will highlight and explain the likely cause.</dd><dt>Will I need an account?</dt><dd>The plan is no. It is being designed so your keys never leave your machine.</dd><dt>Will it replace Postman?</dt><dd>No. It will focus on one job: signing, sending and debugging one-off requests. If you need collections, teams and collaboration, a full client is a better fit.</dd><dt>What will it cost?</dt><dd>A free tier and a paid Pro plan are planned. The planned prices are shown on this page. They are not final. The limits of the free tier are not decided yet.</dd><dt>What does the Reserve button do?</dt><dd>Each Pro plan has a Reserve button. Clicking it does not charge anyone. It shows a payment link if you want to pre-order. Pre-orders are fully refundable on request at any time. If Presign Pad is not built, pre-orders will be refunded. The refund date will be shown next to the payment link.</dd><dt>Which services will it support?</dt><dd>The first goal is AWS-style signed requests, such as S3. We will not promise other services until we have tested them.</dd><dt>What happens when I join the waitlist?</dt><dd>We will save your email. We may send you one short survey and a launch email. You can ask us to delete your email at any time.</dd></dl><script data-goatcounter="https://tuckertools.goatcounter.com/count" async src="gc.js"></script>
+<div class="actions"><a class="cta" href="https://buy.stripe.com/test_dRm9AM3q74X3gCL72X1Fe01" rel="noopener">Join the waitlist</a></div><p class="note">Joining the waitlist means we will email you a launch note when Presign Pad is ready, and we may send you one short survey. No spam. No discounts are promised. Nothing is built yet, and joining does not commit you to buy anything.</p></div></header>
+<section class="soft"><div class="wrap"><h2>The problem</h2><div class="grid" style="margin-top:28px"><div class="card"><h3>You just need to fire off one signed request</h3><p>Opening a full API client feels like too much.</p></div><div class="card"><h3>A signing error often only shows up after you hit send</h3><p>Then you get a vague 403 and have to guess.</p></div><div class="card"><h3>Presigned S3 URLs are easy to get slightly wrong</h3><p>A wrong header, region or timestamp breaks them.</p></div><div class="card"><h3>Signing alone is not enough</h3><p>You also want the request sent and the failure explained in plain words.</p></div><div class="card"><p class="pt">You don&#x27;t want to paste your AWS keys into a tool that syncs them to a cloud workspace.</p></div></div></div></section>
+<section><div class="wrap"><h2>What it does</h2><div class="grid" style="margin-top:28px"><div class="card"><p class="pt">Basic request signing for AWS-style requests (SigV4) and presigned URLs. This is what Presign Pad will do first.</p></div><div class="card"><p class="pt">Send the request from the extension and see the live response right next to it.</p></div><div class="card"><h3>Real-time error highlighting</h3><p>It will flag likely signing and syntax problems as you type, and explain the likely cause when a request fails.</p></div><div class="card"><h3>No account is planned</h3><p>It is being designed so your keys never leave your machine.</p></div><div class="card"><h3>A free tier is planned</h3><p>Its limits are not decided yet.</p></div><div class="card"><h3>A single-purpose tool</h3><p>It will not try to replace a full API platform.</p></div></div></div></section>
+<section><div class="wrap"><h2>Pricing</h2><p class="lead">Simple, no surprises.</p><div class="grid"><div class="tier top"><h3>Free</h3><p class="price">$0/month</p><ul><li>A free tier is planned. Its limits are not decided yet.</li><li>Live response preview for unsigned requests</li><li>Basic syntax error highlighting</li><li>Local-only storage, no account</li></ul></div><div class="tier"><h3>Pro</h3><p class="price">$5/month</p><ul><li>SigV4 and presigned URL signing helpers</li><li>Explanations for signing mismatches</li><li>Saved signing profiles stored locally</li><li>Pre-order price of $5/month is kept for as long as you stay subscribed</li><li>Pre-orders are fully refundable on request at any time, and refunded automatically if Presign Pad is not built by the date shown on the page</li></ul></div><div class="tier"><h3>Pro Yearly</h3><p class="price">$48/year</p><ul><li>Everything in Pro</li><li>Pre-order price of $48/year kept for as long as you stay subscribed</li><li>Early access to new features</li><li>Same refund terms as Pro</li></ul></div></div></div></section>
+<section class="soft"><div class="wrap"><h2>Questions</h2><details><summary>Does Presign Pad exist yet?</summary><p>No. It is not built yet. This page tests whether enough developers want it. If there is enough interest, we will build it and email the waitlist.</p></details><details><summary>What will it do?</summary><p>It will be a browser extension. You will build a request, sign it with SigV4 or create a presigned URL, send it, and see the live response. When a request fails, it will highlight and explain the likely cause.</p></details><details><summary>Will I need an account?</summary><p>The plan is no. It is being designed so your keys never leave your machine.</p></details><details><summary>Will it replace Postman?</summary><p>No. It will focus on one job: signing, sending and debugging one-off requests. If you need collections, teams and collaboration, a full client is a better fit.</p></details><details><summary>What will it cost?</summary><p>A free tier and a paid Pro plan are planned. The planned prices are shown on this page. They are not final. The limits of the free tier are not decided yet.</p></details><details><summary>What does the Reserve button do?</summary><p>Each Pro plan has a Reserve button. Clicking it does not charge anyone. It shows a payment link if you want to pre-order. Pre-orders are fully refundable on request at any time. If Presign Pad is not built, pre-orders will be refunded. The refund date will be shown next to the payment link.</p></details><details><summary>Which services will it support?</summary><p>The first goal is AWS-style signed requests, such as S3. We will not promise other services until we have tested them.</p></details><details><summary>What happens when I join the waitlist?</summary><p>We will save your email. We may send you one short survey and a launch email. You can ask us to delete your email at any time.</p></details></div></section>
+<footer><div class="wrap">© Presign Pad · a small, focused tool</div></footer>
+<script data-goatcounter="https://tuckertools.goatcounter.com/count" async src="gc.js"></script>
 </body></html>
