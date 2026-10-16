@@ -36,9 +36,9 @@
     "updated": "2026-10-15"
   },
   "sundayfile": {
-    "has_app": false,
-    "tagline": "Coming soon: a clean CSV of your HubSpot and Trello data, in your Drive every week",
-    "title": "Sundayfile",
-    "updated": "2026-10-15"
+    "has_app": true,
+    "tagline": "Turn HubSpot and Trello CSV exports into the same columns every time, per client",
+    "title": "Sundayfile: fixed-column CSVs from your HubSpot and Trello exports, one profile per client",
+    "updated": "2026-10-16"
   }
 }
