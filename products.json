@@ -1,5 +1,6 @@
 {
   "auditfold": {
+    "bucket": "website_care",
     "has_app": true,
     "image": true,
     "price": "$19/month",
