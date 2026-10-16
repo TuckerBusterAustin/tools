@@ -55,6 +55,7 @@
     "updated": "2026-10-16"
   },
   "sundayfile": {
+    "bucket": "client_data",
     "has_app": true,
     "image": true,
     "price": "$49/month",
