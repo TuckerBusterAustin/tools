@@ -1,0 +1,69 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>How to monitor SSL certificate expiration across multiple domains</title>
+<meta name="description" content="A practical way to check SSL expiry dates for every client website at once and get an email or Slack alert before any certificate lapses. Includes a…">
+<link rel="canonical" href="https://tuckertooling.com/lapsewatch/guides/monitor-ssl-expiry-multiple-domains/">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23635bff'/%3E%3Ctext x='32' y='44' font-size='36' text-anchor='middle' fill='white' font-family='system-ui,sans-serif' font-weight='bold'%3EH%3C/text%3E%3C/svg%3E">
+<meta property="og:type" content="website">
+<meta property="og:title" content="How to monitor SSL certificate expiration across multiple domains">
+<meta property="og:description" content="A practical way to check SSL expiry dates for every client website at once and get an email or Slack alert before any certificate lapses. Includes a…">
+<meta property="og:url" content="https://tuckertooling.com/lapsewatch/guides/monitor-ssl-expiry-multiple-domains/">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="How to monitor SSL certificate expiration across multiple domains">
+<meta name="twitter:description" content="A practical way to check SSL expiry dates for every client website at once and get an email or Slack alert before any certificate lapses. Includes a…"><style>:root{--accent:#4f46e5;--ink:#111827;--muted:#5b6170;--line:#e5e7eb}*{box-sizing:border-box} body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;color:var(--ink);line-height:1.7;font-size:18px}nav{border-bottom:1px solid var(--line)} nav div{max-width:760px;margin:0 auto;padding:18px 24px;display:flex;justify-content:space-between;font-size:15px}nav a{color:var(--muted);text-decoration:none} nav a.home{color:var(--ink);font-weight:700}main,article{max-width:760px;margin:0 auto;padding:40px 24px 64px}h1{font-size:clamp(30px,5vw,44px);line-height:1.15;letter-spacing:-.02em}h2{margin-top:2em;letter-spacing:-.01em} a{color:var(--accent)}code{background:#f3f4f6;padding:1px 5px;border-radius:4px}a.cta{display:inline-block;margin:28px 0;padding:13px 22px;background:var(--accent);color:#fff;border-radius:10px;text-decoration:none;font-weight:600}</style></head><body><nav><div><a class="home" href="https://tuckertooling.com/">Tucker Tooling</a><a href="https://tuckertooling.com/lapsewatch/">The tool</a></div></nav><article><h1>How to monitor SSL certificate expiration across multiple domains</h1><h2>What you&#x27;re building</h2>
+<p>You need three things:</p>
+<p>1. <strong>One list</strong> of every hostname you&#x27;re responsible for.</p>
+<p>2. <strong>A scheduled check</strong> that reads each certificate&#x27;s expiry date and works out the days left.</p>
+<p>3. <strong>An alert</strong> that reaches a person while there&#x27;s still time to fix the problem.</p>
+<p>You can set this up in under an hour with <code>openssl</code>, <code>cron</code> and a Slack webhook or mail command.</p>
+<h2>Step 1: Build the domain list</h2>
+<p>Create <code>domains.txt</code> with one hostname per line:</p>
+<p><code>`</code></p>
+<p>client-a.com</p>
+<p>www.client-a.com</p>
+<p>shop.client-b.co.uk</p>
+<p>mail.client-c.com:465</p>
+<p><code>`</code></p>
+<p>Put every hostname that serves HTTPS on the list, not just the main domain:</p>
+<ul><li>both <code>www</code> and the bare domain;</li><li>subdomains such as <code>shop.</code>, <code>staging.</code>, <code>portal.</code> and <code>api.</code>;</li><li>mail servers and other non-443 services (add the port);</li><li>client sites you inherited and never set up yourself. These are the most likely to break.</li></ul>
+<p>To find hostnames you&#x27;ve forgotten, search Certificate Transparency logs at <a href="https://crt.sh/">crt.sh</a> (for example <code>%.client-a.com</code>). Every publicly trusted certificate gets logged there.</p>
+<h2>Step 2: The check script</h2>
+<p><code>`</code>bash</p>
+<p>#!/usr/bin/env bash</p>
+<p>while read -r line; do</p>
+<p>  [ -z &quot;$line&quot; ] &amp;&amp; continue</p>
+<p>  host=${line%%:*}; port=${line##*:}; [ &quot;$port&quot; = &quot;$line&quot; ] &amp;&amp; port=443</p>
+<p>  end=$(echo | timeout 10 openssl s_client -connect &quot;$host:$port&quot; -servername &quot;$host&quot; 2&gt;/dev/null \</p>
+<p>        | openssl x509 -noout -enddate 2&gt;/dev/null | cut -d= -f2)</p>
+<p>  if [ -z &quot;$end&quot; ]; then echo &quot;$host ERROR no-certificate-or-unreachable&quot;; continue; fi</p>
+<p>  days=$(( ( $(date -d &quot;$end&quot; +%s) - $(date +%s) ) / 86400 ))</p>
+<p>  echo &quot;$host $days $end&quot;</p>
+<p>done &lt; &quot;${1:-domains.txt}&quot; | sort -k2 -n</p>
+<p><code>`</code></p>
+<p>Run it with <code>bash check-ssl.sh domains.txt</code>. Example output:</p>
+<p><code>`</code></p>
+<p>old-client.org ERROR no-certificate-or-unreachable</p>
+<p>shop.client-b.co.uk 9 Oct 25 08:14:02 2026 GMT</p>
+<p>client-a.com 61 Dec 16 10:00:00 2026 GMT</p>
+<p><code>`</code></p>
+<p>Notes:</p>
+<ul><li><code>-servername</code> matters. Without SNI, shared hosting often returns the wrong certificate.</li><li><code>date -d</code> is GNU syntax. On macOS, install <code>coreutils</code> and use <code>gdate</code>, or run the script on a small Linux server.</li><li>An <strong>ERROR is an alert too</strong>. It can mean an expired or missing certificate, a DNS change or a dead site, and you want to hear about any of them.</li></ul>
+<h2>Step 3: Alert only when something needs action</h2>
+<p>Keep the lines that are in trouble (errors, or fewer than 21 days left) and send them only if there are any:</p>
+<p><code>`</code>bash</p>
+<p>#!/usr/bin/env bash</p>
+<p>out=$(bash /opt/ssl/check-ssl.sh /opt/ssl/domains.txt | awk &#x27;$2==&quot;ERROR&quot; || $2+0 &lt; 21&#x27;)</p>
+<p>[ -z &quot;$out&quot; ] &amp;&amp; exit 0</p>
+<p>curl -s -X POST -H &#x27;Content-type: application/json&#x27; \</p>
+<p>  --data &quot;{\&quot;text\&quot;: \&quot;SSL attention needed:\n$out\&quot;}&quot; &quot;$SLACK_WEBHOOK_URL&quot;</p>
+<p><code>`</code></p>
+<p>Schedule it every day:</p>
+<p><code>`</code></p>
+<p>0 8 * * * SLACK_WEBHOOK_URL=https://hooks.slack.com/services/XXX /opt/ssl/alert.sh</p>
+<p><code>`</code></p>
+<h3>Choosing the warning window</h3>
+<p>Auto-renewing certificates usually renew well before they expire. Certbot, for example, renews when about 30 days are left, which is one third of a 90-day certificate&#x27;s life. So a certificate showing fewer than about 21 days usually means <strong>auto-renewal has already failed</strong>. That leaves you three weeks to fix it. For certificates you renew by hand, alert earlier, at 30 and 14 days.</p>
+<h2>Mistakes that cause missed renewals anyway</h2>
+<ul><li><strong>The monitor dies silently.</strong> If the cron box goes down, you&#x27;ll just stop hearing anything, which looks the same as all being fine. Have the script send a short &quot;all OK, N domains checked&quot; message once a week as a heartbeat.</li><li><strong>Alerts go to one person.</strong> Send them to a shared channel or a role address, not the inbox of someone who might be on leave or no longer with you.</li><li><strong>CDN hides the origin.</strong> Behind Cloudflare and similar proxies you&#x27;re checking the edge certificate. If the origin certificate matters (for example in Full (strict) mode), add an origin check: <code>openssl s_client -connect ORIGIN_IP:443 -servername client-a.com</code>.</li><li><strong>Multiple servers.</strong> If a hostname resolves to several IPs, each server can hold a different certificate. Check them individually.</li><li><strong>The list goes stale.</strong> Add &quot;add to SSL list&quot; to your new-client onboarding checklist, and &quot;remove from list&quot; to offboarding.</li><li><strong>Alert fatigue.</strong> If the same warning fires every day for a site you no longer manage, people start ignoring all of them. Prune the list.</li></ul>
+<h2>Why this matters more each year</h2>
+<p>Under CA/Browser Forum ballot SC-081, the maximum lifetime of public certificates drops to 200 days (from March 15, 2026), then 100 days (2027), then 47 days (2029) (<a href="https://support.dnsimple.com/articles/announcement-ssl-certificate-validity-changes/">DNSimple</a>). More renewals mean more chances for one to fail without anyone noticing. Let&#x27;s Encrypt also <a href="https://letsencrypt.org/2025/06/26/expiration-notification-service-has-ended/">ended its expiry reminder emails</a> in 2025, so the warning many people relied on no longer arrives.</p>
+<h2>If you&#x27;d rather not run a script</h2>
+<p>The DIY setup works, but someone has to own the server, the cron job and the list. We&#x27;re building <strong>Lapsewatch</strong> for agency ops teams. It will keep one list of client domains with days-to-expiry and send email or Slack alerts before anything lapses, with no server to maintain. It isn&#x27;t available yet; the page below has the details.</p></article><a class="cta" href="https://tuckertooling.com/lapsewatch/?ref=guide">Try it</a></body></html>
