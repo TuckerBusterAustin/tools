@@ -1,0 +1,56 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>How to do an on-page SEO audit of a single page</title>
+<meta name="description" content="A step-by-step checklist for auditing one page&#x27;s on-page SEO by reading its HTML: title, meta description, headings, images, links, canonical, viewport…">
+<link rel="canonical" href="https://tuckertooling.com/auditfold/guides/on-page-seo-audit-single-page/">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23635bff'/%3E%3Ctext x='32' y='44' font-size='36' text-anchor='middle' fill='white' font-family='system-ui,sans-serif' font-weight='bold'%3EH%3C/text%3E%3C/svg%3E">
+<meta property="og:type" content="website">
+<meta property="og:title" content="How to do an on-page SEO audit of a single page">
+<meta property="og:description" content="A step-by-step checklist for auditing one page&#x27;s on-page SEO by reading its HTML: title, meta description, headings, images, links, canonical, viewport…">
+<meta property="og:url" content="https://tuckertooling.com/auditfold/guides/on-page-seo-audit-single-page/">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="How to do an on-page SEO audit of a single page">
+<meta name="twitter:description" content="A step-by-step checklist for auditing one page&#x27;s on-page SEO by reading its HTML: title, meta description, headings, images, links, canonical, viewport…"><style>:root{--accent:#4f46e5;--ink:#111827;--muted:#5b6170;--line:#e5e7eb}*{box-sizing:border-box} body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;color:var(--ink);line-height:1.7;font-size:18px}nav{border-bottom:1px solid var(--line)} nav div{max-width:760px;margin:0 auto;padding:18px 24px;display:flex;justify-content:space-between;font-size:15px}nav a{color:var(--muted);text-decoration:none} nav a.home{color:var(--ink);font-weight:700}main,article{max-width:760px;margin:0 auto;padding:40px 24px 64px}h1{font-size:clamp(30px,5vw,44px);line-height:1.15;letter-spacing:-.02em}h2{margin-top:2em;letter-spacing:-.01em} a{color:var(--accent)}code{background:#f3f4f6;padding:1px 5px;border-radius:4px}a.cta{display:inline-block;margin:28px 0;padding:13px 22px;background:var(--accent);color:#fff;border-radius:10px;text-decoration:none;font-weight:600}</style></head><body><nav><div><a class="home" href="https://tuckertooling.com/">Tucker Tooling</a><a href="https://tuckertooling.com/auditfold/">The tool</a></div></nav><article><h1>How to do an on-page SEO audit of a single page</h1><h2>What an on-page audit covers</h2>
+<p>An on-page audit looks at what&#x27;s inside the page&#x27;s HTML: the tags and content that you or your client control directly. It doesn&#x27;t cover backlinks, site speed or crawl budget across the whole site. Those are separate jobs. Auditing one page at a time is the quickest way to find problems on a page that matters, like a homepage, a key service page or a new landing page.</p>
+<p>All you need is the page&#x27;s HTML and the checklist below.</p>
+<h2>Step 1: Get the right HTML</h2>
+<p>Open the page, right-click and choose <strong>View Page Source</strong> (or press <code>Ctrl+U</code> / <code>Cmd+Option+U</code>). That shows the HTML the server sends.</p>
+<p><strong>Pitfall:</strong> on sites built with JavaScript, the source can be almost empty, because the content is added later in the browser. If so, open DevTools (<code>F12</code>), right-click the <code>&lt;html&gt;</code> element in the Elements panel and choose <strong>Copy &gt; Copy outerHTML</strong> to get the rendered page. Note which version you audited. If important tags only appear after rendering, that&#x27;s worth flagging on its own.</p>
+<h2>Step 2: Title tag</h2>
+<p>Find <code>&lt;title&gt;</code> in the <code>&lt;head&gt;</code>.</p>
+<ul><li><strong>It exists, and there&#x27;s only one.</strong> Missing or duplicate titles are common in templates.</li><li><strong>It&#x27;s specific to this page.</strong> <code>Home</code> or the bare brand name is a missed chance.</li><li><strong>Length.</strong> Google cuts off titles by display width, not by a fixed character count. A common rule of thumb is roughly 50-60 characters so the important words show.</li><li><strong>Front-load the topic.</strong> <code>Emergency Plumber in Leeds | Smith &amp; Co</code> beats <code>Smith &amp; Co | Welcome to Our Website</code>.</li></ul>
+<h2>Step 3: Meta description</h2>
+<p>Look for <code>&lt;meta name=&quot;description&quot; content=&quot;...&quot;&gt;</code>.</p>
+<ul><li>Check that it exists and is unique to this page.</li><li>Write it as a one- or two-sentence pitch for the click: what the page offers and why it&#x27;s worth opening.</li><li>Keep in mind that Google often rewrites the snippet using text from the page, so the description shapes the snippet but doesn&#x27;t control it. Its job is the click, not the ranking.</li></ul>
+<h2>Step 4: Headings</h2>
+<p>List every <code>&lt;h1&gt;</code> to <code>&lt;h6&gt;</code> in order.</p>
+<ul><li>There should be an <code>&lt;h1&gt;</code> that says what the page is about.</li><li>Headings should form a sensible outline. Watch for jumps like <code>&lt;h1&gt;</code> straight to <code>&lt;h4&gt;</code>, or headings used only to make text big.</li><li><strong>Pitfall:</strong> don&#x27;t treat &quot;more than one H1&quot; as an emergency. Google has said multiple H1s aren&#x27;t a problem. One clear H1 is still the tidiest convention, so flag extra H1s as low priority.</li></ul>
+<h2>Step 5: Image alt text</h2>
+<p>Check every <code>&lt;img&gt;</code> for an <code>alt</code> attribute.</p>
+<ul><li>Images that carry meaning (products, diagrams, team photos) need alt text that describes them: <code>alt=&quot;Copper pipe joint after soldering&quot;</code>.</li><li>Purely decorative images should have an empty <code>alt=&quot;&quot;</code>, so screen readers skip them.</li><li>A <strong>missing</strong> alt attribute and an <strong>empty</strong> one aren&#x27;t the same thing. Only the first is always a problem.</li><li>Avoid stuffing keywords into alt text.</li></ul>
+<h2>Step 6: Links</h2>
+<p>Go through the <code>&lt;a&gt;</code> tags.</p>
+<ul><li>Look for empty or placeholder <code>href</code> values (<code>href=&quot;#&quot;</code>, <code>href=&quot;&quot;</code>).</li><li>Look for vague anchor text like &quot;click here&quot; or &quot;read more&quot; where a descriptive label would help.</li><li>Make sure the page links to related pages on the same site. A page with no internal links out is a dead end.</li><li>Note any <code>rel=&quot;nofollow&quot;</code> on internal links. It&#x27;s usually a mistake.</li></ul>
+<h2>Step 7: Canonical tag</h2>
+<p>Look for <code>&lt;link rel=&quot;canonical&quot; href=&quot;...&quot;&gt;</code>.</p>
+<ul><li>It should use an absolute URL that points to the preferred version of this page, usually itself.</li><li><strong>Common bugs:</strong> every page&#x27;s canonical points to the homepage (a template error), the canonical points to an <code>http://</code> or staging URL, or there are two canonical tags.</li><li>Google treats the canonical as a strong hint, not an order, but a wrong one can still keep the page out of search results.</li></ul>
+<h2>Step 8: Viewport tag</h2>
+<p>For mobile-friendly pages you need:</p>
+<p><code>`</code>html</p>
+<p>&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1&quot;&gt;</p>
+<p><code>`</code></p>
+<p>If it&#x27;s missing, phones show the desktop layout zoomed out. Google indexes the mobile version of pages, so this matters.</p>
+<h2>Step 9: Open Graph tags</h2>
+<p>These control how the link looks when it&#x27;s shared on social platforms and in many chat apps:</p>
+<p><code>`</code>html</p>
+<p>&lt;meta property=&quot;og:title&quot; content=&quot;...&quot;&gt;</p>
+<p>&lt;meta property=&quot;og:description&quot; content=&quot;...&quot;&gt;</p>
+<p>&lt;meta property=&quot;og:image&quot; content=&quot;https://...&quot;&gt;</p>
+<p>&lt;meta property=&quot;og:url&quot; content=&quot;https://...&quot;&gt;</p>
+<p><code>`</code></p>
+<p>Missing <code>og:image</code> is the most visible gap, because shared links end up with no picture or a random one.</p>
+<h2>Step 10: Rank what you found</h2>
+<p>A list of 20 problems in random order is hard to act on. Sort them:</p>
+<p>1. <strong>High:</strong> things that can keep the page out of search or make it look broken (missing title, wrong canonical, no viewport).</p>
+<p>2. <strong>Medium:</strong> things that weaken the click or the page&#x27;s clarity (weak or missing meta description, no H1, missing alt text on key images).</p>
+<p>3. <strong>Low:</strong> polish (extra H1s, vague anchor text, missing Open Graph tags on a page that&#x27;s rarely shared).</p>
+<h2>Doing it faster</h2>
+<p>A manual pass on one page takes 15-30 minutes once you know the checklist. That&#x27;s fine for one page and tedious for ten. We make Auditfold, which takes pasted HTML, runs these checks (title, meta description, headings, alt text, links, canonical, viewport, Open Graph) and gives back a score and a fix list ranked by importance, in plain words. Whichever way you do it, the checklist above is what matters.</p></article><a class="cta" href="https://tuckertooling.com/auditfold/?ref=guide">Try it</a></body></html>
