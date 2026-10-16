@@ -40,8 +40,11 @@
   },
   "sundayfile": {
     "has_app": true,
-    "tagline": "Turn HubSpot and Trello CSV exports into the same columns every time, per client",
-    "title": "Sundayfile: fixed-column CSVs from your HubSpot and Trello exports, one profile per client",
+    "image": true,
+    "price": "$49/month",
+    "stage": "live",
+    "tagline": "Fixed-column HubSpot and Trello CSVs, one profile per client.",
+    "title": "Sundayfile: Clean HubSpot and Trello CSVs, same columns every time",
     "updated": "2026-10-16"
   }
 }
