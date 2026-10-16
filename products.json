@@ -13,8 +13,8 @@
   },
   "rollwell": {
     "has_app": true,
-    "tagline": "Deploy static sites to Netlify, Vercel and GitHub Pages. Roll back from one place.",
-    "title": "Rollwell: one deploy and rollback history for client static sites (waitlist)",
+    "tagline": "Coming soon: one rollback history for Netlify, Vercel and GitHub Pages sites",
+    "title": "Rollwell: deploy and roll back static sites across hosts (waitlist)",
     "updated": "2026-10-15"
   }
 }
