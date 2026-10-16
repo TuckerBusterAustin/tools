@@ -48,6 +48,11 @@
   },
   "presign-pad": {
     "bucket": "developer",
+    "guides": [
+      "https://tuckertooling.com/presign-pad/guides/curl-aws-sigv4/",
+      "https://tuckertooling.com/presign-pad/guides/s3-presigned-url-signaturedoesnotmatch/",
+      "https://tuckertooling.com/presign-pad/guides/verify-hmac-webhook-signature/"
+    ],
     "has_app": true,
     "image": true,
     "price": "$5/month",
