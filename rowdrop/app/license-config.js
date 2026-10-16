@@ -1,1 +1,1 @@
-window.VS_LICENSE_CONFIG = {"slug": "rowdrop", "publicX": "_aL9_iIlB7mESOO_Zg-SWm_cppDKrZa2hhOvGK6xMyY", "api": "https://venture-studio-api.austinbillimek.workers.dev", "buyUrl": "https://buy.stripe.com/test_6oU00c8Krahn4U30Ez1Fe07"};
+window.VS_LICENSE_CONFIG = {"slug": "rowdrop", "publicX": "_aL9_iIlB7mESOO_Zg-SWm_cppDKrZa2hhOvGK6xMyY", "api": "https://venture-studio-api.austinbillimek.workers.dev", "buyUrl": ""};
