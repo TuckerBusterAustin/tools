@@ -1,0 +1,74 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>How to check a page&#x27;s title, meta tags and canonical in your browser</title>
+<meta name="description" content="Three ways to inspect a page&#x27;s title, meta description, canonical, viewport, headings, alt text and Open Graph tags using only your browser, including a…">
+<link rel="canonical" href="https://tuckertooling.com/auditfold/guides/check-meta-tags-in-browser/">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23635bff'/%3E%3Ctext x='32' y='44' font-size='36' text-anchor='middle' fill='white' font-family='system-ui,sans-serif' font-weight='bold'%3EH%3C/text%3E%3C/svg%3E">
+<meta property="og:type" content="website">
+<meta property="og:title" content="How to check a page&#x27;s title, meta tags and canonical in your browser">
+<meta property="og:description" content="Three ways to inspect a page&#x27;s title, meta description, canonical, viewport, headings, alt text and Open Graph tags using only your browser, including a…">
+<meta property="og:url" content="https://tuckertooling.com/auditfold/guides/check-meta-tags-in-browser/">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="How to check a page&#x27;s title, meta tags and canonical in your browser">
+<meta name="twitter:description" content="Three ways to inspect a page&#x27;s title, meta description, canonical, viewport, headings, alt text and Open Graph tags using only your browser, including a…"><style>:root{--accent:#4f46e5;--ink:#111827;--muted:#5b6170;--line:#e5e7eb}*{box-sizing:border-box} body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;color:var(--ink);line-height:1.7;font-size:18px}nav{border-bottom:1px solid var(--line)} nav div{max-width:760px;margin:0 auto;padding:18px 24px;display:flex;justify-content:space-between;font-size:15px}nav a{color:var(--muted);text-decoration:none} nav a.home{color:var(--ink);font-weight:700}main,article{max-width:760px;margin:0 auto;padding:40px 24px 64px}h1{font-size:clamp(30px,5vw,44px);line-height:1.15;letter-spacing:-.02em}h2{margin-top:2em;letter-spacing:-.01em} a{color:var(--accent)}code{background:#f3f4f6;padding:1px 5px;border-radius:4px}a.cta{display:inline-block;margin:28px 0;padding:13px 22px;background:var(--accent);color:#fff;border-radius:10px;text-decoration:none;font-weight:600}</style></head><body><nav><div><a class="home" href="https://tuckertooling.com/">Tucker Tooling</a><a href="https://tuckertooling.com/auditfold/">The tool</a></div></nav><article><h1>How to check a page&#x27;s title, meta tags and canonical in your browser</h1><p>You don&#x27;t need an SEO tool to see a page&#x27;s on-page tags. Every browser can show them. Below are three methods, from quickest to most thorough, and the traps that make people read the results wrong.</p>
+<h2>Method 1: View source</h2>
+<p>1. Open the page.</p>
+<p>2. Press <code>Ctrl+U</code> (Windows/Linux) or <code>Cmd+Option+U</code> (Mac). You can also type <code>view-source:</code> before the URL.</p>
+<p>3. Press <code>Ctrl+F</code> and search for each of these:</p>
+<p>   - <code>&lt;title</code></p>
+<p>   - <code>name=&quot;description&quot;</code></p>
+<p>   - <code>rel=&quot;canonical&quot;</code></p>
+<p>   - <code>name=&quot;viewport&quot;</code></p>
+<p>   - <code>og:</code></p>
+<p>   - <code>&lt;h1</code></p>
+<p>This shows the <strong>raw HTML the server sent</strong>, before any JavaScript runs. That&#x27;s useful, because it shows what a crawler gets on its first request.</p>
+<p><strong>Pitfall:</strong> on sites built with JavaScript frameworks, view source can be almost empty, with tags added later by scripts. If you can&#x27;t find a tag here, check Method 2 before you report it as missing.</p>
+<h2>Method 2: DevTools Elements panel</h2>
+<p>1. Press <code>F12</code>, or right-click the page and choose <strong>Inspect</strong>.</p>
+<p>2. In the <strong>Elements</strong> tab, expand <code>&lt;head&gt;</code>.</p>
+<p>3. Press <code>Ctrl+F</code> inside the panel to search the DOM.</p>
+<p>This shows the page <strong>after</strong> JavaScript has run. Compare it with view source:</p>
+<ul><li><strong>In both:</strong> fine.</li><li><strong>Only in Elements:</strong> JavaScript adds it. Note it. Search engines that render JavaScript may still see it, but it&#x27;s less reliable.</li><li><strong>Different values in each:</strong> a real problem. For example, the server sends one canonical and a script replaces it with another. That sends mixed signals.</li></ul>
+<h2>Method 3: A console snippet that pulls everything at once</h2>
+<p>Open DevTools, go to the <strong>Console</strong> tab, paste this and press Enter:</p>
+<p><code>`</code>js</p>
+<p>(() =&gt; {</p>
+<p>  const q = s =&gt; document.querySelector(s);</p>
+<p>  const all = s =&gt; [...document.querySelectorAll(s)];</p>
+<p>  const report = {</p>
+<p>    title: document.title,</p>
+<p>    titleLength: document.title.length,</p>
+<p>    titleTagCount: all(&#x27;title&#x27;).length,</p>
+<p>    description: q(&#x27;meta[name=&quot;description&quot;]&#x27;)?.getAttribute(&#x27;content&#x27;) ?? &#x27;MISSING&#x27;,</p>
+<p>    descriptionCount: all(&#x27;meta[name=&quot;description&quot;]&#x27;).length,</p>
+<p>    canonicalRaw: q(&#x27;link[rel=&quot;canonical&quot;]&#x27;)?.getAttribute(&#x27;href&#x27;) ?? &#x27;MISSING&#x27;,</p>
+<p>    canonicalCount: all(&#x27;link[rel=&quot;canonical&quot;]&#x27;).length,</p>
+<p>    viewport: q(&#x27;meta[name=&quot;viewport&quot;]&#x27;)?.getAttribute(&#x27;content&#x27;) ?? &#x27;MISSING&#x27;,</p>
+<p>    h1s: all(&#x27;h1&#x27;).map(h =&gt; h.textContent.trim()),</p>
+<p>    imagesMissingAlt: all(&#x27;img:not([alt])&#x27;).map(i =&gt; i.getAttribute(&#x27;src&#x27;)),</p>
+<p>    vagueLinks: all(&#x27;a&#x27;).filter(a =&gt; /^(click here|read more|here|more)$/i.test(a.textContent.trim())).length,</p>
+<p>    ogTitle: q(&#x27;meta[property=&quot;og:title&quot;]&#x27;)?.getAttribute(&#x27;content&#x27;) ?? &#x27;MISSING&#x27;,</p>
+<p>    ogDescription: q(&#x27;meta[property=&quot;og:description&quot;]&#x27;)?.getAttribute(&#x27;content&#x27;) ?? &#x27;MISSING&#x27;,</p>
+<p>    ogImage: q(&#x27;meta[property=&quot;og:image&quot;]&#x27;)?.getAttribute(&#x27;content&#x27;) ?? &#x27;MISSING&#x27;,</p>
+<p>  };</p>
+<p>  console.table(report);</p>
+<p>  return report;</p>
+<p>})();</p>
+<p><code>`</code></p>
+<p>You get a table of every key tag. Some notes on reading it:</p>
+<ul><li><strong><code>getAttribute(&#x27;href&#x27;)</code> vs <code>.href</code>.</strong> The snippet reads the raw attribute on purpose. Using <code>.href</code> would quietly turn a relative canonical like <code>/page</code> into a full URL, which hides the problem. If <code>canonicalRaw</code> doesn&#x27;t start with <code>https://</code>, flag it.</li><li><strong>Counts above 1</strong> for title, description or canonical usually mean a theme and a plugin are both outputting the tag.</li><li><strong><code>imagesMissingAlt</code></strong> lists images with no <code>alt</code> attribute at all. Images with <code>alt=&quot;&quot;</code> are left out, because an empty alt is correct for decorative images.</li><li><strong>Empty <code>h1s</code></strong> means there&#x27;s no H1. Several H1s isn&#x27;t automatically wrong, but check that they make sense.</li><li>This snippet reads the <strong>live DOM</strong>, so it reflects JavaScript changes, like Method 2.</li></ul>
+<h2>What &quot;good&quot; looks like</h2>
+<p>A healthy <code>&lt;head&gt;</code> for a typical page looks something like this:</p>
+<p><code>`</code>html</p>
+<p>&lt;title&gt;Emergency Plumber in Leeds | Acme Plumbing&lt;/title&gt;</p>
+<p>&lt;meta name=&quot;description&quot; content=&quot;24/7 emergency plumbing across Leeds. Fixed call-out fee, engineers usually on site within the hour.&quot;&gt;</p>
+<p>&lt;link rel=&quot;canonical&quot; href=&quot;https://acmeplumbing.example/emergency-plumber-leeds/&quot;&gt;</p>
+<p>&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1&quot;&gt;</p>
+<p>&lt;meta property=&quot;og:title&quot; content=&quot;Emergency Plumber in Leeds&quot;&gt;</p>
+<p>&lt;meta property=&quot;og:description&quot; content=&quot;24/7 emergency plumbing across Leeds.&quot;&gt;</p>
+<p>&lt;meta property=&quot;og:image&quot; content=&quot;https://acmeplumbing.example/img/van.jpg&quot;&gt;</p>
+<p><code>`</code></p>
+<p>Each tag appears once, the canonical is absolute and points at the page itself, and the title and description are written for this page, not the whole site.</p>
+<h2>Common problems you&#x27;ll find</h2>
+<ul><li><strong>Same title on every page.</strong> The template uses the site name only.</li><li><strong>Canonical pointing at the homepage</strong> from every page, often from a misconfigured theme or plugin setting.</li><li><strong>Staging URLs</strong> in the canonical or <code>og:url</code>, such as <code>https://staging.example.com/...</code>.</li><li><strong>Missing viewport tag</strong> on older hand-coded sites.</li><li><strong><code>og:image</code> pointing to a file that 404s</strong>, so shared links show no preview. Open the URL in a new tab to check.</li></ul>
+<h2>Turning it into something you can act on</h2>
+<p>The browser tells you what&#x27;s there. It doesn&#x27;t tell you what to fix first. A simple order is: title and canonical problems first, then headings and viewport, then descriptions and alt text, then Open Graph tags. Write each item as an instruction, for example &quot;Change the canonical on /services/ to point to itself,&quot; not just &quot;canonical wrong.&quot;</p>
+<p>If you&#x27;d rather not run the snippet and sort the results yourself, we make Auditfold: paste the page&#x27;s HTML and it checks these same tags, then returns a score and a plain-words fix list ranked by importance. It&#x27;s one option among several. The methods above cost nothing and work in any browser.</p></article><a class="cta" href="https://tuckertooling.com/auditfold/?ref=guide">Try it</a></body></html>
