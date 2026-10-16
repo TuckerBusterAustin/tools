@@ -1,0 +1,1 @@
+window.VS_LICENSE_CONFIG = {"slug": "lapsewatch", "publicX": "_aL9_iIlB7mESOO_Zg-SWm_cppDKrZa2hhOvGK6xMyY", "api": "https://venture-studio-api.austinbillimek.workers.dev", "buyUrl": "https://buy.stripe.com/4gMcN5b8ZfSv0fJ6PN9ws04"};
