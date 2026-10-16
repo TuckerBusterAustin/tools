@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Free SSL certificate expiry checker for many domains | Lapsewatch</title>
+  <meta name="description" content="Paste up to 50 client domains and see when each SSL certificate expires. Free, no sign-up. You enter the expiry dates yourself.">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to main content</a>
+<header class="site-header">
+  <div class="wrap">
+    <a class="wordmark" href="index.html">Lapsewatch</a>
+    <span class="tag header-tag">Coming soon</span>
+    <nav class="site-nav" id="site-nav" aria-label="Main">
+      <a href="#checker">Checker</a>
+      <a href="index.html#pricing">Pricing</a>
+      <a href="index.html#faq">FAQ</a>
+      <a href="app-domains.html">App preview</a>
+      <span class="tag nav-menu-tag">Coming soon</span>
+    </nav>
+    <div class="header-actions">
+      <a class="btn btn-secondary" href="index.html#waitlist" aria-label="Join the waitlist"><span class="btn-label-short">Waitlist</span><span class="btn-label-long">Join the waitlist</span></a>
+      <button class="menu-btn" id="menu-btn" type="button" aria-expanded="false" aria-controls="site-nav">Menu</button>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+  <section class="section band" id="checker" aria-labelledby="checker-title">
+    <div class="wrap">
+      <h1 id="checker-title" class="checker-head">Free SSL certificate expiry checker for many domains</h1>
+      <p class="checker-head">Paste your client domains and see when each certificate expires, soonest first. No sign-up.</p>
+      <p class="banner strip checker-head">Lapsewatch is not built yet. This checker only reminds you of dates; it never renews certificates.</p>
+      <form class="checker-form card" id="checker-form" data-mode="entered" novalidate>
+        <div class="field" style="margin-top:0">
+          <label for="domains">Client domains, one per line</label>
+          <textarea id="domains" rows="6" spellcheck="false" autocapitalize="off" aria-describedby="domains-help dates-note domains-error line-errors"></textarea>
+          <p class="help" id="domains-help">Paste up to 50 lines, one per line, like clientsite.com, 2026-12-01</p>
+          <p class="help" id="dates-note">You enter the expiry dates yourself; a browser can't read certificates. Find a date in your browser's certificate viewer, or run <code>openssl s_client -connect clientsite.com:443 | openssl x509 -noout -enddate</code>. Nothing is stored or sent.</p>
+          <p class="err-text" id="domains-error" hidden></p>
+          <ul class="err-text" id="line-errors"></ul>
+        </div>
+        <div class="checker-actions">
+          <button class="btn btn-primary" id="check-btn" type="submit"><span class="spin" aria-hidden="true"></span><span class="lbl">Check expiry dates</span></button>
+        </div>
+      </form>
+      <div class="results" id="results" aria-live="polite">
+        <p class="banner" id="results-empty">Your results will show here, soonest expiry first.</p>
+        <div id="results-done" hidden>
+          <h2>Your results</h2>
+          <p class="summary-line" id="results-summary"></p>
+          <div class="table-box">
+            <table class="domain-table">
+              <caption>Days left, from the expiry dates you entered</caption>
+              <thead><tr><th scope="col">Domain</th><th scope="col" class="num">Days left <span class="sr-only">sorted, soonest first</span></th><th scope="col">Status</th><th scope="col">Expires</th></tr></thead>
+              <tbody id="results-body"></tbody>
+            </table>
+          </div>
+          <p class="small" style="margin-top:12px">Worked out just now from your dates. These results are not monitored; Lapsewatch will watch them for you. <a href="index.html#waitlist">Join the waitlist</a></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="about-title">
+    <div class="wrap stack">
+      <h2 id="about-title">What the checker shows</h2>
+      <p>For each domain: days left, status and the expiry date you entered. Lines that can't be read are listed by line number; the rest still show.</p>
+      <p>Renew the certificate yourself or ask your host. Lapsewatch will only remind you.</p>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div><p><strong>Lapsewatch</strong></p><p class="small">Lapsewatch is coming soon. It will send reminders; it does not renew certificates.</p></div>
+    <ul class="footer-links">
+      <li><a href="#checker">Checker</a></li><li><a href="index.html#pricing">Pricing</a></li><li><a href="index.html#faq">FAQ</a></li><li><a href="index.html#faq">Privacy</a></li>
+    </ul>
+  </div>
+</footer>
+<div id="toast-region"></div>
+<script src="lib/domains.js"></script>
+<script src="lib/render.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
