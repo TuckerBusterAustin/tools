@@ -28,5 +28,11 @@
     "tagline": "Coming soon: one rollback history for Netlify, Vercel and GitHub Pages sites",
     "title": "Rollwell: deploy and roll back static sites across hosts (waitlist)",
     "updated": "2026-10-15"
+  },
+  "rowdrop": {
+    "has_app": true,
+    "tagline": "Turn the HubSpot CSV you export every week into a repeatable, scheduled job.",
+    "title": "Rowdrop: scheduled CSV/Excel file jobs for HubSpot exports",
+    "updated": "2026-10-15"
   }
 }
