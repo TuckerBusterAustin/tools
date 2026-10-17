@@ -117,5 +117,12 @@
     "tagline": "Fixed-column HubSpot and Trello CSVs, one profile per client.",
     "title": "Sundayfile: Clean HubSpot and Trello CSVs for agencies",
     "updated": "2026-10-16"
+  },
+  "tagshelf": {
+    "has_app": false,
+    "stage": "soon",
+    "tagline": "Meta tags and JSON-LD for every client page, saved per client",
+    "title": "Tagshelf",
+    "updated": "2026-10-17"
   }
 }
