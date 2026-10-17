@@ -95,6 +95,13 @@
     "title": "Rowdrop: scheduled CSV/Excel file jobs for HubSpot exports",
     "updated": "2026-10-16"
   },
+  "speedbrief": {
+    "has_app": false,
+    "stage": "soon",
+    "tagline": "Your Shopify store is slow. Speedbrief will tell you what to fix first.",
+    "title": "Speedbrief",
+    "updated": "2026-10-17"
+  },
   "sundayfile": {
     "bucket": "client_data",
     "guides": [
